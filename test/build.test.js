@@ -40,7 +40,7 @@ test('/1334/ is My work here is done alone, and /2445/ is Despair', () => {
 
 test('the main pages exist', () => {
   for (const f of ['index.html', 'decode/index.html', 'encode/index.html', 'browse/index.html',
-    'browse/love/index.html', 'story/index.html', 'how-it-works/index.html', '404.html']) {
+    'browse/love/index.html', 'story/index.html', '404.html']) {
     assert.ok(fs.existsSync(path.join(out, f)), f);
   }
 });
@@ -105,6 +105,15 @@ test('every page has the contact address in its footer', () => {
   assert.ok(pages.length >= 196);
   for (const f of pages) {
     assert.ok(read(f).includes('&bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>'), f);
+  }
+});
+
+test('How it works is gone (Ed, 20c): no page, no link, footer is Story, Browse, address', () => {
+  assert.ok(!fs.existsSync(path.join(out, 'how-it-works')));
+  for (const f of allFiles(out).filter(f => f.endsWith('.html'))) {
+    const html = read(f);
+    assert.doesNotMatch(html, /how-it-works|How it works/, f);
+    assert.match(html, /<p class="footer-links">&bull; <a href="[^"]*story\/">Story<\/a> &bull; <a href="[^"]*browse\/">Browse<\/a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house<\/a> &bull;<\/p>/, f);
   }
 });
 

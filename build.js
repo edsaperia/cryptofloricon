@@ -170,7 +170,7 @@ function build(out) {
 
   function footer(r) {
     return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}how-it-works/">How it works</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
+  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
   <p class="credits">Invented &amp; produced by Edward Saperia<br>
   Written by Sasha Garwood &amp; Grant Howitt<br>
   Website by Kimi Lawrie &amp; Eugen Rochko<br>
@@ -347,7 +347,7 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
     });
   }
 
-  /* ---------- story and how it works ---------- */
+  /* ---------- story ---------- */
 
   page({
     file: 'story/index.html',
@@ -358,19 +358,6 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
 <div class="prose">
 ${fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8')}
 </div>`
-  });
-
-  page({
-    file: 'how-it-works/index.html',
-    title: 'How it works',
-    bodyClass: 'how',
-    main: r => {
-      const key = Cipher.KEY_ORDER.map(d =>
-        `<li><img src="${asset('flower' + d, r)}" alt=""><span>${Cipher.FLOWERS[d].key}</span></li>`).join('');
-      return fs.readFileSync(path.join(ROOT, 'content', 'how-it-works.html'), 'utf8')
-        .replace('{{key}}', `<ul class="key-flowers key-open">${key}</ul>`)
-        .replace(/\{\{root\}\}/g, r);
-    }
   });
 
   /* ---------- 404 ---------- */

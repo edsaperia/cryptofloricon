@@ -151,7 +151,8 @@ img { vertical-align: middle; max-width: 100%; }
 }
 
 .title {
-  font: 2em/1.4 var(--title-font);
+  /* Andrade's swash capitals and descenders need room between lines (Ed, 2026-11-23). */
+  font: 2em/1.95 var(--title-font);
   margin: 0 auto;
   padding: 12px 0;
   font-weight: normal;
@@ -327,13 +328,11 @@ h2 a { text-decoration: none; }
 .row-flowers { font-size: 0.85em; font-variant: small-caps; color: var(--ink-soft); }
 .no-results { font-style: italic; text-align: center; border: 0; }
 
-/* ---------- story and how it works ---------- */
+/* ---------- story ---------- */
 
 .prose { text-align: left; }
 .prose p { margin: 0 0 1em; }
 .prose p:first-child::first-letter { font: 3.2em/0.8 var(--title-font); float: left; padding: 0.12em 0.08em 0 0; }
-.how .prose p:first-child::first-letter { font: inherit; float: none; padding: 0; }
-.how .key-open img { height: 90px; }
 
 /* ---------- footer ---------- */
 
