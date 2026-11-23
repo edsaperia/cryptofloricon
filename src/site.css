@@ -1,0 +1,358 @@
+/* @license
+ * MyFonts Webfont Build ID 2448905, 2013-01-14T06:01:38-0500
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Andrade Script Pro by DSType
+ * URL: http://www.myfonts.com/fonts/dstype/andrade-pro/script/
+ * Copyright: Copyright (c) Dino dos santos _DSType, 2006. All rights reserved.
+ * 
+ * 
+ * License: http://www.myfonts.com/viewlicense?type=web&buildid=2448905
+ * 
+ * © 2013 Bitstream Inc
+*/
+
+/* The licence's page-view counter (from the MyFonts kit). It must stay first. */
+@import url("https://hello.myfonts.net/count/255e09");
+
+/* Andrade Script Pro: web licence owned by Ed Saperia (MyFonts order M4359904,
+   up to 10,000 page views a month). Self-hosted from the 2013 kit. */
+@font-face {
+  font-family: "AndradeScriptPro";
+  src: {{fontWoff}} format("woff"), {{fontTtf}} format("truetype");
+  font-display: swap;
+}
+
+/*
+ * Cryptofloricon. Modelled on the 2015 site's stylesheet
+ * (/Cryptofloricon Dev/css/main.css): brown ink (#581a0e) on paper, a
+ * script title face, a Caslon body face, ornamental corners round the main
+ * panel, small-caps "• Decode •" links, and a 600px column on wide screens.
+ *
+ * Double-brace asset names are filled in by build.js with the artwork's path: the real
+ * file once it is in src/assets/, a labelled placeholder until then.
+ */
+
+:root {
+  --ink: #581a0e;
+  --ink-dark: #1e140f;
+  --ink-soft: rgba(88, 26, 14, 0.55);
+  --paper: #f1e6cc;
+  --title-font: "AndradeScriptPro", "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
+  --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; background-color: #f1e6cc; }
+
+body {
+  margin: 0;
+  padding: 10px 0 20px;
+  color: var(--ink);
+  font: 16px/1.65 var(--body-font);
+  background-color: var(--paper);
+  /* Placeholder paper (soft mottling) under the real texture once it is in. */
+  background-image:
+    {{paper}},
+    radial-gradient(ellipse at 20% 10%, rgba(255, 250, 235, 0.7), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(200, 170, 120, 0.25), transparent 55%);
+  background-repeat: repeat, no-repeat, no-repeat;
+  min-height: 100vh;
+}
+
+a { color: var(--ink); }
+a:hover, a:focus-visible { color: var(--ink-dark); }
+:focus-visible { outline: 2px dotted var(--ink); outline-offset: 2px; }
+
+img { vertical-align: middle; max-width: 100%; }
+
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* ---------- masthead: logo, tabs, key ---------- */
+
+.masthead { text-align: center; }
+
+.logo { display: inline-block; text-decoration: none; }
+.logo img { width: 80%; min-width: 260px; }
+.logotype {
+  display: inline-block;
+  font: 3.4em/1.1 var(--title-font);
+  padding: 0.1em 0.2em 0;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2.2em;
+  margin: 0.4em auto 0.2em;
+  font-size: 1.3em;
+  font-variant: small-caps;
+}
+.tabs a { text-decoration: none; }
+.tabs a:hover { text-decoration: underline; }
+.tabs.bottom { margin-top: 1em; }
+
+.key { margin: 0 auto; font-variant: small-caps; }
+.key summary {
+  display: inline-block;
+  cursor: pointer;
+  list-style: none;
+  padding: 0 0.5em;
+}
+.key summary::-webkit-details-marker { display: none; }
+.key summary::before { content: "\2022\00a0"; }
+.key summary::after { content: "\00a0\2022"; }
+
+.key-flowers {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.key-flowers li { display: flex; flex-direction: column; align-items: center; font-size: 0.85em; }
+.key-flowers img { height: 70px; width: auto; }
+
+/* ---------- the main panel with its ornamental corners ---------- */
+
+.border {
+  display: block;
+  margin: 10px auto 0;
+  padding: 56px 18px 56px;
+  text-align: center;
+  background:
+    {{cornerTL}} left top / 75px 100px no-repeat,
+    {{cornerTR}} right top / 75px 100px no-repeat,
+    {{cornerBL}} left bottom / 75px 100px no-repeat,
+    {{cornerBR}} right bottom / 75px 100px no-repeat;
+}
+
+.title {
+  font: 2em/1.4 var(--title-font);
+  margin: 0 auto;
+  padding: 12px 0;
+  font-weight: normal;
+}
+.title .joiner { white-space: nowrap; }
+
+h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; margin: 1.4em 0 0.3em; }
+h2 a { text-decoration: none; }
+
+.divider { margin: 14px auto; }
+.divider img { display: block; margin: 0 auto; }
+/* The original divider SVGs carry a faint embedded JPEG layer; multiply blends it into the paper. */
+.divider img { mix-blend-mode: multiply; }
+.divider-large img { width: 70%; max-width: 360px; }
+.divider-small img { width: 40%; max-width: 200px; }
+
+.intro { margin: 0 auto 1em; max-width: 30em; }
+
+.calls { font-size: 1.2em; font-variant: small-caps; margin: 1.2em 0 0.4em; }
+.call { text-decoration: none; white-space: nowrap; }
+.call:hover { text-decoration: underline; }
+.joiner { font-style: italic; font-variant: normal; font-size: 0.85em; }
+
+.buttons { margin: 1em 0; font-size: 1.2em; font-variant: small-caps; }
+.buttons a { text-decoration: none; }
+.link-button {
+  font: inherit;
+  font-variant: small-caps;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.link-button:hover { color: var(--ink-dark); text-decoration: underline; }
+
+.hint { font-style: italic; margin: 0 0 0.6em; }
+
+/* ---------- bouquets: the stems side by side ---------- */
+
+.bouquet {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  min-height: 1px;
+}
+.bouquet .stem { height: 60px; width: auto; }
+.bouquet-large .stem { height: 100px; }
+.bouquet-small .stem { height: 36px; }
+.bouquet-small { min-width: 48px; }
+
+.flower-words { margin: 4px 0 0; font-variant: small-caps; color: var(--ink-soft); }
+
+/* ---------- message pages ---------- */
+
+.entry { margin: 0 auto; }
+.passage { text-align: left; }
+.passage p { margin: 0 0 1em; }
+.xref { text-decoration: underline; }
+
+.entry-tags, .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 0;
+  list-style: none;
+  margin: 0.5em 0;
+  padding: 0;
+  font-variant: small-caps;
+}
+.entry-tags li + li::before, .tag-list li + li::before { content: "\00a0\2022\00a0"; }
+.entry-tags a, .tag-list a { text-decoration: none; }
+.entry-tags a:hover, .tag-list a:hover { text-decoration: underline; }
+.tag-list .current { text-decoration: underline; }
+
+.shared-note { font-style: italic; }
+
+/* ---------- decode ---------- */
+
+.flower-picker {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.flower-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 1 60px;
+  min-width: 0;
+  padding: 6px 1px 2px;
+  font: inherit;
+  font-size: 0.72em;
+  letter-spacing: -0.01em;
+  font-variant: small-caps;
+  color: var(--ink);
+  background: rgba(255, 252, 240, 0.35);
+  border: 1px dotted var(--ink-soft);
+  border-radius: 4px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.flower-btn img { height: 83px; width: auto; }
+.flower-btn:active { transform: translateY(1px); }
+.flower-btn:focus:not(:focus-visible) { outline: none; }
+.flower-btn.chosen { border-style: solid; background: rgba(255, 252, 240, 0.7); }
+.flower-count {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-variant: normal;
+  font-weight: bold;
+}
+
+.bouquet-build { min-height: 112px; margin-top: 14px; display: flex; justify-content: center; align-items: flex-end; }
+.stem-button { background: none; border: 0; padding: 0; cursor: pointer; }
+.stem-button:hover img { opacity: 0.6; }
+.stem-count { min-height: 1.6em; margin: 0; font-variant: small-caps; color: var(--ink-soft); }
+.decode-result .title { padding: 0; }
+
+/* ---------- send a message (encode) ---------- */
+
+.search input {
+  display: block;
+  width: 260px;
+  max-width: 100%;
+  height: 70px;
+  margin: 0 auto;
+  padding: 0 18px;
+  font: 1.3em var(--body-font);
+  text-align: center;
+  color: var(--ink);
+  border: 0;
+  background:
+    {{bracketLeft}} left center / 12px 70px no-repeat,
+    {{bracketRight}} right center / 12px 70px no-repeat;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+.search input::placeholder { color: var(--ink-soft); }
+.search input:focus { outline: none; background-color: rgba(255, 252, 240, 0.45); }
+
+.results, .entry-list { list-style: none; margin: 0.6em 0; padding: 0; text-align: left; }
+.entry-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0 10px;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--ink-soft);
+}
+.entry-row a { display: flex; align-items: flex-end; gap: 10px; text-decoration: none; }
+.entry-row a:hover .row-title { text-decoration: underline; }
+.row-flowers { font-size: 0.85em; font-variant: small-caps; color: var(--ink-soft); }
+.no-results { font-style: italic; text-align: center; border: 0; }
+
+/* ---------- story and how it works ---------- */
+
+.prose { text-align: left; }
+.prose p { margin: 0 0 1em; }
+.prose p:first-child::first-letter { font: 3.2em/0.8 var(--title-font); float: left; padding: 0.12em 0.08em 0 0; }
+.how .prose p:first-child::first-letter { font: inherit; float: none; padding: 0; }
+.how .key-open img { height: 90px; }
+
+/* ---------- footer ---------- */
+
+.site-footer { text-align: center; font-size: 0.85em; margin-top: 1.4em; }
+.footer-links { font-variant: small-caps; font-size: 1.1em; }
+.footer-links a { text-decoration: none; }
+.footer-links a:hover { text-decoration: underline; }
+.credits { margin: 0.6em 0; line-height: 1.6; }
+
+/* ---------- the narrowest phones (320-379px) ---------- */
+
+@media (max-width: 379px) {
+  .border { padding-left: 10px; padding-right: 10px; }
+  /* Andrade's swash capitals and descenders reach well outside the letters' box. */
+  .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
+  .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
+  .flower-btn img { height: 72px; }
+}
+
+/* ---------- wider screens ---------- */
+
+@media (min-width: 480px) {
+  body { padding-top: 40px; }
+  .logo img { width: 90%; min-width: 400px; }
+  .logotype { font-size: 4.6em; }
+  .border {
+    padding: 60px 40px 60px;
+    background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
+  }
+  .key-flowers img { height: 100px; }
+  .flower-btn { flex-basis: 76px; font-size: 0.8em; }
+  .flower-btn img { height: 100px; }
+  .bouquet-build { min-height: 130px; }
+}
+
+@media print {
+  body { background: none; }
+  .tabs, .key, .site-footer .footer-links { display: none; }
+}

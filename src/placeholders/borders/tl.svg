@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200" width="150" height="200">
+<title>PLACEHOLDER corner ornament. Replace with /Cryptofloricon Dev/img/tl.svg</title>
+<g transform="" fill="none" stroke="#581a0e" stroke-linecap="round">
+<path d="M10 190 L10 10 L140 10" stroke-width="2"/>
+<path d="M18 190 L18 18 L140 18" stroke-width="0.8"/>
+<path d="M10 10 C30 30 40 40 34 52 C28 62 16 56 20 46 C24 38 34 42 32 48" stroke-width="1.2"/>
+<path d="M18 18 C40 22 52 18 60 26" stroke-width="1"/>
+<path d="M18 18 C22 40 18 52 26 60" stroke-width="1"/>
+<circle cx="64" cy="29" r="2.2" fill="#581a0e"/><circle cx="29" cy="64" r="2.2" fill="#581a0e"/>
+</g>
+<text x="75" y="40" font-family="Georgia,serif" font-size="8" text-anchor="middle" fill="#581a0e" opacity="0.5">placeholder</text>
+</svg>
