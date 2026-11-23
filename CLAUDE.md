@@ -47,7 +47,7 @@ Cross-reference fixes, from the reviewers' findings (`#source: change`):
 - #44: point at #94 *On one condition*, reworded to fit: "whereas #82 recommends the Bearer tone down their demands" → "whereas #94 answers the Bearer's terms with conditions of the Receiver's own" (proposed wording; Ed approves it in the content PR).
 - Apply all the high-confidence fixes from both content reviews in one go (Decision 11a): the 2013 corrections list, spelling, Bearer/Receiver swaps, layout slips, the 7 confident cross-reference fixes, #146's own code 2445.
 - #164 *You're the one*: Ed checks his printed book for a passage; no draft of it exists anywhere (only citations calling it "passionate").
-- Still open: #192's tag; whether to restore #164; and whether to apply all the high-confidence fixes in one pull request.
+- #192 *My heart bleeds*: drop the tag Forgiveness, add nothing (tags: Rejection, Anger).
 
 ## Glossary
 
