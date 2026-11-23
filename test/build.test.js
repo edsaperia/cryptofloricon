@@ -48,9 +48,9 @@ test('the main pages exist', () => {
   }
 });
 
-test('browse lists all 177 entries; the Love tag page lists 53', () => {
+test('browse lists all 177 entries; the Love tag page lists 49', () => {
   assert.equal((read('browse/index.html').match(/class="entry-row"/g) || []).length, 177);
-  assert.equal((read('browse/love/index.html').match(/class="entry-row"/g) || []).length, 53);
+  assert.equal((read('browse/love/index.html').match(/class="entry-row"/g) || []).length, 49);
 });
 
 test('#123 now links "Do you feel the same?" where it said #32', () => {
@@ -198,7 +198,7 @@ test('no message page shows its tags line; /2445/ does not link to Sorrow', () =
 
 test('every tag page is still linked from Send a Message and from Browse', () => {
   const tagPages = allFiles(out).filter(f => /^browse\/[^/]+\/index\.html$/.test(f)).map(f => f.split('/')[1]);
-  assert.equal(tagPages.length, 13);
+  assert.equal(tagPages.length, 14);
   for (const s of ['love', 'sorrow', 'anger', 'rejection', 'warning']) assert.ok(tagPages.includes(s), s);
   const encode = read('encode/index.html');
   const browse = read('browse/index.html');

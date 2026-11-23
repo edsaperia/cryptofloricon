@@ -31,7 +31,8 @@
   "title": "How you doin'?",
   "body": "A cheeky, non-committal edge makes #3 an excellent opening gambit. Whilst possible to send such a message in the context of a long-held friendship, or the first flush of enthusiasm for the company of a newfound comrade, such an implicitly flattering gesture is rarely entirely lacking in romantic subtext.\n\nResponses can vary from the enthusiastically romantic #13, #59, to the direct #5, playful #56 or dismissive #122 or #147. Receivers unconvinced of their own worth may employ #38, while for those confused by the Bearer’s advances, or unsure of their identity, #12 or #35 may provide means of clarification. Should romantic intent be clear and a Receiver unwilling or unable to respond in kind, #17, #104 or #95 may provide appropriate and (in some cases) complimentary means of refusal. Any offended by an anonymous donor can make their feelings clear with an emphatic #103, #111 or #98, although such reactions are somewhat unlikely to give the Bearer much encouragement.",
   "tags": [
-   "Attraction"
+   "Attraction",
+   "Question"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"Shall we?\" (5.1)",
@@ -75,7 +76,8 @@
   "title": "Drink?",
   "body": "A convivial drink is an excellent way to break all but the hardest of social ice, and this proposes just such an encounter. Whether an initial approach, an attempted conclusion to prolonged periods of ambiguous romantic tension, or when a relationship has broken and the Bearer wishes to repair it, this is as much a question as it is a laying of one's cards on the table.\n\nImmediate acceptance can be signalled playfully with #105 or #124, simply with #73, or enthusiastically with #42 or #96. More time can be requested by those with positive intention with #83 or #60; conditions can be imposed with #94; #31 offers means of enquiring as to the Bearer’s situation or intent; and attempts at reconciliation can be accepted with #118. Receivers distinctly unimpressed with the suggestion can send #103 or #111, whereas those wishing to let the Bearer down gently have #67, #71, or #104 with which to do so.",
   "tags": [
-   "Attraction"
+   "Attraction",
+   "Question"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -142,9 +144,9 @@
   "title": "Laugh out loud",
   "body": "Such a gift conveys shared joy and pleasure, grounded firmly in humour rather than romance. Beware, however; for Receivers with romantic intent may feel rebuked, merely clowns to the Bearer. Of course, for those not especially enamoured in the first place, or wishing to imply a Platonic yet sustained regard for the Receiver, this may be no bad thing.\n\nEchoing the Bearer’s message reinforces the mutuality of such appreciation, while #121 and #151 express gratitude for the sentiment, #55 articulates the closeness between Bearer and Receiver, #80 playfully requests further detail, and #48 or #36 express disenchantment with the Bearer’s message.",
   "tags": [
-   "Attraction",
    "Friendship",
-   "Joy"
+   "Joy",
+   "Perfunction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -167,8 +169,8 @@
   "tags": [
    "Attraction",
    "Friendship",
-   "Question",
-   "Warning"
+   "Warning",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -214,8 +216,7 @@
   "body": "Confusion reigns, but never indifference. Perhaps the Bearer cannot discern the Receiver’s feelings, and seeks to know more; or perhaps genuine confusion about their motives and character provides occasion for the gift. Whatever the reason, this is never an admission of defeat, and requests the Receiver to be clear and forthright.\n\nReply in like form is rarely the end of the story, but Receivers can accept the Bearer’s confusion with #53 or an almost dismissive #117, indicate positive or romantic feelings with #59, articulate troubled or negative emotions with #69 or #146, tease with #173, promise for the future with #60, and make a potentially confusing situation clear with #154, #104 or a tempting #13.",
   "tags": [
    "Attraction",
-   "Confusion",
-   "Question"
+   "Confusion"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"I just can't figure you out\" (5.1, 5.4, 5.5, Code Generator)",
@@ -238,7 +239,6 @@
   "body": "Some Receivers just don’t take the hint. Kissing is often the first clear physical affirmation of affection or desire, and this Bearer wishes to hurry matters along somewhat. Unconcerned with plans for the future, echoes from the past, or the vagaries of the present, if the Receiver accepts, then the kiss is all that matters – for now.\n\nOften a positive response in kind is redundant, although Receivers wishing to explore their feelings for the Bearer can always send #1, #34, #130 or #19 should they wish. Receivers unsure of the Bearer’s romantic situation can use #31 or #153 to make delicate enquiries, and a non-committal #105, #107 or #5 to invite further contact. #123 also rarely goes amiss in such situations. Should the Bearer’s identity be unknown, #12 and #35 request courteously that they make themselves known before the Receiver makes any decision, while #37, #103 and #104 repel their advances. #98 and #163 articulate confusion, feigned or otherwise, while Receivers fully cognizant of the Bearer’s identity can use #138, #74, #67, #180, #181 or even #186 or #169 to let them down with various degrees of directness.",
   "tags": [
    "Attraction",
-   "Confusion",
    "Love"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -261,7 +261,7 @@
   "title": "I need a favour",
   "body": "Whether the Bearer’s fondness for the Receiver is romantic, platonic, familial or noticeably ambiguous is irrelevant here – what marks this communication as important is the favour. It might be as simple and mundane as tracking down the Bearer’s lost cat, or as elaborate a scheme as posing as a paramour during an important social event. The task might seem odious, but it is surely somewhat uncivil to turn down a request so eloquently delivered. Furthermore, the Receiver will invariably be owed a favour in future, and favours can be an extremely valuable commodity.\n\nAcceptance can be as basically expressed as #151 or #97; #70 or #87 imply enthusiasm; while #94 offers conditional acceptance and #101 frustration with a repeat offender. #125 is equivocal, while #80 requests further info and #55 assures the Bearer the Receiver will be there if needed. #30, on the other hand, makes the Receiver’s rejection quite clear.",
   "tags": [
-   "Question"
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -332,7 +332,8 @@
   "title": "Obsession",
   "body": "Sleepless nights, lost hours in reverie; desire run wild, and beyond the Bearer’s control. This Receiver simply will not leave the Bearer's head, welcome or otherwise. Whilst undeniably romantic, there is vulnerability and perhaps an edge of desperation in such an admission; attached is an implicit plea to spend more time together, so a Bearer thus stricken can cast aside their daydreams and focus on reality.\n\nPassionate acceptance can be signalled with #46 or #66, while #65 or #49 advise caution, and #62 requests proof of such arrant devotion. Should the Bearer’s desires be unreciprocated, #104, #99, #154 or #22 all variously express and explain this, and #127 laments the awkwardness of the situation. A sarcastic #192 casts doubt on their genuineness. Meanwhile, those wishing to repudiate the Bearer’s gesture without sparing their feelings can employ a disbelieving #111 or #98, a dismissive #25 or an insulting #103 for the purpose.",
   "tags": [
-   "Love"
+   "Love",
+   "Attraction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -355,7 +356,6 @@
   "title": "Told you so",
   "body": "Rarely a pleasant token to receive; often a satisfying one to give. A cheeky reminder that next time the Receiver might be well-served by listening to the Bearer, it is often rather left on desks or tied to doors with a note than presented face-to-face.\n\nTricky as response can be, Receivers wishing to undermine Bearers’ certainty or challenge their self-satisfaction can use #48 or #49, or a flippant #161. Those preferring to repudiate the Bearer than accept their sentiments have #103 or #37 with which to do so, or #30 with which to escalate hostilities if desired.\n\nTolerant or abashed Receivers, however, can accept the implicit reprimand with #137, #127, #151 or #122; #186 suggests both parties continue as normal, while #86 turns a criticism into a tease.",
   "tags": [
-   "Anger",
    "Friendship",
    "Perfunction"
   ],
@@ -380,7 +380,6 @@
   "title": "I have something to tell you",
   "body": "The Bearer is brimming over with excitement, but cannot fully explain their reasons to the Receiver in their current situation – perhaps a gossipy workplace, or a public forum. Or perhaps the Bearer has a question that they must have the Receiver answer, post-haste. Often given in person with a meeting arranged between both parties in the near future, for the Receiver to then refuse, or be late to the meeting, is an act of considerable disrespect.\n\nOften positive responses in kind are unnecessary, although #81 can be used; concerned Receivers can use #69 to ascertain the possible outcome of such discussions, #35 to insist on an unedited and fully disclosive answer, or #179 to playfully engage with the question at hand. #167 enquires about the Bearer’s emotional state; #128 indicates fear or #42 excited anticipation; #86 offers as assurance of the Receiver’s willingness to hear the news, and #33 promises respite if trouble is at hand.",
   "tags": [
-   "Anger",
    "Perfunction",
    "Warning"
   ],
@@ -407,7 +406,6 @@
   "tags": [
    "Confusion",
    "Perfunction",
-   "Question",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -455,8 +453,8 @@
   "body": "Although this flower rarely refers to true peril, it is wise never to rule out such an eventuality. The Bearer has found themselves trapped in a situation or position from which they cannot extricate themselves alone, and stands in need of the Receiver’s assistance. Potentially they may even be trapped in a florist’s (as with #207), although in such cases some more precise geographical indication may be necessary. Concealment and a degree of subterfuge are often required to obfuscate the meaning from vigilant eyes. To ignore such a plea without inquiring further into the nature of the situation is unthinkable, and for that reason it should never be given spuriously.\n\nReceivers wishing to assure the Bearer of their ongoing support can send #55 or #83 to do so, while #167 expresses concern and #97 or #89 ask simply what is needed. #94 offers conditional agreement, #132 wishes luck, #192 raises a cynical eyebrow, and #162 satisfaction for a job (hopefully) well done.",
   "tags": [
    "Confusion",
-   "Question",
-   "Warning"
+   "Warning",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -550,7 +548,6 @@
   "title": "For old times' sake?",
   "body": "This affectionate and nostalgic message recalls old passion and times past, and perhaps speaks of a desire to return to them. Not necessarily romantic (although often used as such), the Bearer requests the Receiver to relive and rekindle the relationship they once shared; for a single drink, a single dinner, or a single amorous rendez-vous in secret. The precise nature of any such meeting is, of course, implied by the nature of the relationship that the parties once shared.\n\nIt is traditional for the Receiver to respond positively in kind, perhaps with #42, #124 or #151. If unsure of the Bearer’s meaning or intent – and perhaps a little wary, but keen to meet regardless - Receivers can respond with #11. Should acceptance be conditional, #94 provides means of saying so. #115 implicitly amplifies the sentiments occasioning the invitation in the first place. If affection is constant but circumstances prevent reunion, #67 or #95 may be appropriate. #177 or #184 give an unequivocal and somewhat crushing refusal, and #173 a somewhat more moderate version. Declining with #111 or #193 is rare, but on occasion peculiarly satisfying.",
   "tags": [
-   "Acceptance",
    "Attraction",
    "Question",
    "Love"
@@ -626,8 +623,8 @@
    "Acceptance",
    "Friendship",
    "Forgiveness",
-   "Question",
-   "Love"
+   "Love",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"Respite\" (Code Generator)",
@@ -648,7 +645,8 @@
   "title": "I love you",
   "body": "Passion, devotion, kinship, desire, idolatry, yearning, rapture; love is infinitely various as those who live it, and #34 is an intensely joyous celebration of its truth. The Bearer wishes the Receiver to know of their adoration, body and soul. Often only responding in kind is necessary, but the profound feeling in #115 and #152, the devotion of #4 and #197, the newfound enchantment of #59, commitment of #66 or simple contentment of #106 are all significant in themselves. #157 expresses childlike joy, while #46 or #47 affirm the bond between Bearer and Receiver. #163 responds with a teasing self-deprecation, while #124 implies that the expression of such sentiments are long overdue, and #62 demands the Bearer prove their love. #54 states baldly the Receiver’s mistrust of the Bearer, whilst an advisory #11, #65 or #49 counsel caution. Receivers substantially less than overjoyed at the receipt of such assertions, however, can send in repudiation an unequivocal #48 or #184. #104 provides a semi-apologetic explanation, while the blank incomprehension of #98 or #78 prove effective if destructive means of undercutting the Bearer’s declaration.",
   "tags": [
-   "Love"
+   "Love",
+   "Joy"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "April 2013 book layout text differs (similarity 0.921; mainly layout trims/reference formatting).",
@@ -745,8 +743,7 @@
   "tags": [
    "Attraction",
    "Love",
-   "Sorrow",
-   "Warning"
+   "Sorrow"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -769,9 +766,8 @@
   "title": "Lips sealed",
   "body": "Silence can be of the utmost importance; here a Bearer swears to keep whatever indiscretion or potentially dangerous secret that the Receiver has entrusted them with quiet for as long as necessary. It makes an excellent response to flowers such as #67, #93 and #17 – all of which place the Bearer in the graces of the Receiver. Of course, should the Bearer subsequently break their promise – no matter what the situation, or the duress that they are placed under – then they will have to work hard to regain their standing, and for their word to carry any weight in future. #39 can also be used to instruct the Receiver to keep silent - a sensible move, providing the Receiver is minded to do so. Bearers should beware of receiving #67, #111, #98 or even #113 in reply.",
   "tags": [
-   "Confusion",
-   "Love",
-   "Warning"
+   "Warning",
+   "Friendship"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -795,9 +791,7 @@
   "body": "A noble intent; the Bearer assures the Receiver they will wait for as long as necessary for a decision to be made or a course of action to become viable. Whether sent by potential lovers, separated sweethearts or simply between friends awaiting confidence and conversation, #41 indicates resolution on the Bearer’s part, and considerable esteem for the Receiver. Should the process take more than a year, the Bearer is encouraged to send #41s every year on the same date, if acceptable, to show that they still hold the Receiver in their regard. To send #41s is to say that the Bearer will wait forever and a day, and is often a forlorn assertion of a love or desire that cannot be attained.\n\nReceivers can indicate simple gratitude with #121, proffer reassurance of their devotion with #4, #46 or #60, impose conditions with #94, or disengage themselves from the Bearer with #67. #83 requests the Bearer not abandon hope just yet, while #42 suggests the proposed delay is intolerable. #103, #25 and #111 all offer brutal means of repudiating the Bearer’s regard, but it is advisable for Receivers to be entirely certain before doing so, as Bearers are unlikely to forgive such slights.",
   "tags": [
    "Acceptance",
-   "Love",
-   "Rejection",
-   "Warning"
+   "Love"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1023,8 +1017,6 @@
   "body": "Thus speaks a Bearer ready to submit to anything save what the Receiver proposes. Not to be sent without due consideration, for the Receiver may demand whatever they choose in return, #51 can be as playful or as serious as the parties concerned choose to make it. #160 is particularly relevant in response, but #131, #93, and #47 may also express important responses. #71 questions the Bearer’s certainty, #107 disregards their caution, while #195 offers reparation and #184 remains stoutly unsympathetic to the Bearer’s declaration.",
   "tags": [
    "Acceptance",
-   "Attraction",
-   "Love",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -1127,7 +1119,6 @@
   "body": "Whether a Receiver’s troubles are romantic, professional, personal or simply the result of long-term stresses and strains, this Bearer simply wants them to know they’re not alone; whatever happens, there’s another person on their side. And a recommissioned, possibly sharpened, gardening tool. A gesture of friendship rather than passion, #55 invites trust and companionship from the Receiver.\n\nResponding may be as simple as #121 or #134, or the wry acknowledgement of #101. #18 communicates trust in the Bearer, while lovers may reply with #34, #4, #152 or #57.\n\nCynical Receivers may employ #160, #54 or even #48 to question the reality of the Bearer’s assertion.",
   "tags": [
    "Friendship",
-   "Love",
    "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -1151,7 +1142,7 @@
   "body": "The Bearer wishes to take the Receiver away, somewhere, for excitement and escapism; the precise destination, and the adventure’s precise duration and nature is left up to the Bearer to explain upon the Receiver's acceptance.\n\nIn fact, keeping the details deliberately secret is encouraged to heighten anticipation, and if the Receiver agrees without knowing what the future holds for them, it is a sign of a strong connection and trust between both parties.\n\nReceivers wishing to impose conditions upon their acceptance have #94 with which to do so, while #98 or #111 articulate disbelief and #124 the decided belief that the Bearer’s offer comes none too soon. #157 or #42 express enthusiasm, while those communicate a hedonistic wish for new experiences can send #105 in order to do so. #188 refuses politely, #180 and #181 somewhat less so; #17 expresses regret, and #67 the firm conviction of inappropriateness.",
   "tags": [
    "Attraction",
-   "Question"
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "CSV notes field: I never really liked this title...",
@@ -1176,7 +1167,8 @@
   "body": "Life is not always as easy as one would like, and sending #57 acknowledges that – but whether the difficulties are financial, romantic or familial, this Bearer knows that the bond of love between the two parties will keep them strong throughout.\n\nAlthough admitting that something is amiss, and that one needs help to make it right, is frequently difficult, it can also be crucial to successfully negotiating trouble, especially if problems lie within the relationship between Bearer and Receiver. It is a forgiving message, suggesting growth and optimistic evolution, and Receivers should be pleased that they are bound to such an understanding partner.\n\nReassurance of the Receiver’s willingness to bear with the situation can be given with #83 or #86, while #87 promises to do whatever it takes to improve matters.\n\nReceivers despairing of the Bearer’s promise can use #146 to articulate their sorrow, while sadness for the state of things is evident in #149 or a lamenting #118.\n\n#152 asserts the Receiver’s need for the Bearer, and those wishing to underline their love and care can send #34 or #140 to do so. Doubtful Receivers can remain equivocal with #71, whilst #160 and #193 express disagreement and #177 or #176 disclaim any desire to try.",
   "tags": [
    "Acceptance",
-   "Love"
+   "Love",
+   "Forgiveness"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"I know this is difficult, but I love you and we can survive\" (5.1)",
@@ -1277,9 +1269,9 @@
   "title": "Prove it",
   "body": "Challenge indeed; from a Bearer sufficiently confident in a Receiver’s devotion to tease, but wishing nevertheless for practical demonstrations of their passion. Whether the demand is met through prearranged methods or the impulse of the moment, the outcome of such a gesture can often be revealing for both Bearer and Receiver, and should therefore be issued with care.\n\nShould the Receiver feel the Bearer seeks traditionally romantic affirmation, sending #34, #19, #4 or #46 may come in useful, whereas those planning a lengthy campaign in response can use #61 or #30 to warn its object. Reluctant Receivers can refuse with #74, or #111, or make their negative responses clear with #165, while enthusiastic ones can both embrace the challenge and ask for suggestions with #97 or #87.",
   "tags": [
-   "Question",
    "Perfunction",
-   "Warning"
+   "Warning",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"Show me how much you love me\" (5.1)",
@@ -1403,7 +1395,8 @@
   "body": "For reasons beyond their control, this Bearer cannot hope to go along with the Receiver’s wishes. Since such obstacles are frequently matters of religion, creed or some similarly sensitive subject, and thus insurmountable, it is recommended that the Receiver not push for an answer as to why the arrangement cannot go ahead in greater detail.\n\nHowever, should such clarity be desired, then #80 may be sent, although Bearers are advised to bear in mind the possible consequences of such unmediated honesty before doing so. More sensible, perhaps, would be to respond with a graceful #137, #81 or #53. If challenge is required, #107 provides it; #140 assures their concerns are groundless, while #49 gently suggests a misunderstanding has occurred and #48 robustly declares the Bearer has made an error.",
   "tags": [
    "Perfunction",
-   "Warning"
+   "Warning",
+   "Rejection"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1430,8 +1423,7 @@
    "Confusion",
    "Love",
    "Question",
-   "Sorrow",
-   "Warning"
+   "Sorrow"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1455,7 +1447,8 @@
   "title": "Sure thing",
   "body": "This Bearer's lighthearted certainty is infectious. An affirmative connoting joy and enthusiasm, #70 is usually welcome - unless, perhaps, where preceded by #30 or #176. Cutting in response to #69, #188 or #114, it can also be used to echo the sentiments of #161 or #154, respond unequivocally to #3 or #56, or touchingly enthuse in reply to #208. Receivers may find #131, #116, #162, #148 or a laconic #147 useful in the tricky matter of composing a reply.",
   "tags": [
-   "Perfunction"
+   "Perfunction",
+   "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1503,9 +1496,7 @@
    "Anger",
    "Confusion",
    "Love",
-   "Question",
-   "Rejection",
-   "Warning"
+   "Question"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1529,7 +1520,8 @@
   "title": "Yes",
   "body": "An affirmative with certainty and weight; whatever question the Receiver has asked, or request made, this Bearer will agree without even the conditionals of #80. Happy Receivers can show their feelings with #157 or #134, show gratitude with #121, or advise caution with #160. Receivers with plans about which they feel the Bearer may not be entirely enthusiastic can signal this with #131 or #61, or should a question have been negative (#69 or #72, for example), a Receiver can share their feelings with #149, #146, #36 or #145.",
   "tags": [
-   "Perfunction"
+   "Perfunction",
+   "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1553,7 +1545,8 @@
   "title": "No",
   "body": "A simple but quite unequivocal refusal of whatever the Bearer is proposing. No further explanation or negotiation is necessarily required, although in certain circumstances (say, when #74 has arrived in response to #154 or #153) it is certainly churlish. Receivers can make such requests with #80, #35 or perhaps #168, or appeal the Bearer’s decision with #168; if they accept the Bearer’s choice, #137, #122 or #53 all make this courteously explicit. Should they wish either to inform the Bearer of a perceived error, #48 or #26 do so, whilst the explicitly hostile #30 or #131 can be as serious or teasing as Bearer and Receiver require.",
   "tags": [
-   "Perfunction"
+   "Perfunction",
+   "Rejection"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1577,7 +1570,8 @@
   "title": "Unsure",
   "body": "Confusion lies at the heart of this message, and the way forward will not be clear for some time. The Bearer feels unable to commit to a single course of action and instead must weigh their options – but sending such a message requires care and scrupulous honesty. To proffer #76 merely as a delaying tactic in a situation one finds uncomfortable marks the Bearer as inconsiderate, uncaring of the feelings, and time, of others.\n\nReceivers sympathetic to the Bearer’s plight can signal their acceptance with #53, whereas those left in difficult situations can articulate their emotional unease with #11.\n\nThose intent on an answer from the Receiver have #44 to signal the limits of their tolerance, and those left confused can use #118 or #12 to request further insight.\n\nAngry or frustrated Receivers, however, have #144, #93, #36, #101 or #48 to express themselves.",
   "tags": [
-   "Confusion"
+   "Confusion",
+   "Perfunction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1751,9 +1745,7 @@
   "body": "No matter what the Receiver desires, whatever the cost, this Bearer will accept. Whether offering reassurance in anticipation of a clearly troubling revelation or declaring one’s willingness to perform whatever task the Receiver may require, #86 is an unequivocal statement of dedication to the Receiver.\n\nContext is paramount. Whilst a relieved or thankful Receiver may prefer the simple gratitude of #121 or the genuine appreciation of #134, a Receiver with mischievous intent may find #131, #93 or a cynical #160 appropriate, or offer appropriate compensation for the imposition in question with #195.",
   "tags": [
    "Acceptance",
-   "Attraction",
-   "Love",
-   "Warning"
+   "Love"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1780,8 +1772,7 @@
   "tags": [
    "Acceptance",
    "Attraction",
-   "Love",
-   "Warning"
+   "Love"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1832,7 +1823,6 @@
   "title": "Consequences",
   "body": "Albeit rather caring than challenging, #91 is nevertheless a powerful warning of impending injury or damage done. This Bearer strongly advises the Receiver to reconsider a course of action they perceive as inadvisable at best.\n\nReceivers confident in their actions and in their awareness of all aspects of a situation can reject the Bearer’s concern with a firm #86; reprimand them with #22 or #37; query the warning with a noncommittal #80 or #98; thank the Bearer with #121 or offer further, if difficult, information with #114. #117 proffers perhaps the best method of proceeding, whatever the circumstances.",
   "tags": [
-   "Confusion",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -1883,7 +1873,8 @@
   "title": "On one condition",
   "body": "Whatever request Receiver has made of the Bearer, there is at least one stipulation to be made before they agree. Perhaps the Receiver has hurt the Bearer previously, or failed to take into consideration some crucial point; perhaps they are negotiating the future terms of a relationship, and the Bearer has a dealbreaker to share. Responses can vary from the unequivocally positive #81 to the decidedly negative #111 or #98, whilst the romantic #4, #152 or #18 make the Receiver’s feelings clear. Senders of #86 are confident in their capacity to meet the Bearer’s demands, those using #87 will do whatever it takes, #80 requests explanation and #23 accepts the situation, while #51 speaks of a Receiver prepared to do anything except that which the Bearer asks.",
   "tags": [
-   "Warning"
+   "Warning",
+   "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1909,8 +1900,8 @@
   "body": "Whether with passionate longing or merely wistfulness, this Bearer wishes it were so. Often a response to the romantic desperation of #17 or the concern of #57, as well as modest refutation of compliments or invitations, suitable replies are many and varied. #140 urges the Bearer to trust the Receiver, while #149 and #146 convey regret and despair at how matters have turned out. #87 asserts that the Receiver will go to any extremes should the Bearer require, while #23 and #161 ruefully accept the inevitability of some of life’s misfortunes and impossibilities.",
   "tags": [
    "Attraction",
-   "Confusion",
-   "Love"
+   "Love",
+   "Sorrow"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1935,7 +1926,8 @@
   "title": "See you soon",
   "body": "A straightforward assurance that the Bearer is keenly anticipating reunion with the Receiver. As appropriate between acquaintances as lovers, such a message is more friendly than fevered, expressing appreciation of the Receiver’s company without the longing overtones of #19, say, or #152. If appropriate, Receivers can respond in kind, or echo the Bearer’s enthusiasm with #42, #115 or #157; if otherwise, #116 implies a shift in the relationship has left the Receiver bereft, and #35 requests honesty about how or why; #139 perhaps increases the intimacy of such an exchange, reminding the Bearer they are in the Receiver’s thoughts; #123 or #1 add a note of romantic appreciation; #117 or #83 offers support to a Bearer under pressure; #55 reinforces a friendship; whereas #111, #67, #71 or #104 all make the Receiver’s intention to spurn the Bearer’s invitation clear.",
   "tags": [
-   "Perfunction"
+   "Perfunction",
+   "Friendship"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1960,7 +1952,8 @@
   "title": "What do?",
   "body": "Thus speaks a Bearer entirely at a loss for word or deed, and desirous of the Receiver’s instruction and assistance.\n\n#117 offers a calm, sensible suggestion for how to proceed; while further detail can be requested with #80. #55 assures the Bearer of the Receiver’s support and #114 proposes a potentially tricky conversation. Those placed in a difficult situation by such a query can express this with #127 or #77, while Receivers unwilling or unable to accede to the Bearer’s implicit request may signal this with #76, #77, #193 or a disbelieving #111. A condemnatory #36 or #101 serves to express disenchantment with the Bearer in no uncertain terms.",
   "tags": [
-   "Question"
+   "Question",
+   "Confusion"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -1985,7 +1978,8 @@
   "title": "WTF?",
   "body": "A particularly eloquent means of articulating speechlessness at the stupidity, randomness or simple incomprehensibility of a communication, situation or proposition.\n\nResponses can range from the apologetic #27, the reassuring #117 or #140, to a potentially flustered #185 and mock-accidental #174. Potentially problematic situations can be signalled with #127, but a manic #131 offers perhaps the most effective retort.",
   "tags": [
-   "Confusion"
+   "Confusion",
+   "Perfunction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"What is this I don't even\" (5.1)",
@@ -2039,8 +2033,8 @@
   "body": "A challenge, a tease and a gesture of trust - #100 is all three. A Bearer may be testing the Receiver’s mettle, wishing to understand them better, or simply be seeking excitement or interesting experiences with a valued companion; the precise nature of such experiences, of course, is limited only by the Receiver’s imagination. Responses can vary from the confident #96 to the sinister #131. Of course, #100 can also be sent as an ironic response to some declaration of the Receiver’s - perhaps #72, or #77? - as well as deflating somewhat the self-conscious #131.",
   "tags": [
    "Attraction",
-   "Question",
-   "Perfunction"
+   "Perfunction",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2066,7 +2060,7 @@
   "body": "Fingernails down a blackboard, misplaced apostrophes, ridiculous workloads - an affectionate if tongue-in-cheek plea from the Bearer to make it all go away, now, please. Preferably yesterday. And a cup of tea would be nice.\n\nReceivers sympathetic to the Bearer’s plight can indicate the fact with #84 and offer support with #55; encouragement can be sent with #83, #158 or #117. Those willing to accede to the Bearer’s request can do so with #70, those unable to with #182, while conditions can be imposed with #94 or a refusal given in #67. #195 promises compensation for whatever iniquity prompted the Bearer’s desperation, but whether such a gesture is adequate only the parties concerned can decide.",
   "tags": [
    "Perfunction",
-   "Question"
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2219,8 +2213,7 @@
   "title": "That was... interesting",
   "body": "Some experiences, particularly unexpected ones, are definitely preferable in retrospect - but one hopes there is some sort of lesson to be learned from most things. Such a message acknowledges the difficult or troubling nature of something Bearer and Receiver have shared, be it a meeting, a holiday, an event or a party, but unites the pair in their wry appreciation of its cessation.\n\nReceivers genuinely appreciative of the experience in question can use #45, while #23 and #105 acknowledge that such things happen, and #161 suggests that the knowledge gained might be worth it. #149 expresses regret, #159 the lack thereof, and #69 asks whether whatever has happened will have dire consequences. #183 swears never to repeat the experience, #195 promises to make amends, and #186 suggests the mutual assertion that Nothing. Ever. Happened.",
   "tags": [
-   "Acceptance",
-   "Forgiveness"
+   "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2247,8 +2240,7 @@
   "tags": [
    "Confusion",
    "Perfunction",
-   "Rejection",
-   "Warning"
+   "Rejection"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"You gotta be kidding me *\" (Code Generator)",
@@ -2299,7 +2291,6 @@
   "title": "We need to talk",
   "body": "A seemingly innocuous request, with forbidding overtones indeed. Perhaps unfortunately, such a communication has been long held to herald some drastic change in any connection - if not a parting of ways, some serious news. Any Receiver of such a message would be entirely justified in sending a swift #69, in the hopes of receiving #57 or #34 in response. Sometimes, however, #51, #72 or #63 may be directly relevant - although #159 adds a positive if consolatory note. #194 asks about possible slips by the Receiver, #167 directly enquires as to the nature of a Bearer’s concerns, and #178 offers tongue-in-cheek acknowledgement of the situation’s gravity. Receivers anxious to make their feelings known can send #152, while #22 suggests the Bearer is deceived somewhat, #33 asks for respite; #44 makes it clear matters are reaching crisis point; and a simple #128 suggests an entirely reasonable note of fear.",
   "tags": [
-   "Anger",
    "Rejection",
    "Warning"
   ],
@@ -2411,7 +2402,8 @@
   "body": "Somewhere, Bearer and Receiver have become lost to one another; this Bearer seeks explanation, understanding, a healing of the breach. Both an appeal to address the problem and a nostalgic plea to recall good times gone before the chance of redemption is lost forever, #118 is rarely less than heartfelt.\n\nA Receiver wishing to reassure the Bearer of their commitment despite the distance between them can reply with #57, #46 or #66.\n\nThose feeling a state of disrepair fundamentally the responsibility of the Bearer can communicate this with #116, #149 and #146 means of expressing emotional responses.\n\n#101 or #33 constitute appeals to rectify matters, but should the situation be irretrievable, #154, #99, or #63 all offer explanations and more-or-less gentle refusals. #114 invites the Bearer to discuss matters in somewhat sombre tones, while #83 reassures them that whatever’s happening does not necessarily mean the end of all that is between them.",
   "tags": [
    "Love",
-   "Sorrow"
+   "Sorrow",
+   "Question"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2669,7 +2661,6 @@
   "title": "Fear",
   "body": "This Bearer is afraid, whether of the Receiver’s possible actions or of an ongoing situation relevant to both. Whether the Receiver is personally responsible for the Bearer’s state of mind or not, #55 or #89 enquire as to whether any help can be given and reassure the Bearer of the Receiver’s continued presence. Should the Receiver have intentionally prompted terror, of course, #162 says so explicitly and #131 or #48 may be appropriate, whilst #140 suggests trust in the Receiver can counter the Bearer’s concerns. #117 offers universal support, #195 promises to make amends, while #80 asks for further detail and #83 counsels endurance. #192 offers sympathy laconic at best, and #184 none whatsoever.",
   "tags": [
-   "Perfunction",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -2764,9 +2755,7 @@
   "title": "You rock!",
   "body": "This Bearer’s world is a better place because the Receiver is in it. Whether with companionship, compassion, cake or comfort, the Receiver provides inspiration, affection or succour to a Bearer wishing to make their gratitude and appreciation known. #170 echoes their sentiment with a teasing edge, while #121 thanks them for their recognition, and #95 or #38 express their perceived unworthiness of the sentiment. The promised support of #55, the affectionate devotion of #46 or the slightly smug edge of #162 may also be appropriate.",
   "tags": [
-   "Attraction",
-   "Friendship",
-   "Love"
+   "Friendship"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2789,7 +2778,8 @@
   "title": "Fair enough",
   "body": "This Bearer accepts the Receiver’s position, whatever it may be, with a shrug of the shoulders. Grateful Receivers can use #134, #190 or #121 to thank them, or #146 or #149 to regret the emotional consequences of their decision. If said decision appears inexplicable to the Bearer, #80 or #143 can be used to request further information.",
   "tags": [
-   "Perfunction"
+   "Perfunction",
+   "Acceptance"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -2888,7 +2878,6 @@
   "title": "Penny for your thoughts?",
   "body": "Less intense than #167, this is a simple enquiry as to what’s on the Receiver’s mind. Perhaps they’ve appeared troubled, distracted or fraught, or perhaps the Bearer simply feels distanced from them in some sense and wishes to reconnect. Receivers who have no wish to confide can use an unequivocal #39, a brisk #37 or a sharp #175 to make this clear; those thinking in some way of the Bearer can say so with #139, an appreciative #123 or a passionate #19; while sadness is evident in #146, anger in #144 and happiness in #157.",
   "tags": [
-   "Acceptance",
    "Question",
    "Friendship"
   ],
@@ -3020,8 +3009,7 @@
    "Acceptance",
    "Friendship",
    "Forgiveness",
-   "Love",
-   "Sorrow"
+   "Love"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -3046,7 +3034,6 @@
   "body": "A Bearer haunted by the echoes of things done or undone, spoken or unspoken, found or lost, wishes at least to make their awareness of lost possibilities or passions known. Whether longing to rectify the situation or simply to express sorrow for pain caused, this Bearer recognises and accepts the consequences of their actions, however mistaken they may have been.\n\nForgiveness can be offered explicitly with #148, and more playfully with #179. #23 acknowledges ongoing complexity, and implicitly shifts responsibility from the Bearer onto the general mess of human emotional life; #62 demands restitution; #44 offers one last chance; and #57 assures the Bearer of the Receiver’s ultimate devotion. Receivers wishing to blank the incident from the record can propose doing so with #186, and those determined never to repeat whichever experience prompted the exchange can articulate this with #183. #20 reprimands the Bearer for not heeding the Receiver’s advice; #35 demands the Bearer tell the truth about their actions, feelings or behaviour; #118 laments the effect of the Bearer’s behaviour on their relationship; and #100 ironically accepts the truth of the expressed sentiment. #192 offers potentially ironic sympathy, and #173 offers the similarly laconic wish for improved outcome in the future.",
   "tags": [
    "Forgiveness",
-   "Rejection",
    "Sorrow"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -3246,9 +3233,6 @@
   "title": "Don't make promises you can't keep",
   "body": "A wry warning to a Receiver whose promises – whether of time, thought or action - repeatedly outstrip their performance. Whilst not angry as such, this Bearer certainly wishes to make their awareness of the discrepancy clear – and urge the Receiver to be more honest in future.\n\nOf course, appropriate responses depend entirely upon the circumstances occasioning the Receiver’s unsatisfactory behaviour. Should pressing but imminently resolvable matters be the cause, #60 should suffice to make positions clear; #140 urges the Receiver to have faith in the Bearer, or #44 begs for one last chance. Should a Receiver wish to make amends, #87 or #27 indicate this, and #97 asks for suggestions; #94 imposes conditions, #62 turns the Bearer’s criticism on its head, while Receivers wishing to challenge the Bearer have #111 or #22 with which to do so.",
   "tags": [
-   "Anger",
-   "Rejection",
-   "Sorrow",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -3326,7 +3310,6 @@
   "title": "Who, me?",
   "body": "The voice of possibly spurious innocence, #163 is often used in primarily silly or hostile exchanges, although it is also relevant in response to serious messages like #116, semi-serious ones such as #12, #47, #160 or #138. Replies are heavily dependent on the tone of the original communication; #73, #111, and #165 all imply flippancy and friendliness, while #193 offers sarcastic denial, and #44 introduces a serious note.",
   "tags": [
-   "Acceptance",
    "Question",
    "Perfunction"
   ],
@@ -3377,7 +3360,8 @@
   "title": "What's troubling you?",
   "body": "A Receiver has become cold and distant, for no reason the Bearer can fathom; perhaps they are even openly dismissive without any explanation. #167 constitutes a plea, for explanation at the very least, but preferably with reconciliation in mind. Receivers unaware of any change in behaviour but anxious to reassure the Bearer can declare their feelings with #1, #34, or #4, or acknowledge difficulties with #114 or a mournful #118. Those who have indeed been upset by the Bearer – or by something else – can express the problem with #145, #54, #72, #138, or #63, while those doubting the Bearer’s word have #35 or #80 with which to request further discussion. Warnings of upcoming or potential emotional havoc can be given with #11, #93 or #144, and Bearers would be well advised to heed such concerns.",
   "tags": [
-   "Question"
+   "Question",
+   "Confusion"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"Have I upset you? [something I said?]\" (5.1)",
@@ -3401,8 +3385,8 @@
   "title": "Please",
   "body": "Whether sent as a request in itself, on the assumption the Receiver will be well aware of precisely what the Bearer desires, or as a response to rejection or refusal from the Receiver, this is a powerful and often intimate appeal for (re)consideration. Whether an appeal for clemency (perhaps in response to #67 or #63), a statement of enthusiasm for #5, #3, or #96, or even a fervent acquiescence to #89, replies can be as simple as #73 or #74, as intensely inviting as #47 or #151, as equivocal as #76, #77 or #65, as insulting as #103 or as (supposedly) determined as #181. A sardonic #193, devoted #191 or intriguing #195 may also offer means of developing a delicate relationship between Bearer and Receiver.",
   "tags": [
-   "Question",
-   "Perfunction"
+   "Perfunction",
+   "Request"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -3553,9 +3537,7 @@
   "title": "It's not what it looks like",
   "body": "It is imperative to this Bearer that the Receiver does not take recent revelations or events at face value. A common response to #144 or #72, #174 begs for at least the chance to explain before any irrevocable actions are taken. Receivers minded to do so can ask for further explanations with #80 or an assertive #114, while those horrified and wishing to make this clear can send an accusatory #144, doubtful #54 or incredulous #98. #118 and #69 ask painful questions about the future of the relationship between Bearer and Receiver; #122 speaks of dismissal, and #148 or #179 potentially magnanimous forgiveness; meanwhile, #111 can be used as a cutting conclusion to any potential dialogue.",
   "tags": [
-   "Anger",
    "Confusion",
-   "Rejection",
    "Warning"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
@@ -3582,7 +3564,6 @@
   "tags": [
    "Anger",
    "Confusion",
-   "Perfunction",
    "Rejection",
    "Warning"
   ],
@@ -3609,10 +3590,8 @@
   "title": "I give up",
   "body": "Such a Bearer is flinging their hands in the air, unwilling or incapable of struggling any longer against seemingly insurmountable forces. Concerned Receivers can urge them to think again with a direct #83, cautious #49 or supportive #55, while #51 declares anything would be preferable to the Receiver than the Bearer’s refusing to continue. A hopeful #173 suggests that whilst surrender may be preferable now, the future may hold other outcomes, whereas hostile Receivers who have been awaiting just such a message can make their feelings known with #124, #52 or a dismissive #122.",
   "tags": [
-   "Confusion",
    "Perfunction",
-   "Rejection",
-   "Warning"
+   "Rejection"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"I can’t do this/I give up\" (5.1)",
@@ -3719,9 +3698,9 @@
   "title": "You should be so lucky",
   "body": "This Bearer considers that a hubris-ridden Receiver’s ambitions, assertions or desires are overreaching their capacities somewhat. Those confident in their capabilities or their charms can refute such charges with #163, or wryly acquiesce with #100; #161 declares that the venture was worth making in any case, while #140 indicates confidence potentially stemming from knowledge or awareness the Bearer may not in fact possess. #122 dismisses the Bearer’s concerns, #137 acknowledges their validity, while #98 proclaims complete incomprehension and #165 reprimands the Bearer for their tone.",
   "tags": [
-   "Acceptance",
    "Perfunction",
-   "Warning"
+   "Warning",
+   "Rejection"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"You shd be so lucky\" (5.1)",
@@ -3746,7 +3725,9 @@
   "title": "Never",
   "body": "Whatever happens to the world or its inhabitants, this Bearer is pretty certain that their mind is made up, unshakeable by faith or reason. Receivers feeling such assurance ill-considered can say so with #26, #48 or #49, while #111 articulates disbelief and #98 confusion. #144 expresses anger at such a conclusion, #146 despair, and #122 dismissal. #168 begs for reconsideration, #44 begs for one last chance, while #36 indicates a Receiver is profoundly unwilling to reopen any sort of negotiation.",
   "tags": [
-   "Warning"
+   "Warning",
+   "Rejection",
+   "Perfunction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -3852,7 +3833,8 @@
   "body": "That probably shouldn’t have happened, and this Bearer is apologetically acknowledging the fact. Whether the slip was as dramatic as an accidentally revealed secret or as trivial as a minor catastrophe with the Receiver’s favourite mug, #185 reaches for some sort of shared acknowledgement of mistakes made and hopefully forgiven. #186 concurs, agreeing to forget the incident in question forthwith; #148 forgives the Bearer for whatever damage, physical or emotional, may have been caused, and #91 warns that the consequences of whatever mistake has been made are unlikely to be trauma-free. #138 places responsibility squarely on the Bearer’s shoulders, while #99 does precisely the opposite. #39 announces the intent to keep matters secret. #78 indicates a substantial degree of agitation at the occurrence in question, and #144 blind rage; #44 offers the Bearer one last chance, but it might be wise for Bearers to consider that such gestures are rarely extended more than once.",
   "tags": [
    "Forgiveness",
-   "Confusion"
+   "Confusion",
+   "Perfunction"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -4091,7 +4073,8 @@
   "tags": [
    "Forgiveness",
    "Question",
-   "Sorrow"
+   "Sorrow",
+   "Confusion"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "Earlier titles: \"I think not\" (5.1)",
@@ -4243,8 +4226,6 @@
   "title": "Ouch",
   "body": "Despite their best efforts, this Bearer feels a twinge at the Receiver’s actions. Not quite a stab in the back, but certainly a twist of the knife. Should this have been unintentional on the Receiver’s part, they can apologise with #27, request forgiveness with #113, or elicit further details with #80, an offhand #194 or a concerned #167. Deliberately hurtful Receivers, however, can display contemptuous dismissal with #122 or #36, and indicate that they consider the Bearer’s feelings to be inappropriate with #103. #171 indicates mutual pain, and #11 indicates future care may be advisable.",
   "tags": [
-   "Anger",
-   "Rejection",
    "Perfunction",
    "Sorrow",
    "Warning"
@@ -4365,7 +4346,8 @@
   "title": "Long time no see",
   "body": "Whether due to geography or circumstance, Bearer and Receiver have been separated for some time, and the Bearer of #211 wishes to lament the fact. A gesture of remembered affection more than passionately unfulfilled desire, #211 is as appropriate between absent friends as parted lovers.\n\nReceivers feeling themselves responsible for unexpected absence can apologise with #27 or a graver #113, while a mundane #96 suggests the situation is soon to be altered. Receivers regretting their prolonged absence from the Bearer can point this out with #115, or offer support and reassurance with #83 or #117. #118 implies such severance is potentially troubling for both parties, and #69 that it may even spell the cessation of whatever significant connection binds the pair together. #52, #22, or a sarcastic #192, on the other hand, suggest the Receiver remains unconcerned by the parting concerned.",
   "tags": [
-   "Friendship"
+   "Friendship",
+   "Sorrow"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
@@ -4412,7 +4394,8 @@
   "title": "I missed you",
   "body": "This Bearer has deeply regretted the Receiver's absence, and is unutterably glad it has at last come to an end. Whether the pair's separation has lasted hours or months, the simple honesty and affection of #220 rarely goes amiss. Receivers welcoming the Bearer's sentiment can do so courteously with #121, or apologise for their unfortunate absence with #27 or #113. #169, on the other hand, implies such parting a necessity. #209 suggests Bearer and Receiver must now work out how to move forward together. Lovers can offer reassurance and feeling with #197, while #35, #192 or #54 somewhat uncharitably doubt the Bearer's sincerity.",
   "tags": [
-   "Friendship"
+   "Friendship",
+   "Joy"
   ],
   "source": "Cryptofloricon/messages.csv (2013-03-25); text matches April 2013 book layout",
   "notes": "",
