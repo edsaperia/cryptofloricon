@@ -136,7 +136,9 @@ test('the Story drop cap is drawn and the first word stays whole', () => {
 
 test('a title with no drawing fails the build, so a new or renamed title forces a redraw', () => {
   const entries = loadLexicon();
-  entries.push({ id: 999, code: '111111', title: 'Quokka zebra', body: 'Test.', tags: ['Love'] });
+  // On a code that has a share preview, so the build reaches the heading check
+  // rather than stopping at the missing preview (test/previews.test.js).
+  entries.push({ id: 999, code: '111222', title: 'Quokka zebra', body: 'Test.', tags: ['Love'] });
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cryptofloricon-missing-'));
   tmpDirs.push(dir);
   assert.throws(() => build(dir, { entries }), /no drawing for "Quokka", "zebra"/);

@@ -81,6 +81,42 @@ function loadDrawings() {
   };
 }
 
+/*
+ * Share previews (Ed, 2026-11-23): the card a chat or social site shows for
+ * a pasted link. Its image must be at an absolute address, so the site's
+ * address is here, once. A message page's card shows its bouquet and the
+ * flowers in words, never the message; the pictures are drawn by
+ * scripts/draw-previews.mjs into src/previews/ and the build fails if a code
+ * has none. Every other page shares the site's card.
+ */
+const SITE_URL = 'https://cryptofloricon.com';
+const PREVIEWS = path.join(SRC, 'previews');
+const PREVIEW_SIZE = { width: 1200, height: 630 };
+const SITE_SHARE = {
+  title: 'Cryptofloricon',
+  description: 'A lexicon of ciphers to encrypt and decrypt floral bouquets',
+  image: 'site.jpg',
+  alt: 'The Cryptofloricon logotype over a chrysanth, a lily, a gerbera, a rose and a carnation'
+};
+const MESSAGE_DESCRIPTION = 'What could it mean?';
+
+/* The share tags for a page at urlPath ("" for the home page, "2244/"; null for none). */
+function shareTags(urlPath, share) {
+  const tags = [
+    ['property', 'og:type', 'website'],
+    ['property', 'og:site_name', 'Cryptofloricon'],
+    urlPath === null ? null : ['property', 'og:url', SITE_URL + '/' + urlPath],
+    ['property', 'og:title', share.title],
+    ['property', 'og:description', share.description],
+    ['property', 'og:image', SITE_URL + '/previews/' + share.image],
+    ['property', 'og:image:width', String(PREVIEW_SIZE.width)],
+    ['property', 'og:image:height', String(PREVIEW_SIZE.height)],
+    ['property', 'og:image:alt', share.alt],
+    ['name', 'twitter:card', 'summary_large_image']
+  ].filter(Boolean);
+  return tags.map(([attr, key, value]) => `<meta ${attr}="${key}" content="${esc(value)}">\n`).join('');
+}
+
 const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
 
 // The marker the 404 page looks for to find the site's root (see src/notfound.js).
@@ -234,8 +270,10 @@ function build(out, options = {}) {
 </footer>`;
   }
 
-  function page({ file, title, main, scripts = [], bodyClass = '', head = '', mainClass = 'border' }) {
+  function page({ file, title, main, scripts = [], bodyClass = '', head = '', mainClass = 'border', share = SITE_SHARE }) {
     const depth = file.split('/').length - 1;
+    // The 404 page is served at any missing address, so it names no URL of its own.
+    const urlPath = file === '404.html' ? null : file.replace(/index\.html$/, '');
     const r = rootOf(depth);
     const fav = asset('favicon', r);
     const html = `<!doctype html>
@@ -249,7 +287,7 @@ ${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="ht
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS_CSS}">
 <link rel="stylesheet" href="${r}assets/site.css" data-site-css>
-${head}</head>
+${shareTags(urlPath, share)}${head}</head>
 <body class="${bodyClass}" data-root="${r}">
 <div class="wrapper">
 <header class="masthead">
@@ -339,13 +377,24 @@ ${divider(r, 'small')}
 <p class="buttons"><a href="${r}browse/">&bull; Browse &bull;</a></p>`
   });
 
+  /* ---------- share previews ---------- */
+
+  const noPreview = [...codes, 'site'].filter(name => !fs.existsSync(path.join(PREVIEWS, name + '.jpg')));
+  if (noPreview.length) {
+    throw new Error(`no share preview for ${noPreview.join(', ')}. Draw it: node scripts/draw-previews.mjs`);
+  }
+  for (const name of [...codes, 'site']) copy(out, path.join(PREVIEWS, name + '.jpg'), 'previews/' + name + '.jpg');
+
   /* ---------- a page per code (the old site's /<code> scheme) ---------- */
 
   for (const code of codes) {
     const list = byCode[code];
+    const words = Cipher.inWords(code);
     page({
       file: code + '/index.html',
       title: list.map(e => e.title).join(' / '),
+      // The flowers, never the message: people click to find out.
+      share: { title: words, description: MESSAGE_DESCRIPTION, image: code + '.jpg', alt: words },
       bodyClass: 'message',
       main: r => {
         const shared = list.length > 1
@@ -460,7 +509,7 @@ function siteCss(assets) {
     });
 }
 
-module.exports = { build, loadLexicon, ASSETS, ROOT_MARKER };
+module.exports = { build, loadLexicon, ASSETS, ROOT_MARKER, SITE_URL };
 
 if (require.main === module) {
   const result = build(process.argv[2]);
