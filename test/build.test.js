@@ -90,13 +90,39 @@ test('/1334/ shows its stems and flowers in the 2015 display order', () => {
   assert.ok(html.includes('<p class="flower-words">2 Chrysanths, 1 Lily, 1 Carnation</p>'));
 });
 
-test('the Key and the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
-  const key = read('index.html').match(/<ul class="key-flowers">([\s\S]*?)<\/ul>/)[1];
-  assert.deepEqual([...key.matchAll(/<span>([^<]+)<\/span>/g)].map(m => m[1]),
-    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+test('the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
   const decode = read('decode/index.html');
   assert.deepEqual([...decode.matchAll(/class="flower-btn" data-digit="(\d)" aria-label="([^"]+)"/g)].map(m => m[1] + ' ' + m[2]),
     ['3 Add a chrysanth', '1 Add a lily', '5 Add a gerbera', '2 Add a rose', '4 Add a carnation']);
+  assert.deepEqual([...decode.matchAll(/<span class="flower-name">([^<]+)<\/span>/g)].map(m => m[1]),
+    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+});
+
+// The Key is gone (Ed, 2026-11-23: "we write a text description underneath anyway").
+test('no page has the Key toggle, its panel or the word Key as a label', () => {
+  const pages = allFiles(out).filter(f => f.endsWith('.html'));
+  assert.ok(pages.length > 177, 'pages checked: ' + pages.length);
+  for (const f of pages) {
+    const html = read(f);
+    assert.doesNotMatch(html, /<details|<summary|class="key|key-flowers/, f);
+    const text = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+    assert.doesNotMatch(text, /\bKey\b/, f);
+  }
+  const css = read('assets/site.css');
+  assert.doesNotMatch(css, /\.key\b|key-flowers/);
+  for (const js of ['assets/encode.js', 'assets/decode.js']) assert.doesNotMatch(read(js), /key-flowers/, js);
+});
+
+test('Send a Message hands its script the five flower pictures', () => {
+  const html = read('encode/index.html');
+  const m = html.match(/<ul class="results entry-list" id="results"[^>]*data-flowers="([^"]+)"/);
+  assert.ok(m, 'data-flowers on #results');
+  const map = JSON.parse(m[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(Object.keys(map).sort(), ['1', '2', '3', '4', '5']);
+  for (const src of Object.values(map)) {
+    assert.match(src, /^\.\.\/assets\//);
+    assert.ok(fs.existsSync(path.join(out, 'encode', src)), src);
+  }
 });
 
 test('no page or script calls the flower "Chrysanthemum"', () => {
@@ -157,4 +183,110 @@ test('no generated page has a broken internal link', () => {
   assert.deepEqual(broken, []);
   assert.ok(checked.pages >= 196, `checked ${checked.pages} pages`);
   assert.ok(checked.refs > 5000, `checked ${checked.refs} links`);
+});
+
+// Message pages no longer list their tags (Ed, 2026-11-23: "you can get to them via the encode page").
+test('no message page shows its tags line; /2445/ does not link to Sorrow', () => {
+  const codes = [...new Set(loadLexicon().map(e => e.code))];
+  assert.equal(codes.length, 177);
+  for (const code of codes) assert.doesNotMatch(read(code + '/index.html'), /entry-tags/, code);
+  const despair = read('2445/index.html');
+  assert.doesNotMatch(despair, /browse\/sorrow\//);
+  assert.doesNotMatch(despair, />Sorrow</);
+  assert.doesNotMatch(read('assets/site.css'), /entry-tags/);
+});
+
+test('every tag page is still linked from Send a Message and from Browse', () => {
+  const tagPages = allFiles(out).filter(f => /^browse\/[^/]+\/index\.html$/.test(f)).map(f => f.split('/')[1]);
+  assert.equal(tagPages.length, 13);
+  for (const s of ['love', 'sorrow', 'anger', 'rejection', 'warning']) assert.ok(tagPages.includes(s), s);
+  const encode = read('encode/index.html');
+  const browse = read('browse/index.html');
+  for (const s of tagPages) {
+    assert.ok(encode.includes(`href="../browse/${s}/"`), 'encode -> ' + s);
+    assert.ok(browse.includes(`href="../browse/${s}/"`), 'browse -> ' + s);
+  }
+});
+
+// Browse rows: title on the left, the bouquet on the right, no flowers-in-words text (Ed, 2026-11-23).
+const browseRows = html => [...html.matchAll(/<li class="entry-row">([\s\S]*?)<\/li>/g)].map(m => m[1]);
+const visibleText = s => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+test('Browse rows show no flowers-in-words text, but keep it for screen readers', () => {
+  for (const f of ['browse/index.html', 'browse/love/index.html', 'browse/sorrow/index.html']) {
+    const html = read(f);
+    assert.doesNotMatch(html, /row-flowers/, f);
+    for (const row of browseRows(html)) {
+      assert.doesNotMatch(visibleText(row), /\b\d (Chrysanths?|Lil(y|ies)|Gerberas?|Roses?|Carnations?)\b/, f + ': ' + visibleText(row));
+    }
+  }
+  const despair = browseRows(read('browse/index.html')).find(r => r.includes('href="../2445/"'));
+  assert.equal(visibleText(despair), 'Despair');
+  assert.ok(despair.includes('role="img" aria-label="1 Gerbera, 1 Rose, 2 Carnations"'));
+});
+
+test('each Browse row links to its message, title first and then its bouquet', () => {
+  const rows = browseRows(read('browse/index.html'));
+  assert.equal(rows.length, 177);
+  for (const row of rows) {
+    const m = row.match(/^<a href="\.\.\/(\d+)\/(#m\d+)?"><span class="row-title">[^<]+<\/span><span class="bouquet bouquet-small"/);
+    assert.ok(m, row.slice(0, 160));
+    assert.ok(fs.existsSync(path.join(out, m[1], 'index.html')), m[1]);
+    const digits = [...row.matchAll(/data-digit="(\d)"/g)].map(x => x[1]).sort().join('');
+    assert.equal(digits, m[1].split('').sort().join(''), m[1]);
+  }
+  // Hand-written spot checks, in the order Browse lists them (by code).
+  const first = rows.slice(0, 3).map(r => r.match(/href="\.\.\/([^"]+)"/)[1]);
+  assert.deepEqual(first, ['1/', '11/', '111/']);
+  assert.ok(rows.some(r => r.startsWith('<a href="../2/"><span class="row-title">I love you</span>')));
+});
+
+// Send a Message's search results match Browse (Ed, 28a, 2026-11-23): title left, bouquet right, no flower words.
+// Runs the built encode.js against a minimal DOM: only what the script touches, behaving as a browser's does.
+function runEncode(query) {
+  const vm = require('vm');
+  class El {
+    constructor(tag) { this.tagName = tag.toUpperCase(); this.children = []; this.attrs = {}; this.className = ''; this._text = ''; }
+    setAttribute(k, v) { this.attrs[k] = String(v); }
+    getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+    appendChild(c) { this.children.push(c); return c; }
+    set textContent(t) { this._text = String(t); this.children = []; }
+    get textContent() { return this._text + this.children.map(c => c.textContent).join(''); }
+    set innerHTML(h) { if (h !== '') throw new Error('unexpected innerHTML'); this.children = []; this._text = ''; }
+    addEventListener(type, fn) { this['on' + type] = fn; }
+    toHtml() {
+      const a = Object.entries({ class: this.className, href: this.href, src: this.src, ...this.attrs })
+        .filter(([, v]) => v).map(([k, v]) => ` ${k}="${v}"`).join('');
+      const t = this.tagName.toLowerCase();
+      return `<${t}${a}>${this._text}${this.children.map(c => c.toHtml()).join('')}</${t}>`;
+    }
+  }
+  const html = read('encode/index.html');
+  const results = new El('ul');
+  results.setAttribute('data-flowers', html.match(/data-flowers="([^"]+)"/)[1].replace(/&quot;/g, '"'));
+  const input = new El('input');
+  input.value = '';
+  const body = new El('body');
+  body.setAttribute('data-root', '../');
+  const document = { body, createElement: t => new El(t), getElementById: id => ({ keyword: input, results }[id]) };
+  const ctx = vm.createContext({ document });
+  ctx.window = ctx;
+  for (const f of ['assets/cipher.js', 'assets/lexicon.js', 'assets/encode.js']) vm.runInContext(read(f), ctx, { filename: f });
+  input.value = query;
+  input.oninput();
+  return results.children.map(li => li.toHtml());
+}
+
+test('a Send a Message result is title then bouquet, with no visible flower words', () => {
+  const rows = runEncode('love');
+  assert.ok(rows.length >= 50, 'results for "love": ' + rows.length);
+  for (const row of rows) {
+    assert.match(row, /^<li class="entry-row"><a href="\.\.\/\d+\/(#m\d+)?"><span class="row-title">[^<]+<\/span><span class="bouquet bouquet-small" role="img" aria-label="[^"]+">(<img class="stem" src="\.\.\/assets\/flowers\/\d\.png"><\/img>)+<\/span><\/a><\/li>$/, row);
+    assert.doesNotMatch(visibleText(row), /\b\d (Chrysanths?|Lil(y|ies)|Gerberas?|Roses?|Carnations?)\b/, row);
+  }
+  const iLoveYou = rows.find(r => r.includes('href="../2/"'));
+  assert.equal(visibleText(iLoveYou), 'I love you');
+  assert.ok(iLoveYou.includes('aria-label="1 Rose"'));
+  // The results list takes Browse's row styles.
+  assert.match(read('encode/index.html'), /<ul class="results entry-list" id="results"/);
 });

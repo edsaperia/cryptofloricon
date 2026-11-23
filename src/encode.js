@@ -1,6 +1,6 @@
 /*
  * Send a Message: type a keyword to find messages whose title or tags match,
- * each shown with its bouquet. The tag list below the box needs no script.
+ * each shown as its title and bouquet, the way Browse lists them. The tag list below the box needs no script.
  */
 (function () {
   'use strict';
@@ -11,11 +11,8 @@
   var input = document.getElementById('keyword');
   var results = document.getElementById('results');
 
-  // Flower pictures as the page already references them (real or placeholder).
-  var flowerSrc = {};
-  var keyImgs = document.querySelectorAll('.key-flowers img');
-  var order = Cipher.KEY_ORDER;
-  for (var i = 0; i < keyImgs.length && i < order.length; i++) flowerSrc[order[i]] = keyImgs[i].getAttribute('src');
+  // Flower pictures (real or placeholder), digit -> src, as build.js writes them.
+  var flowerSrc = JSON.parse(results.getAttribute('data-flowers'));
 
   function norm(s) {
     return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[‘’]/g, "'");
@@ -49,13 +46,10 @@
     var t = document.createElement('span');
     t.className = 'row-title';
     t.textContent = e.title;
-    a.appendChild(bq);
+    // As on Browse: title left, bouquet right; the bouquet's words are its aria-label only (Ed, 28a).
     a.appendChild(t);
-    var f = document.createElement('span');
-    f.className = 'row-flowers';
-    f.textContent = Cipher.describe(e.code);
+    a.appendChild(bq);
     li.appendChild(a);
-    li.appendChild(f);
     return li;
   }
 

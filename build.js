@@ -182,12 +182,6 @@ function build(out, options = {}) {
     return `<span class="bouquet${cls ? ' ' + cls : ''}" role="img" aria-label="${esc(label)}">${stems}</span>`;
   }
 
-  function keyPanel(r) {
-    const items = Cipher.KEY_ORDER.map(d =>
-      `<li><img src="${asset('flower' + d, r)}" alt=""><span>${Cipher.FLOWERS[d].key}</span></li>`).join('');
-    return `<details class="key"><summary>Key</summary><ul class="key-flowers">${items}</ul></details>`;
-  }
-
   function tabs(r, extraClass) {
     return `<nav class="tabs${extraClass ? ' ' + extraClass : ''}">` +
       `<a href="${r}encode/">&bull; Encode &bull;</a>` +
@@ -261,7 +255,6 @@ ${head}</head>
 <header class="masthead">
 ${logo(r)}
 ${tabs(r)}
-${keyPanel(r)}
 </header>
 <main class="${mainClass}">
 ${main(r)}
@@ -339,7 +332,8 @@ ${divider(r, 'large')}
   <label class="visually-hidden" for="keyword">Keyword</label>
   <input type="search" id="keyword" placeholder="Type a keyword" autocomplete="off" spellcheck="false">
 </form>
-<ul class="results" id="results" aria-live="polite"></ul>
+<ul class="results entry-list" id="results" aria-live="polite" data-flowers="${esc(JSON.stringify(
+  Object.fromEntries(Cipher.KEY_ORDER.map(d => [d, asset('flower' + d, r)]))))}"></ul>
 ${divider(r, 'small')}
 <ul class="tag-list">${tags.map(t => `<li><a href="${tagHref(t, r)}">${esc(t)}</a></li>`).join('')}</ul>
 <p class="buttons"><a href="${r}browse/">&bull; Browse &bull;</a></p>`
@@ -365,7 +359,6 @@ ${divider(r, 'small')}
   <div class="passage">
 ${renderBody(e.body, byId, id => entryHref(id, r))}
   </div>
-  <ul class="entry-tags">${e.tags.map(t => `<li><a href="${tagHref(t, r)}">${esc(t)}</a></li>`).join('')}</ul>
 </article>`).join(`\n${divider(r, 'small')}\n`);
         return shared + articles;
       }
@@ -375,8 +368,8 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
   /* ---------- browse ---------- */
 
   function entryRow(e, r) {
-    return `<li class="entry-row"><a href="${entryHref(e.id, r)}">${bouquet(e.code, r, 'bouquet-small')}<span class="row-title">${esc(e.title)}</span></a>` +
-      `<span class="row-flowers">${esc(Cipher.describe(e.code))}</span></li>`;
+    // Title on the left, bouquet on the right; the bouquet's words are its aria-label only (Ed, 2026-11-23).
+    return `<li class="entry-row"><a href="${entryHref(e.id, r)}"><span class="row-title">${esc(e.title)}</span>${bouquet(e.code, r, 'bouquet-small')}</a></li>`;
   }
   // The old browse page listed entries by code (browse.php: ORDER BY code ASC).
   const byCodeOrder = entries.slice().sort((a, b) => (a.code < b.code ? -1 : a.code > b.code ? 1 : a.id - b.id));
