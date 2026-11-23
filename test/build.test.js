@@ -207,3 +207,36 @@ test('every tag page is still linked from Send a Message and from Browse', () =>
     assert.ok(browse.includes(`href="../browse/${s}/"`), 'browse -> ' + s);
   }
 });
+
+// Browse rows: title on the left, the bouquet on the right, no flowers-in-words text (Ed, 2026-11-23).
+const browseRows = html => [...html.matchAll(/<li class="entry-row">([\s\S]*?)<\/li>/g)].map(m => m[1]);
+const visibleText = s => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+test('Browse rows show no flowers-in-words text, but keep it for screen readers', () => {
+  for (const f of ['browse/index.html', 'browse/love/index.html', 'browse/sorrow/index.html']) {
+    const html = read(f);
+    assert.doesNotMatch(html, /row-flowers/, f);
+    for (const row of browseRows(html)) {
+      assert.doesNotMatch(visibleText(row), /\b\d (Chrysanths?|Lil(y|ies)|Gerberas?|Roses?|Carnations?)\b/, f + ': ' + visibleText(row));
+    }
+  }
+  const despair = browseRows(read('browse/index.html')).find(r => r.includes('href="../2445/"'));
+  assert.equal(visibleText(despair), 'Despair');
+  assert.ok(despair.includes('role="img" aria-label="1 Gerbera, 1 Rose, 2 Carnations"'));
+});
+
+test('each Browse row links to its message, title first and then its bouquet', () => {
+  const rows = browseRows(read('browse/index.html'));
+  assert.equal(rows.length, 177);
+  for (const row of rows) {
+    const m = row.match(/^<a href="\.\.\/(\d+)\/(#m\d+)?"><span class="row-title">[^<]+<\/span><span class="bouquet bouquet-small"/);
+    assert.ok(m, row.slice(0, 160));
+    assert.ok(fs.existsSync(path.join(out, m[1], 'index.html')), m[1]);
+    const digits = [...row.matchAll(/data-digit="(\d)"/g)].map(x => x[1]).sort().join('');
+    assert.equal(digits, m[1].split('').sort().join(''), m[1]);
+  }
+  // Hand-written spot checks, in the order Browse lists them (by code).
+  const first = rows.slice(0, 3).map(r => r.match(/href="\.\.\/([^"]+)"/)[1]);
+  assert.deepEqual(first, ['1/', '11/', '111/']);
+  assert.ok(rows.some(r => r.startsWith('<a href="../2/"><span class="row-title">I love you</span>')));
+});

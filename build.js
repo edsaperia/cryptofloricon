@@ -368,8 +368,8 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
   /* ---------- browse ---------- */
 
   function entryRow(e, r) {
-    return `<li class="entry-row"><a href="${entryHref(e.id, r)}">${bouquet(e.code, r, 'bouquet-small')}<span class="row-title">${esc(e.title)}</span></a>` +
-      `<span class="row-flowers">${esc(Cipher.describe(e.code))}</span></li>`;
+    // Title on the left, bouquet on the right; the bouquet's words are its aria-label only (Ed, 2026-11-23).
+    return `<li class="entry-row"><a href="${entryHref(e.id, r)}"><span class="row-title">${esc(e.title)}</span>${bouquet(e.code, r, 'bouquet-small')}</a></li>`;
   }
   // The old browse page listed entries by code (browse.php: ORDER BY code ASC).
   const byCodeOrder = entries.slice().sort((a, b) => (a.code < b.code ? -1 : a.code > b.code ? 1 : a.id - b.id));
