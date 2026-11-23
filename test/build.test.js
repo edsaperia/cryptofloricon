@@ -23,18 +23,19 @@ test('every code has its page at /<code>/index.html', () => {
   const codes = [...new Set(loadLexicon().map(e => e.code))];
   for (const code of codes) assert.ok(fs.existsSync(path.join(out, code, 'index.html')), code);
   // Hand-written spot checks of the old URL scheme.
-  for (const code of ['2', '14', '1334', '2244', '222555']) assert.ok(fs.existsSync(path.join(out, code, 'index.html')), code);
-  assert.equal(result.codes.length, 176);
+  for (const code of ['2', '14', '1334', '2445', '2244', '222555']) assert.ok(fs.existsSync(path.join(out, code, 'index.html')), code);
+  assert.equal(result.codes.length, 177);
 });
 
 test('/2/ is "I love you"', () => {
   assert.match(read('2/index.html'), /<h1 class="title">I love you<\/h1>/);
 });
 
-test('/1334/ shows both Despair and My work here is done', () => {
-  const html = read('1334/index.html');
-  assert.match(html, /<article class="entry" id="m146">[\s\S]*<h1 class="title">Despair<\/h1>/);
-  assert.match(html, /<article class="entry" id="m162">[\s\S]*<h1 class="title">My work here is done<\/h1>/);
+test('/1334/ is My work here is done alone, and /2445/ is Despair', () => {
+  const a = read('1334/index.html');
+  assert.match(a, /<h1 class="title">My work here is done<\/h1>/);
+  assert.doesNotMatch(a, /Despair<\/h1>/);
+  assert.match(read('2445/index.html'), /<h1 class="title">Despair<\/h1>/);
 });
 
 test('the main pages exist', () => {
@@ -49,16 +50,11 @@ test('browse lists all 177 entries; the Love tag page lists 53', () => {
   assert.equal((read('browse/love/index.html').match(/class="entry-row"/g) || []).length, 53);
 });
 
-test('a cross-reference to an entry on a shared code points at its anchor', () => {
-  const pages = allFiles(out).filter(f => f.endsWith('.html'));
-  const linking = pages.filter(f => /href="\.\.\/1334\/#m(146|162)"/.test(read(f)));
-  assert.ok(linking.length > 0, 'some passage links #146 or #162');
-});
-
-test('the dangling #32 stays plain text on the page of #123', () => {
+test('#123 now links "Do you feel the same?" where it said #32', () => {
   const e = loadLexicon().find(x => x.id === 123);
   const html = read(e.code + '/index.html');
-  assert.ok(html.includes('#32'));
+  assert.ok(html.includes('<a class="xref" href="../14455/">Do you feel the same?</a> enable delicate enquiries'));
+  assert.ok(!html.includes('#32'));
 });
 
 test('no generated page has a broken internal link', () => {

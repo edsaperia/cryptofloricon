@@ -20,12 +20,23 @@ test('"#32", an ID with no entry, stays plain unlinked text', () => {
   assert.equal(html, '<p>Delicate enquiries may use <a class="xref" href="entry-31/">Are you single?</a> or #32.</p>');
 });
 
-test('all three dangling references stay plain text in their real passages', () => {
-  for (const [from, to] of [[123, 32], [44, 82], [103, 150]]) {
-    const html = renderBody(byId[from].body, byId, href);
-    assert.ok(html.includes('#' + to), `#${from} should still say #${to}`);
-    assert.ok(!html.includes('entry-' + to + '/'), `#${from} should not link #${to}`);
+test('every #NN in every passage names an existing entry, so every one becomes a link', () => {
+  const missing = [];
+  for (const e of Object.values(byId)) {
+    for (const id of refsIn(e.body)) if (!byId[id]) missing.push(`#${e.id} cites #${id}`);
+    // And nothing that looks like a reference is left unlinked in the rendered passage.
+    const text = renderBody(e.body, byId, href).replace(/<a [^>]*>[^<]*<\/a>/g, '');
+    if (/\B#\d/.test(text)) missing.push(`#${e.id} keeps an unlinked reference`);
+    // A bare "#" with no number was a slip in five passages (Ed, 2026-11-23).
+    if (/(^|\s)#(\s|[,.;:]|$)/.test(e.body)) missing.push(`#${e.id} has a bare #`);
   }
+  assert.deepEqual(missing, []);
+});
+
+test('the three references that were never written are re-pointed (Ed, 2026-11-23)', () => {
+  assert.ok(renderBody(byId[123].body, byId, href).includes('<a class="xref" href="entry-153/">Do you feel the same?</a> enable delicate enquiries'));
+  assert.ok(renderBody(byId[44].body, byId, href).includes('whereas <a class="xref" href="entry-94/">On one condition</a> answers the Bearer'));
+  assert.ok(renderBody(byId[103].body, byId, href).includes('while <a class="xref" href="entry-176/">I give up</a> admits defeat'));
 });
 
 test('a "#" inside a word is not a reference, and text is escaped', () => {

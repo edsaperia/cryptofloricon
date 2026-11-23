@@ -28,10 +28,10 @@ test('isValidCode refuses bad codes', () => {
   for (const good of ['1', '5', '14', '1334', '222555']) assert.equal(Cipher.isValidCode(good), true, good);
 });
 
-test('176 codes are in use: 1334 is the only code shared by two entries', () => {
-  assert.equal(Object.keys(byCode).length, 176);
+test('177 codes are in use, one per entry: no two entries share a code', () => {
+  assert.equal(Object.keys(byCode).length, 177);
   const shared = Object.keys(byCode).filter(c => byCode[c].length > 1);
-  assert.deepEqual(shared, ['1334']);
+  assert.deepEqual(shared, []);
 });
 
 test('a single rose ("2") decodes to "I love you"', () => {
@@ -44,9 +44,14 @@ test('a lily and a carnation ("14") decode to "Kiss me, you fool!"', () => {
   assert.deepEqual(titles(Cipher.decode('14', byCode)), ['Kiss me, you fool!']);
 });
 
-test('"1334" decodes to both #146 Despair and #162 My work here is done', () => {
+test('"1334" decodes to #162 My work here is done only (Ed, 2026-11-23)', () => {
   const res = Cipher.decode('1334', byCode);
-  assert.deepEqual(res.entries.map(e => [e.id, e.title]), [[146, 'Despair'], [162, 'My work here is done']]);
+  assert.deepEqual(res.entries.map(e => [e.id, e.title]), [[162, 'My work here is done']]);
+});
+
+test('"2445" decodes to #146 Despair, its January 2013 code (Ed, 2026-11-23)', () => {
+  const res = Cipher.decode('2445', byCode);
+  assert.deepEqual(res.entries.map(e => [e.id, e.title]), [[146, 'Despair']]);
 });
 
 test('a bouquet given in any order decodes the same', () => {
@@ -56,7 +61,10 @@ test('a bouquet given in any order decodes the same', () => {
     assert.deepEqual(titles(res), ['Kiss me, you fool!'], JSON.stringify(b));
   }
   for (const b of ['4313', '3341', [3, 4, 1, 3], { 3: 2, 4: 1, 1: 1 }]) {
-    assert.deepEqual(titles(Cipher.decode(b, byCode)), ['Despair', 'My work here is done'], JSON.stringify(b));
+    assert.deepEqual(titles(Cipher.decode(b, byCode)), ['My work here is done'], JSON.stringify(b));
+  }
+  for (const b of ['5442', '4254', [5, 4, 4, 2], { 5: 1, 4: 2, 2: 1 }]) {
+    assert.deepEqual(titles(Cipher.decode(b, byCode)), ['Despair'], JSON.stringify(b));
   }
 });
 
@@ -77,13 +85,14 @@ test('something that is not one of the five flowers is refused', () => {
 });
 
 test('a well-formed bouquet that spells nothing decodes to no entries', () => {
-  // 2445 was #146's code in the January 2013 Code Generator; no entry uses it now.
-  const res = Cipher.decode('2445', byCode);
-  assert.deepEqual(res, { ok: true, code: '2445', entries: [] });
+  // Six gerberas: no entry uses this bouquet.
+  const res = Cipher.decode('555555', byCode);
+  assert.deepEqual(res, { ok: true, code: '555555', entries: [] });
 });
 
 test('describe names the flowers and counts in words', () => {
   assert.equal(Cipher.describe('2'), '1 Rose');
   assert.equal(Cipher.describe('13444'), '1 Lily, 1 Chrysanthemum, 3 Carnations');
   assert.equal(Cipher.describe('1334'), '1 Lily, 2 Chrysanthemums, 1 Carnation');
+  assert.equal(Cipher.describe('2445'), '1 Rose, 2 Carnations, 1 Gerbera');
 });
