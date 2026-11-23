@@ -8,6 +8,19 @@
 - **How the project is run:** by the Cryptofloricon Coordinator, under the shared rules in `edsaperia/dev-ops` (AGENTS.md, then owner/PROFILE.md, which is Ed; CONVENTIONS.md; claude/QUESTIONS-PAGE.md). Cryptofloricon's row is in dev-ops `owner/projects.md`, which records that it is **off the page**: Ed works with the coordinator directly in its session, not through his questions page (Ed, 2026-11-23). It asks him everything there, one decision at a time, multiple choice with the recommended option first, and puts nothing on the page until he says otherwise. Each builder brief carries the coordinator's session link so a finished builder can wake it.
 - **Deferred work:** a register, once there is any (item, why deferred, condition to act, where).
 
+## The original Cryptofloricon (2011–2015), and where its materials are
+
+Ed ran Cryptofloricon before, through Original Content London, and is resurrecting it (Ed, 2026-11-23). What the Dropbox shows (read 2026-11-23):
+
+- **The idea:** a lexicon of about 200 "flower codes" (177 in `messages.csv`, March 2013). Each message ("I love you", "Someone else?", "Creep!") is a bouquet of up to six stems drawn from five flowers (chrysanthemum, lily, gerbera, rose, carnation, coded 1 to 5). Each entry has a title, a written passage that cross-references other codes, and tags. Written by Sasha Garwood and Grant Howitt; invented and produced by Ed.
+- **History:** pop-up florist near Brick Lane for Valentine's Day, 8–10 Feb 2013; a website at cryptofloricon.com to decode and encode; a book proposal (2013) and drafts; real bouquets sold online through Stripe for Valentine's Day 2014 (about 20 orders at £19.50–£24.50, Feb–Mar 2014), delivered in London postcodes.
+- **Dropbox folders** (all read-only sources; nothing has been copied into this public repository):
+  - `/Cryptofloricon`: materials (book drafts, symbols, codes, `messages.csv`, design, PR, photos, delivery, franchise).
+  - `/Cryptofloricon Dev` and `/Dev/Cryptofloricon`: the PHP and MySQL website as of Sept 2015; they appear to be duplicates, not yet compared by content.
+  - `/Original Content London Accounting/.../Cryptofloricon` (two folders): Stripe and bank records, 2014.
+- **Never copy into this repository:** database credential files (`DB.php`, `sDB.php`, `private/`), `edit password.txt`, financial records, personal documents.
+- **cryptofloricon.com** still resolves in DNS (2026-11-23); what it serves is unchecked, since this session's network refuses the host.
+
 ## Glossary
 
 Names for the parts of Cryptofloricon, literal and stable, added as they are decided.
