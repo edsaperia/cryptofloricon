@@ -128,6 +128,8 @@ h2 a { text-decoration: none; }
 
 .divider { margin: 14px auto; }
 .divider img { display: block; margin: 0 auto; }
+/* The original divider SVGs carry a faint embedded JPEG layer; multiply blends it into the paper. */
+.divider img { mix-blend-mode: multiply; }
 .divider-large img { width: 70%; max-width: 360px; }
 .divider-small img { width: 40%; max-width: 200px; }
 
@@ -198,7 +200,7 @@ h2 a { text-decoration: none; }
 .flower-picker {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 4px;
   user-select: none;
   -webkit-user-select: none;
@@ -208,7 +210,8 @@ h2 a { text-decoration: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60px;
+  flex: 0 1 60px;
+  min-width: 0;
   padding: 6px 1px 2px;
   font: inherit;
   font-size: 0.72em;
@@ -293,6 +296,14 @@ h2 a { text-decoration: none; }
 .footer-links a:hover { text-decoration: underline; }
 .credits { margin: 0.6em 0; line-height: 1.6; }
 
+/* ---------- the narrowest phones (320-379px) ---------- */
+
+@media (max-width: 379px) {
+  .border { padding-left: 10px; padding-right: 10px; }
+  .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
+  .flower-btn img { height: 72px; }
+}
+
 /* ---------- wider screens ---------- */
 
 @media (min-width: 480px) {
@@ -304,7 +315,7 @@ h2 a { text-decoration: none; }
     background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
   }
   .key-flowers img { height: 100px; }
-  .flower-btn { width: 76px; font-size: 0.8em; }
+  .flower-btn { flex-basis: 76px; font-size: 0.8em; }
   .flower-btn img { height: 100px; }
   .bouquet-build { min-height: 130px; }
 }
