@@ -100,6 +100,28 @@ const SITE_SHARE = {
 };
 const MESSAGE_DESCRIPTION = 'What could it mean?';
 
+/*
+ * Search-engine basics (Ed, 2026-11-23): every page has a meta description,
+ * a canonical link and a place in sitemap.xml. Unlike the share card, a
+ * message page's description names the message.
+ */
+const LANGUAGE = 'a Victorian-inspired language of flowers';
+const DESCRIPTIONS = {
+  home: `A lexicon of ciphers to encrypt and decrypt floral bouquets: ${LANGUAGE} in which a bouquet spells a message.`,
+  decode: 'Decode a bouquet: pick its flowers, stem by stem, and read the message it spells in the Cryptofloricon.',
+  encode: 'Send a message in flowers: search the Cryptofloricon for what you want to say and find the bouquet that spells it.',
+  browse: `Every message in the Cryptofloricon, ${LANGUAGE}, with the bouquet that spells it.`,
+  story: `The story of the Cryptofloricon, ${LANGUAGE}, and of the people who made it.`,
+  notFound: `Page not found. The Cryptofloricon is ${LANGUAGE}.`
+};
+const tagDescription = tag => `Messages tagged ${tag} in the Cryptofloricon, ${LANGUAGE}, with the bouquet that spells each.`;
+/* "I love you: the meaning of a rose in the Cryptofloricon, …"; shorter if that runs past 160 characters. */
+function messageDescription(title, code) {
+  const head = `${title}: the meaning of ${Cipher.inWords(code).toLowerCase()} in the Cryptofloricon`;
+  const full = `${head}, ${LANGUAGE}.`;
+  return full.length <= 160 ? full : head + '.';
+}
+
 /* The share tags for a page at urlPath ("" for the home page, "2244/"; null for none). */
 function shareTags(urlPath, share) {
   const tags = [
@@ -270,7 +292,8 @@ function build(out, options = {}) {
 </footer>`;
   }
 
-  function page({ file, title, main, scripts = [], bodyClass = '', head = '', mainClass = 'border', share = SITE_SHARE }) {
+  function page({ file, title, description, main, scripts = [], bodyClass = '', head = '', mainClass = 'border', share = SITE_SHARE }) {
+    if (!description) throw new Error(file + ': no meta description');
     const depth = file.split('/').length - 1;
     // The 404 page is served at any missing address, so it names no URL of its own.
     const urlPath = file === '404.html' ? null : file.replace(/index\.html$/, '');
@@ -282,8 +305,8 @@ function build(out, options = {}) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title ? esc(title) + ' &middot; ' : ''}Cryptofloricon</title>
-<meta name="description" content="A Lexicon of Ciphers to Encrypt and Decrypt Floral Bouquets">
-${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="description" content="${esc(description)}">
+${urlPath === null ? '' : `<link rel="canonical" href="${SITE_URL}/${urlPath}">\n`}${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS_CSS}">
 <link rel="stylesheet" href="${r}assets/site.css" data-site-css>
@@ -323,6 +346,7 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
   page({
     file: 'index.html',
     title: '',
+    description: DESCRIPTIONS.home,
     bodyClass: 'home',
     main: r => `
 <h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
@@ -337,6 +361,7 @@ ${divider(r, 'large')}
   page({
     file: 'decode/index.html',
     title: 'Decode a Message',
+    description: DESCRIPTIONS.decode,
     bodyClass: 'decode',
     scripts: ['cipher.js', 'lexicon.js', 'decode.js'],
     main: r => {
@@ -362,6 +387,7 @@ ${divider(r, 'large')}
   page({
     file: 'encode/index.html',
     title: 'Send a Message',
+    description: DESCRIPTIONS.encode,
     bodyClass: 'encode',
     scripts: ['cipher.js', 'lexicon.js', 'encode.js'],
     main: r => `
@@ -393,6 +419,7 @@ ${divider(r, 'small')}
     page({
       file: code + '/index.html',
       title: list.map(e => e.title).join(' / '),
+      description: messageDescription(list.map(e => e.title).join(' / '), code),
       // The flowers, never the message: people click to find out.
       share: { title: words, description: MESSAGE_DESCRIPTION, image: code + '.jpg', alt: words },
       bodyClass: 'message',
@@ -426,6 +453,7 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
   page({
     file: 'browse/index.html',
     title: 'Browse',
+    description: DESCRIPTIONS.browse,
     bodyClass: 'browse',
     main: r => `
 <h1 class="title">${drawn('Browse')}</h1>
@@ -440,6 +468,7 @@ ${byCodeOrder.map(e => entryRow(e, r)).join('\n')}
     page({
       file: 'browse/' + slug(tag) + '/index.html',
       title: tag,
+      description: tagDescription(tag),
       bodyClass: 'browse',
       main: r => `
 <h1 class="title">${drawn(tag)}</h1>
@@ -466,6 +495,7 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
   page({
     file: 'story/index.html',
     title: 'Story',
+    description: DESCRIPTIONS.story,
     bodyClass: 'story',
     main: () => `
 <h1 class="title">${drawn('Introduction')}</h1>
@@ -482,6 +512,7 @@ ${dropCap(fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8'))}
   page({
     file: '404.html',
     title: 'Not found',
+    description: DESCRIPTIONS.notFound,
     bodyClass: 'notfound',
     // Inlined: a relative script path would itself break at a deep address.
     head: `<script>\n${fs.readFileSync(path.join(SRC, 'notfound.js'), 'utf8').replace('{{marker}}', ROOT_MARKER)}</script>\n`,
@@ -490,6 +521,13 @@ ${dropCap(fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8'))}
 <p>Sorry, but the page you were trying to view does not exist.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
   });
+
+  /* ---------- sitemap and robots.txt ---------- */
+
+  const listed = pages.filter(f => f !== '404.html').map(f => SITE_URL + '/' + f.replace(/index\.html$/, ''));
+  write(out, 'sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    listed.map(u => `<url><loc>${esc(u)}</loc></url>\n`).join('') + '</urlset>\n');
+  write(out, 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
   if (missing.size && !options.collectHeadings) {
     throw new Error(`Script headings with no drawing for ${[...missing].map(w => JSON.stringify(w)).join(', ')}. ` +
