@@ -49,6 +49,8 @@ Cross-reference fixes, from the reviewers' findings (`#source: change`):
 - #164 *You're the one*: Ed checks his printed book for a passage; no draft of it exists anywhere (only citations calling it "passionate").
 - #192 *My heart bleeds*: drop the tag Forgiveness, add nothing (tags: Rejection, Anger).
 
+- Site calls (Ed, 2026-11-23): flowers shown in the 2015 display order everywhere, Key, Decode buttons and bouquets alike (Chrysanth, Lily, Gerbera, Rose, Carnation) (18c); the label "Chrysanth" everywhere (19b); the 404 wording approved (21a); the footer adds the contact address ed@newspeak.house, at Ed's request (22); Submit opens the message page (23a); messages stay at /<code>/ with no pages by entry number (24a); #7 "a cutting #169" → "a disparaging #169" (25a); #30 opens "Dangerous to bear, and perhaps even more dangerous to receive" (26a); the home title is one size throughout, even if it runs to four lines (27b). Still open: the How it works wording (20).
+
 ## Glossary
 
 Names for the parts of Cryptofloricon, literal and stable, added as they are decided.
