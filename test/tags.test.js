@@ -28,6 +28,13 @@ test('#74 No has Rejection and Perfunction (31)', () => {
   assert.ok(tagsOf(74).includes('Perfunction'));
 });
 
+test('bare replies that plainly mean yes carry Acceptance, plainly no Rejection (31, 36a)', () => {
+  for (const id of [73, 70, 137, 81, 171, 43]) assert.ok(tagsOf(id).includes('Acceptance'), '#' + id + ' Acceptance');
+  for (const id of [74, 181, 193, 122]) assert.ok(tagsOf(id).includes('Rejection'), '#' + id + ' Rejection');
+  // Never and I think not keep Warning (38a).
+  for (const id of [181, 193]) assert.ok(tagsOf(id).includes('Warning'), '#' + id + ' Warning');
+});
+
 test('the nine asks named in the ruling all carry Request (30a)', () => {
   for (const id of [24, 15, 168, 101, 33, 56, 62, 100, 9]) assert.ok(tagsOf(id).includes('Request'), '#' + id);
 });
