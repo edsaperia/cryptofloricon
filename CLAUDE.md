@@ -19,7 +19,8 @@ Ed ran Cryptofloricon before, through Original Content London, and is resurrecti
   - `/Cryptofloricon Dev` and `/Dev/Cryptofloricon`: the PHP and MySQL website as of Sept 2015; they appear to be duplicates, not yet compared by content.
   - `/Original Content London Accounting/.../Cryptofloricon` (two folders): Stripe and bank records, 2014.
 - **Never copy into this repository:** database credential files (`DB.php`, `sDB.php`, `private/`), `edit password.txt`, financial records, personal documents.
-- **cryptofloricon.com** still resolves in DNS (2026-11-23); what it serves is unchecked, since this session's network refuses the host.
+- **The revival (Ed, 2026-11-23):** put the website back up as a modern static site with the original look (home, Decode, Encode, browse, story, press), hosted from this repository; the florist and shop parts are dropped. First step: an audit that all the content is accounted for. Ed believes he controls the domain.
+- **cryptofloricon.com** still resolves in DNS (2026-11-23); Ed's browser times out on it, so the old hosting is dead.
 
 ## Glossary
 
