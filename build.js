@@ -230,12 +230,13 @@ function build(out, options = {}) {
 
   function footer(r) {
     return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
+  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull;</p>
   <p class="credits">Invented &amp; produced by Edward Saperia<br>
   Written by Sasha Garwood &amp; Grant Howitt<br>
   Website by Kimi Lawrie &amp; Eugen Rochko<br>
   Graphics by Sam Ballard &amp; Евгений Олегович</p>
   <p class="credits">&copy; Original Content London</p>
+  <p class="credits contact"><a href="mailto:ed@newspeak.house">ed@newspeak.house</a></p>
 </footer>`;
   }
 

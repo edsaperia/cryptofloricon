@@ -106,20 +106,22 @@ test('no page or script calls the flower "Chrysanthemum"', () => {
   }
 });
 
-test('every page has the contact address in its footer', () => {
+test('every page has the contact address at the very bottom of its footer', () => {
   const pages = allFiles(out).filter(f => f.endsWith('.html'));
   assert.ok(pages.length >= 196);
   for (const f of pages) {
-    assert.ok(read(f).includes('&bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>'), f);
+    // At the very bottom, on its own line below the copyright (Ed, 2026-11-23).
+    assert.ok(read(f).includes('<p class="credits">&copy; Original Content London</p>\n' +
+      '  <p class="credits contact"><a href="mailto:ed@newspeak.house">ed@newspeak.house</a></p>\n</footer>'), f);
   }
 });
 
-test('How it works is gone (Ed, 20c): no page, no link, footer is Story, Browse, address', () => {
+test('How it works is gone (Ed, 20c): no page, no link; the link row is Story, Browse', () => {
   assert.ok(!fs.existsSync(path.join(out, 'how-it-works')));
   for (const f of allFiles(out).filter(f => f.endsWith('.html'))) {
     const html = read(f);
     assert.doesNotMatch(html, /how-it-works|How it works/, f);
-    assert.match(html, /<p class="footer-links">&bull; <a href="[^"]*story\/">Story<\/a> &bull; <a href="[^"]*browse\/">Browse<\/a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house<\/a> &bull;<\/p>/, f);
+    assert.match(html, /<p class="footer-links">&bull; <a href="[^"]*story\/">Story<\/a> &bull; <a href="[^"]*browse\/">Browse<\/a> &bull;<\/p>/, f);
   }
 });
 
