@@ -1,9 +1,11 @@
-# Runs the tests and the build on every push and pull request.
-# A check only: it deploys nothing (GitHub Pages is not switched on).
+# Runs the tests and the build on every push and pull request, except pushes
+# to main: there pages.yml runs the same tests and build before it deploys,
+# so the deploy never waits behind this check. A check only: it deploys nothing.
 name: Check
 
 on:
   push:
+    branches-ignore: [main]
   pull_request:
 
 concurrency:

@@ -7,7 +7,9 @@
  *   node build.js <folder>   writes it somewhere else
  *
  * Reads data/lexicon.json, content/*.html and src/, and needs nothing but
- * Node's standard library. Every link and asset path in the output is
+ * Node's standard library. The script headings are drawings of the words
+ * (src/headings/, made from the title font by scripts/draw-headings.mjs), so
+ * the build needs no font, and it fails if a heading has a word not drawn. Every link and asset path in the output is
  * relative, so the site works at a domain root, under a sub-path such as
  * /cryptofloricon/ on github.io, or from any preview folder.
  */
@@ -43,11 +45,41 @@ const ASSETS = {
   dividerSmall: { final: 'assets/dividers/small.svg', from: '/Cryptofloricon Dev/img/sdiv.svg', placeholder: 'placeholders/dividers/small.svg' },
   bracketLeft: { final: 'assets/brackets/left.png', from: '/Cryptofloricon Dev/img/brl.png', placeholder: 'placeholders/brackets/left.svg' },
   bracketRight: { final: 'assets/brackets/right.png', from: '/Cryptofloricon Dev/img/brr.png', placeholder: 'placeholders/brackets/right.svg' },
-  favicon: { final: 'assets/favicon.ico', from: '/Cryptofloricon Dev/favicon.ico', placeholder: null },
-  // Andrade Script Pro, the title font (licensed to Ed; the repository is private for this reason).
-  fontWoff: { final: 'assets/fonts/andrade-script-pro.woff', from: '/Cryptofloricon Dev/css/fonts/title.woff', placeholder: null },
-  fontTtf: { final: 'assets/fonts/andrade-script-pro.ttf', from: '/Cryptofloricon Dev/css/fonts/title.ttf', placeholder: null }
+  favicon: { final: 'assets/favicon.ico', from: '/Cryptofloricon Dev/favicon.ico', placeholder: null }
 };
+
+/*
+ * The script headings. The title font, Andrade Script Pro, is licensed to Ed
+ * and is kept out of the repository and the site: scripts/draw-headings.mjs
+ * draws each word of each heading from it as an SVG outline, and the build
+ * places the drawings inline, a word at a time, so headings still wrap. See
+ * src/headings/manifest.json for the words drawn.
+ */
+const HEADINGS = path.join(SRC, 'headings');
+
+function loadDrawings() {
+  const file = path.join(HEADINGS, 'manifest.json');
+  const manifest = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { words: {} };
+  const svgs = {};
+  return {
+    manifest,
+    /* The inline SVG for one word, or null if it has no drawing. */
+    word(w) {
+      const m = manifest.words[w];
+      if (!m) return null;
+      if (!(w in svgs)) {
+        const src = path.join(HEADINGS, 'words', m.file);
+        if (!fs.existsSync(src)) return null;
+        const svg = fs.readFileSync(src, 'utf8');
+        const viewBox = svg.match(/viewBox="([^"]+)"/)[1];
+        const d = svg.match(/<path d="([^"]*)"/)[1];
+        const em = +(m.advance / manifest.unitsPerEm).toFixed(3);
+        svgs[w] = `<svg viewBox="${viewBox}" style="width:${em}em" focusable="false"><path d="${d}"/></svg>`;
+      }
+      return svgs[w];
+    }
+  };
+}
 
 const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
 
@@ -89,12 +121,17 @@ function resolveAssets(out) {
   return used;
 }
 
-function build(out) {
+/*
+ * options.entries replaces the lexicon (for tests). options.collectHeadings
+ * lists the headings' text instead of failing on a word with no drawing
+ * (scripts/draw-headings.mjs uses it to learn what to draw).
+ */
+function build(out, options = {}) {
   out = path.resolve(out || path.join(ROOT, 'site'));
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
 
-  const entries = loadLexicon();
+  const entries = options.entries || loadLexicon();
   const byId = {};
   entries.forEach(e => { byId[e.id] = e; });
   const byCode = Cipher.indexByCode(entries);
@@ -104,6 +141,29 @@ function build(out) {
   const pages = [];
 
   /* ---------- shared pieces ---------- */
+
+  // Script text, drawn: each word its own SVG, the words separated by
+  // ordinary spaces so a heading wraps as text does.
+  const drawings = loadDrawings();
+  const headingTexts = new Set();
+  const missing = new Set();
+  function drawWords(text) {
+    headingTexts.add(text);
+    return text.split(' ').filter(Boolean).map(w => {
+      const svg = drawings.word(w);
+      if (!svg) missing.add(w);
+      return svg || '';
+    }).join(' ');
+  }
+  // A heading's contents: its text for screen readers, search engines and
+  // copy and paste, and the drawings, hidden from screen readers. parts
+  // splits a heading into spans with their own classes (the home title).
+  function drawn(text, parts) {
+    const art = parts
+      ? parts.map(([cls, t]) => `<span class="${cls}">${drawWords(t)}</span>`).join(' ')
+      : drawWords(text);
+    return `<span class="visually-hidden">${esc(text)}</span><span class="drawn" aria-hidden="true">${art}</span>`;
+  }
 
   const rootOf = depth => (depth ? '../'.repeat(depth) : './');
   const asset = (key, r) => (assets[key] ? r + assets[key].path : null);
@@ -170,12 +230,13 @@ function build(out) {
 
   function footer(r) {
     return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
+  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull;</p>
   <p class="credits">Invented &amp; produced by Edward Saperia<br>
   Written by Sasha Garwood &amp; Grant Howitt<br>
   Website by Kimi Lawrie &amp; Eugen Rochko<br>
   Graphics by Sam Ballard &amp; Евгений Олегович</p>
   <p class="credits">&copy; Original Content London</p>
+  <p class="credits contact"><a href="mailto:ed@newspeak.house">ed@newspeak.house</a></p>
 </footer>`;
   }
 
@@ -233,7 +294,8 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
     title: '',
     bodyClass: 'home',
     main: r => `
-<h1 class="title"><span class="line">A Lexicon of Ciphers</span> <span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>
+<h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
+  [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt Floral Bouquets']])}</h1>
 ${divider(r, 'large')}
 <p class="intro">Emails, texts, tweets... we are a messaging culture, submerged in an endless deluge of communication. Sometimes, though, we are lost for words. This system makes it a little easier to say those difficult things.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
@@ -252,13 +314,14 @@ ${divider(r, 'large')}
         `<img src="${asset('flower' + d, r)}" alt=""><span class="flower-name">${Cipher.FLOWERS[d].key}</span>` +
         `<span class="flower-count" aria-hidden="true"></span></button>`).join('');
       return `
-<h1 class="title">Decode a Message</h1>
+<h1 class="title">${drawn('Decode a Message')}</h1>
 <p class="hint">Tap a flower once for each stem in the bouquet.</p>
 <div class="flower-picker">${buttons}</div>
 <div class="bouquet-build" aria-live="polite"><span class="bouquet bouquet-large" id="built"></span></div>
 <p class="stem-count" id="stem-count" aria-live="polite"></p>
 <p class="buttons"><button type="button" class="link-button" id="clear">&bull; Clear &bull;</button> <button type="button" class="link-button" id="submit">&bull; Submit &bull;</button></p>
 <div id="result" class="decode-result" aria-live="polite"></div>
+<template id="uh-oh"><p class="title">${drawn('Uh oh!')}</p></template>
 <noscript><p class="hint">Decoding needs JavaScript. Every message is listed on the <a href="${r}browse/">Browse</a> page.</p></noscript>`;
     }
   });
@@ -271,7 +334,7 @@ ${divider(r, 'large')}
     bodyClass: 'encode',
     scripts: ['cipher.js', 'lexicon.js', 'encode.js'],
     main: r => `
-<h1 class="title">Send a Message</h1>
+<h1 class="title">${drawn('Send a Message')}</h1>
 <form class="search" role="search" onsubmit="return false">
   <label class="visually-hidden" for="keyword">Keyword</label>
   <input type="search" id="keyword" placeholder="Type a keyword" autocomplete="off" spellcheck="false">
@@ -298,7 +361,7 @@ ${divider(r, 'small')}
 <article class="entry" id="m${e.id}">
   ${bouquet(code, r, 'bouquet-large')}
   <p class="flower-words">${esc(Cipher.describe(code))}</p>
-  <h1 class="title">${esc(e.title)}</h1>
+  <h1 class="title">${drawn(e.title)}</h1>
   <div class="passage">
 ${renderBody(e.body, byId, id => entryHref(id, r))}
   </div>
@@ -323,7 +386,7 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
     title: 'Browse',
     bodyClass: 'browse',
     main: r => `
-<h1 class="title">Browse</h1>
+<h1 class="title">${drawn('Browse')}</h1>
 <ul class="tag-list">${tags.map(t => `<li><a href="${tagHref(t, r)}">${esc(t)}</a></li>`).join('')}</ul>
 ${divider(r, 'small')}
 <ul class="entry-list">
@@ -337,7 +400,7 @@ ${byCodeOrder.map(e => entryRow(e, r)).join('\n')}
       title: tag,
       bodyClass: 'browse',
       main: r => `
-<h1 class="title">${esc(tag)}</h1>
+<h1 class="title">${drawn(tag)}</h1>
 <ul class="tag-list">${tags.map(t => `<li>${t === tag ? `<span class="current">${esc(t)}</span>` : `<a href="${tagHref(t, r)}">${esc(t)}</a>`}</li>`).join('')}</ul>
 ${divider(r, 'small')}
 <ul class="entry-list">
@@ -349,14 +412,23 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
 
   /* ---------- story ---------- */
 
+  // The first letter of the story, drawn large. The letter itself stays in
+  // the text, made invisible, so the first word is still one word to a
+  // screen reader and in copy and paste.
+  function dropCap(html) {
+    const m = html.match(/<p>([A-Za-z])/);
+    if (!m) throw new Error('content/story.html: no first letter for the drop cap');
+    return html.replace(m[0], `<p><span class="dropcap" aria-hidden="true">${drawWords(m[1])}</span><span class="dropcap-letter">${m[1]}</span>`);
+  }
+
   page({
     file: 'story/index.html',
     title: 'Story',
     bodyClass: 'story',
     main: () => `
-<h1 class="title">Introduction</h1>
+<h1 class="title">${drawn('Introduction')}</h1>
 <div class="prose">
-${fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8')}
+${dropCap(fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8'))}
 </div>`
   });
 
@@ -372,12 +444,17 @@ ${fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8')}
     // Inlined: a relative script path would itself break at a deep address.
     head: `<script>\n${fs.readFileSync(path.join(SRC, 'notfound.js'), 'utf8').replace('{{marker}}', ROOT_MARKER)}</script>\n`,
     main: r => `
-<h1 class="title">Uh oh!</h1>
+<h1 class="title">${drawn('Uh oh!')}</h1>
 <p>Sorry, but the page you were trying to view does not exist.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
   });
 
-  return { out, pages, codes, tags, assets };
+  if (missing.size && !options.collectHeadings) {
+    throw new Error(`Script headings with no drawing for ${[...missing].map(w => JSON.stringify(w)).join(', ')}. ` +
+      'Redraw them from the title font: see scripts/draw-headings.mjs.');
+  }
+
+  return { out, pages, codes, tags, assets, headingTexts: [...headingTexts], missingWords: [...missing] };
 }
 
 /* The stylesheet, with artwork paths filled in (relative to assets/site.css). */

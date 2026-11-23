@@ -1,0 +1,11 @@
+{
+  "name": "cryptofloricon-draw-headings",
+  "private": true,
+  "description": "Draws the site's script headings from Andrade Script Pro as SVG outlines (see draw-headings.js). Not needed by build.js or the tests.",
+  "scripts": {
+    "draw": "node draw-headings.js"
+  },
+  "devDependencies": {
+    "harfbuzzjs": "1.6.4"
+  }
+}

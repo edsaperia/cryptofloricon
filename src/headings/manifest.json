@@ -1,0 +1,1543 @@
+{
+  "about": "Drawings of the script headings, made by scripts/draw-headings.mjs from Andrade Script Pro (DSType, licensed to Ed). Each word is one SVG in words/, in font units: the baseline at y=0, ascender to descender tall, as wide as its advance.",
+  "font": "Andrade Script Pro",
+  "fontSha256": "e957f099f83f2d17946290c43076b5f28f81674b5aecda569b5a2e62a2bc9005",
+  "unitsPerEm": 1000,
+  "ascender": 605,
+  "descender": -395,
+  "words": {
+    "&": {
+      "file": "=26.svg",
+      "advance": 1205
+    },
+    "A": {
+      "file": "_a.svg",
+      "advance": 1225
+    },
+    "Aaaaaaaaaa": {
+      "file": "_aaaaaaaaaa.svg",
+      "advance": 5860
+    },
+    "About": {
+      "file": "_about.svg",
+      "advance": 3038
+    },
+    "Acceptance": {
+      "file": "_acceptance.svg",
+      "advance": 5196
+    },
+    "Admit": {
+      "file": "_admit.svg",
+      "advance": 3163
+    },
+    "Adventure": {
+      "file": "_adventure.svg",
+      "advance": 4925
+    },
+    "Alas": {
+      "file": "_alas.svg",
+      "advance": 2376
+    },
+    "And": {
+      "file": "_and.svg",
+      "advance": 2306
+    },
+    "Anger": {
+      "file": "_anger.svg",
+      "advance": 3099
+    },
+    "Anything": {
+      "file": "_anything.svg",
+      "advance": 4469
+    },
+    "Are": {
+      "file": "_are.svg",
+      "advance": 2059
+    },
+    "Attraction": {
+      "file": "_attraction.svg",
+      "advance": 4809
+    },
+    "Awkward": {
+      "file": "_awkward.svg",
+      "advance": 4657
+    },
+    "Be": {
+      "file": "_be.svg",
+      "advance": 1928
+    },
+    "Better": {
+      "file": "_better.svg",
+      "advance": 3378
+    },
+    "Big": {
+      "file": "_big.svg",
+      "advance": 2288
+    },
+    "Bouquets": {
+      "file": "_bouquets.svg",
+      "advance": 4634
+    },
+    "Browse": {
+      "file": "_browse.svg",
+      "advance": 3902
+    },
+    "By": {
+      "file": "_by.svg",
+      "advance": 1999
+    },
+    "C'est": {
+      "file": "_c=27est.svg",
+      "advance": 2043
+    },
+    "Can": {
+      "file": "_can.svg",
+      "advance": 1799
+    },
+    "Cheer": {
+      "file": "_cheer.svg",
+      "advance": 2526
+    },
+    "Ciphers": {
+      "file": "_ciphers.svg",
+      "advance": 3228
+    },
+    "Condolences": {
+      "file": "_condolences.svg",
+      "advance": 5211
+    },
+    "Confusion": {
+      "file": "_confusion.svg",
+      "advance": 4287
+    },
+    "Congratulations": {
+      "file": "_congratulations.svg",
+      "advance": 6808
+    },
+    "Consequences": {
+      "file": "_consequences.svg",
+      "advance": 5735
+    },
+    "Creep": {
+      "file": "_creep.svg",
+      "advance": 2507
+    },
+    "Danger": {
+      "file": "_danger.svg",
+      "advance": 3622
+    },
+    "Decode": {
+      "file": "_decode.svg",
+      "advance": 3495
+    },
+    "Decrypt": {
+      "file": "_decrypt.svg",
+      "advance": 3797
+    },
+    "Despair": {
+      "file": "_despair.svg",
+      "advance": 3753
+    },
+    "Do": {
+      "file": "_do.svg",
+      "advance": 1706
+    },
+    "Don't": {
+      "file": "_don=27t.svg",
+      "advance": 2798
+    },
+    "Drink?": {
+      "file": "_drink=3f.svg",
+      "advance": 3502
+    },
+    "Encrypt": {
+      "file": "_encrypt.svg",
+      "advance": 3516
+    },
+    "Enjoy": {
+      "file": "_enjoy.svg",
+      "advance": 2612
+    },
+    "Evil": {
+      "file": "_evil.svg",
+      "advance": 1918
+    },
+    "Fair": {
+      "file": "_fair.svg",
+      "advance": 2301
+    },
+    "Farewell": {
+      "file": "_farewell.svg",
+      "advance": 4172
+    },
+    "Fear": {
+      "file": "_fear.svg",
+      "advance": 2425
+    },
+    "Floral": {
+      "file": "_floral.svg",
+      "advance": 3041
+    },
+    "For": {
+      "file": "_for.svg",
+      "advance": 1954
+    },
+    "Forever": {
+      "file": "_forever.svg",
+      "advance": 3719
+    },
+    "Forgive": {
+      "file": "_forgive.svg",
+      "advance": 3674
+    },
+    "Forgiveness": {
+      "file": "_forgiveness.svg",
+      "advance": 5359
+    },
+    "Friendship": {
+      "file": "_friendship.svg",
+      "advance": 5002
+    },
+    "Get": {
+      "file": "_get.svg",
+      "advance": 1796
+    },
+    "Go": {
+      "file": "_go.svg",
+      "advance": 1532
+    },
+    "God": {
+      "file": "_god.svg",
+      "advance": 2057
+    },
+    "Good": {
+      "file": "_good.svg",
+      "advance": 2530
+    },
+    "Grow": {
+      "file": "_grow.svg",
+      "advance": 2683
+    },
+    "Help!": {
+      "file": "_help=21.svg",
+      "advance": 2809
+    },
+    "Help,": {
+      "file": "_help=2c.svg",
+      "advance": 2821
+    },
+    "Here": {
+      "file": "_here.svg",
+      "advance": 2574
+    },
+    "Hold": {
+      "file": "_hold.svg",
+      "advance": 2595
+    },
+    "How": {
+      "file": "_how.svg",
+      "advance": 2530
+    },
+    "I": {
+      "file": "_i.svg",
+      "advance": 915
+    },
+    "I'll": {
+      "file": "_i=27ll.svg",
+      "advance": 1715
+    },
+    "I'm": {
+      "file": "_i=27m.svg",
+      "advance": 1943
+    },
+    "I've": {
+      "file": "_i=27ve.svg",
+      "advance": 2074
+    },
+    "If": {
+      "file": "_if.svg",
+      "advance": 1215
+    },
+    "Introduction": {
+      "file": "_introduction.svg",
+      "advance": 5776
+    },
+    "Is": {
+      "file": "_is.svg",
+      "advance": 1265
+    },
+    "It": {
+      "file": "_it.svg",
+      "advance": 1223
+    },
+    "It's": {
+      "file": "_it=27s.svg",
+      "advance": 1801
+    },
+    "Jealousy": {
+      "file": "_jealousy.svg",
+      "advance": 4138
+    },
+    "Joy": {
+      "file": "_joy.svg",
+      "advance": 2012
+    },
+    "Keep": {
+      "file": "_keep.svg",
+      "advance": 3165
+    },
+    "Kiss": {
+      "file": "_kiss.svg",
+      "advance": 2796
+    },
+    "Laugh": {
+      "file": "_laugh.svg",
+      "advance": 3211
+    },
+    "Let's": {
+      "file": "_let=27s.svg",
+      "advance": 2446
+    },
+    "Lexicon": {
+      "file": "_lexicon.svg",
+      "advance": 3864
+    },
+    "Likewise": {
+      "file": "_likewise.svg",
+      "advance": 4190
+    },
+    "Lips": {
+      "file": "_lips.svg",
+      "advance": 2302
+    },
+    "Long": {
+      "file": "_long.svg",
+      "advance": 2644
+    },
+    "Love": {
+      "file": "_love.svg",
+      "advance": 2535
+    },
+    "Make": {
+      "file": "_make.svg",
+      "advance": 3397
+    },
+    "Maybe": {
+      "file": "_maybe.svg",
+      "advance": 3888
+    },
+    "Message": {
+      "file": "_message.svg",
+      "advance": 4515
+    },
+    "Mind": {
+      "file": "_mind.svg",
+      "advance": 3344
+    },
+    "More": {
+      "file": "_more.svg",
+      "advance": 3265
+    },
+    "My": {
+      "file": "_my.svg",
+      "advance": 2458
+    },
+    "Never": {
+      "file": "_never.svg",
+      "advance": 3523
+    },
+    "Nice": {
+      "file": "_nice.svg",
+      "advance": 2898
+    },
+    "No": {
+      "file": "_no.svg",
+      "advance": 2231
+    },
+    "Obsession": {
+      "file": "_obsession.svg",
+      "advance": 4168
+    },
+    "Of": {
+      "file": "_of.svg",
+      "advance": 1169
+    },
+    "On": {
+      "file": "_on.svg",
+      "advance": 1425
+    },
+    "One": {
+      "file": "_one.svg",
+      "advance": 1854
+    },
+    "Only": {
+      "file": "_only.svg",
+      "advance": 2211
+    },
+    "Oops": {
+      "file": "_oops.svg",
+      "advance": 2208
+    },
+    "Ouch": {
+      "file": "_ouch.svg",
+      "advance": 2356
+    },
+    "Patience": {
+      "file": "_patience.svg",
+      "advance": 4213
+    },
+    "Penny": {
+      "file": "_penny.svg",
+      "advance": 3306
+    },
+    "Perfect": {
+      "file": "_perfect.svg",
+      "advance": 3542
+    },
+    "Perfunction": {
+      "file": "_perfunction.svg",
+      "advance": 5549
+    },
+    "Please": {
+      "file": "_please.svg",
+      "advance": 3374
+    },
+    "Prove": {
+      "file": "_prove.svg",
+      "advance": 3094
+    },
+    "Psst": {
+      "file": "_psst.svg",
+      "advance": 2273
+    },
+    "Question": {
+      "file": "_question.svg",
+      "advance": 4040
+    },
+    "Regret": {
+      "file": "_regret.svg",
+      "advance": 3828
+    },
+    "Rejection": {
+      "file": "_rejection.svg",
+      "advance": 4937
+    },
+    "Reluctance": {
+      "file": "_reluctance.svg",
+      "advance": 5654
+    },
+    "Rest": {
+      "file": "_rest.svg",
+      "advance": 2860
+    },
+    "See": {
+      "file": "_see.svg",
+      "advance": 1632
+    },
+    "Send": {
+      "file": "_send.svg",
+      "advance": 2284
+    },
+    "Slow": {
+      "file": "_slow.svg",
+      "advance": 2279
+    },
+    "So": {
+      "file": "_so.svg",
+      "advance": 1247
+    },
+    "Someone": {
+      "file": "_someone.svg",
+      "advance": 3934
+    },
+    "Something": {
+      "file": "_something.svg",
+      "advance": 4664
+    },
+    "Sorrow": {
+      "file": "_sorrow.svg",
+      "advance": 3276
+    },
+    "Sorry": {
+      "file": "_sorry.svg",
+      "advance": 2557
+    },
+    "Squee": {
+      "file": "_squee.svg",
+      "advance": 2661
+    },
+    "Sure": {
+      "file": "_sure.svg",
+      "advance": 2154
+    },
+    "Surprise": {
+      "file": "_surprise.svg",
+      "advance": 3730
+    },
+    "T": {
+      "file": "_t.svg",
+      "advance": 922
+    },
+    "Tell": {
+      "file": "_tell.svg",
+      "advance": 1923
+    },
+    "Thank": {
+      "file": "_thank.svg",
+      "advance": 3041
+    },
+    "Thanks,": {
+      "file": "_thanks=2c.svg",
+      "advance": 3670
+    },
+    "That": {
+      "file": "_that.svg",
+      "advance": 2298
+    },
+    "The": {
+      "file": "_the.svg",
+      "advance": 1904
+    },
+    "Thinking": {
+      "file": "_thinking.svg",
+      "advance": 4176
+    },
+    "This": {
+      "file": "_this.svg",
+      "advance": 2130
+    },
+    "Told": {
+      "file": "_told.svg",
+      "advance": 2206
+    },
+    "Tread": {
+      "file": "_tread.svg",
+      "advance": 2796
+    },
+    "Truce": {
+      "file": "_truce.svg",
+      "advance": 2708
+    },
+    "Trust": {
+      "file": "_trust.svg",
+      "advance": 2531
+    },
+    "Uh": {
+      "file": "_uh.svg",
+      "advance": 1673
+    },
+    "Unsure": {
+      "file": "_unsure.svg",
+      "advance": 3424
+    },
+    "Unwise": {
+      "file": "_unwise.svg",
+      "advance": 3524
+    },
+    "Unworthy": {
+      "file": "_unworthy.svg",
+      "advance": 4661
+    },
+    "WTF?": {
+      "file": "_w_t_f=3f.svg",
+      "advance": 3904
+    },
+    "Warning": {
+      "file": "_warning.svg",
+      "advance": 4219
+    },
+    "We": {
+      "file": "_we.svg",
+      "advance": 1827
+    },
+    "What": {
+      "file": "_what.svg",
+      "advance": 2756
+    },
+    "What's": {
+      "file": "_what=27s.svg",
+      "advance": 3334
+    },
+    "Whatever": {
+      "file": "_whatever.svg",
+      "advance": 4521
+    },
+    "Where": {
+      "file": "_where.svg",
+      "advance": 3196
+    },
+    "Who,": {
+      "file": "_who=2c.svg",
+      "advance": 2685
+    },
+    "Worth": {
+      "file": "_worth.svg",
+      "advance": 3119
+    },
+    "Yes": {
+      "file": "_yes.svg",
+      "advance": 1877
+    },
+    "You": {
+      "file": "_you.svg",
+      "advance": 2117
+    },
+    "You'll": {
+      "file": "_you=27ll.svg",
+      "advance": 2917
+    },
+    "You're": {
+      "file": "_you=27re.svg",
+      "advance": 3179
+    },
+    "You've": {
+      "file": "_you=27ve.svg",
+      "advance": 3276
+    },
+    "a": {
+      "file": "a.svg",
+      "advance": 515
+    },
+    "adore": {
+      "file": "adore.svg",
+      "advance": 2347
+    },
+    "again": {
+      "file": "again.svg",
+      "advance": 2375
+    },
+    "always": {
+      "file": "always.svg",
+      "advance": 2912
+    },
+    "and": {
+      "file": "and.svg",
+      "advance": 1596
+    },
+    "anything": {
+      "file": "anything.svg",
+      "advance": 3759
+    },
+    "axe!": {
+      "file": "axe=21.svg",
+      "advance": 1775
+    },
+    "be": {
+      "file": "be.svg",
+      "advance": 915
+    },
+    "beautiful": {
+      "file": "beautiful.svg",
+      "advance": 3721
+    },
+    "before": {
+      "file": "before.svg",
+      "advance": 2522
+    },
+    "begins...": {
+      "file": "begins=2e=2e=2e.svg",
+      "advance": 3411
+    },
+    "bleeds": {
+      "file": "bleeds.svg",
+      "advance": 2505
+    },
+    "business": {
+      "file": "business.svg",
+      "advance": 3372
+    },
+    "but": {
+      "file": "but.svg",
+      "advance": 1340
+    },
+    "call": {
+      "file": "call.svg",
+      "advance": 1493
+    },
+    "calm": {
+      "file": "calm.svg",
+      "advance": 2007
+    },
+    "can": {
+      "file": "can.svg",
+      "advance": 1477
+    },
+    "can't": {
+      "file": "can=27t.svg",
+      "advance": 2013
+    },
+    "carry": {
+      "file": "carry.svg",
+      "advance": 2231
+    },
+    "chance": {
+      "file": "chance.svg",
+      "advance": 2847
+    },
+    "changed": {
+      "file": "changed.svg",
+      "advance": 3450
+    },
+    "choice": {
+      "file": "choice.svg",
+      "advance": 2554
+    },
+    "come": {
+      "file": "come.svg",
+      "advance": 2108
+    },
+    "complicated": {
+      "file": "complicated.svg",
+      "advance": 4969
+    },
+    "condition": {
+      "file": "condition.svg",
+      "advance": 3907
+    },
+    "could": {
+      "file": "could.svg",
+      "advance": 2236
+    },
+    "course": {
+      "file": "course.svg",
+      "advance": 2569
+    },
+    "cute": {
+      "file": "cute.svg",
+      "advance": 1689
+    },
+    "dare": {
+      "file": "dare.svg",
+      "advance": 1874
+    },
+    "dent": {
+      "file": "dent.svg",
+      "advance": 1818
+    },
+    "did": {
+      "file": "did.svg",
+      "advance": 1355
+    },
+    "die": {
+      "file": "die.svg",
+      "advance": 1259
+    },
+    "different": {
+      "file": "different.svg",
+      "advance": 3562
+    },
+    "do": {
+      "file": "do.svg",
+      "advance": 998
+    },
+    "do?": {
+      "file": "do=3f.svg",
+      "advance": 1506
+    },
+    "doin'?": {
+      "file": "doin=27=3f.svg",
+      "advance": 2595
+    },
+    "don't": {
+      "file": "don=27t.svg",
+      "advance": 2090
+    },
+    "done": {
+      "file": "done.svg",
+      "advance": 1983
+    },
+    "down": {
+      "file": "down.svg",
+      "advance": 2300
+    },
+    "drops": {
+      "file": "drops.svg",
+      "advance": 2269
+    },
+    "easy": {
+      "file": "easy.svg",
+      "advance": 1794
+    },
+    "else?": {
+      "file": "else=3f.svg",
+      "advance": 2002
+    },
+    "end?": {
+      "file": "end=3f.svg",
+      "advance": 2018
+    },
+    "enough": {
+      "file": "enough.svg",
+      "advance": 3023
+    },
+    "favour": {
+      "file": "favour.svg",
+      "advance": 2741
+    },
+    "feel": {
+      "file": "feel.svg",
+      "advance": 1444
+    },
+    "felt": {
+      "file": "felt.svg",
+      "advance": 1323
+    },
+    "florist's!": {
+      "file": "florist=27s=21.svg",
+      "advance": 3301
+    },
+    "fool!": {
+      "file": "fool=21.svg",
+      "advance": 1799
+    },
+    "for": {
+      "file": "for.svg",
+      "advance": 1178
+    },
+    "forgive": {
+      "file": "forgive.svg",
+      "advance": 2898
+    },
+    "free": {
+      "file": "free.svg",
+      "advance": 1563
+    },
+    "friends": {
+      "file": "friends.svg",
+      "advance": 2870
+    },
+    "from": {
+      "file": "from.svg",
+      "advance": 1978
+    },
+    "get": {
+      "file": "get.svg",
+      "advance": 1221
+    },
+    "give": {
+      "file": "give.svg",
+      "advance": 1720
+    },
+    "goes": {
+      "file": "goes.svg",
+      "advance": 1736
+    },
+    "gotta": {
+      "file": "gotta.svg",
+      "advance": 2088
+    },
+    "handle": {
+      "file": "handle.svg",
+      "advance": 2846
+    },
+    "happened": {
+      "file": "happened.svg",
+      "advance": 4021
+    },
+    "has": {
+      "file": "has.svg",
+      "advance": 1400
+    },
+    "have": {
+      "file": "have.svg",
+      "advance": 1981
+    },
+    "heart": {
+      "file": "heart.svg",
+      "advance": 2192
+    },
+    "help?": {
+      "file": "help=3f.svg",
+      "advance": 2274
+    },
+    "here": {
+      "file": "here.svg",
+      "advance": 1798
+    },
+    "here?": {
+      "file": "here=3f.svg",
+      "advance": 2306
+    },
+    "hole": {
+      "file": "hole.svg",
+      "advance": 1723
+    },
+    "horses": {
+      "file": "horses.svg",
+      "advance": 2502
+    },
+    "imagining": {
+      "file": "imagining.svg",
+      "advance": 4310
+    },
+    "in": {
+      "file": "in.svg",
+      "advance": 861
+    },
+    "interesting": {
+      "file": "interesting.svg",
+      "advance": 4435
+    },
+    "intrigue": {
+      "file": "intrigue.svg",
+      "advance": 3338
+    },
+    "introduction": {
+      "file": "introduction.svg",
+      "advance": 5166
+    },
+    "is": {
+      "file": "is.svg",
+      "advance": 655
+    },
+    "it": {
+      "file": "it.svg",
+      "advance": 613
+    },
+    "it's": {
+      "file": "it=27s.svg",
+      "advance": 1191
+    },
+    "jail": {
+      "file": "jail.svg",
+      "advance": 1364
+    },
+    "keep": {
+      "file": "keep.svg",
+      "advance": 1869
+    },
+    "kidding": {
+      "file": "kidding.svg",
+      "advance": 3195
+    },
+    "la": {
+      "file": "la.svg",
+      "advance": 801
+    },
+    "last": {
+      "file": "last.svg",
+      "advance": 1459
+    },
+    "laugh": {
+      "file": "laugh.svg",
+      "advance": 2366
+    },
+    "like": {
+      "file": "like.svg",
+      "advance": 1515
+    },
+    "looks": {
+      "file": "looks.svg",
+      "advance": 2077
+    },
+    "lose": {
+      "file": "lose.svg",
+      "advance": 1538
+    },
+    "loud": {
+      "file": "loud.svg",
+      "advance": 1830
+    },
+    "love": {
+      "file": "love.svg",
+      "advance": 1690
+    },
+    "loved": {
+      "file": "loved.svg",
+      "advance": 2215
+    },
+    "lovely": {
+      "file": "lovely.svg",
+      "advance": 2476
+    },
+    "luck": {
+      "file": "luck.svg",
+      "advance": 1733
+    },
+    "lucky": {
+      "file": "lucky.svg",
+      "advance": 2233
+    },
+    "make": {
+      "file": "make.svg",
+      "advance": 2239
+    },
+    "me": {
+      "file": "me.svg",
+      "advance": 1229
+    },
+    "me,": {
+      "file": "me=2c.svg",
+      "advance": 1508
+    },
+    "me?": {
+      "file": "me=3f.svg",
+      "advance": 1737
+    },
+    "means": {
+      "file": "means.svg",
+      "advance": 2650
+    },
+    "meet": {
+      "file": "meet.svg",
+      "advance": 1966
+    },
+    "mine": {
+      "file": "mine.svg",
+      "advance": 2090
+    },
+    "miss": {
+      "file": "miss.svg",
+      "advance": 1805
+    },
+    "missed": {
+      "file": "missed.svg",
+      "advance": 2759
+    },
+    "mistake": {
+      "file": "mistake.svg",
+      "advance": 3202
+    },
+    "more": {
+      "file": "more.svg",
+      "advance": 2107
+    },
+    "my": {
+      "file": "my.svg",
+      "advance": 1300
+    },
+    "need": {
+      "file": "need.svg",
+      "advance": 1939
+    },
+    "never": {
+      "file": "never.svg",
+      "advance": 2321
+    },
+    "next": {
+      "file": "next.svg",
+      "advance": 1857
+    },
+    "no": {
+      "file": "no.svg",
+      "advance": 1029
+    },
+    "not": {
+      "file": "not.svg",
+      "advance": 1337
+    },
+    "nothing": {
+      "file": "nothing.svg",
+      "advance": 3217
+    },
+    "now": {
+      "file": "now.svg",
+      "advance": 1775
+    },
+    "of": {
+      "file": "of.svg",
+      "advance": 773
+    },
+    "oh!": {
+      "file": "oh=21.svg",
+      "advance": 1275
+    },
+    "old": {
+      "file": "old.svg",
+      "advance": 1284
+    },
+    "on": {
+      "file": "on.svg",
+      "advance": 1029
+    },
+    "once": {
+      "file": "once.svg",
+      "advance": 1864
+    },
+    "one": {
+      "file": "one.svg",
+      "advance": 1458
+    },
+    "only": {
+      "file": "only.svg",
+      "advance": 1815
+    },
+    "out": {
+      "file": "out.svg",
+      "advance": 1327
+    },
+    "over": {
+      "file": "over.svg",
+      "advance": 1809
+    },
+    "own": {
+      "file": "own.svg",
+      "advance": 1775
+    },
+    "pay": {
+      "file": "pay.svg",
+      "advance": 1531
+    },
+    "penny": {
+      "file": "penny.svg",
+      "advance": 2557
+    },
+    "pleasure": {
+      "file": "pleasure.svg",
+      "advance": 3476
+    },
+    "pretend": {
+      "file": "pretend.svg",
+      "advance": 3168
+    },
+    "promise": {
+      "file": "promise.svg",
+      "advance": 3278
+    },
+    "promises": {
+      "file": "promises.svg",
+      "advance": 3628
+    },
+    "regrets": {
+      "file": "regrets.svg",
+      "advance": 2810
+    },
+    "rock!": {
+      "file": "rock=21.svg",
+      "advance": 2046
+    },
+    "said?": {
+      "file": "said=3f.svg",
+      "advance": 2203
+    },
+    "sake?": {
+      "file": "sake=3f.svg",
+      "advance": 2297
+    },
+    "same?": {
+      "file": "same=3f.svg",
+      "advance": 2602
+    },
+    "sealed": {
+      "file": "sealed.svg",
+      "advance": 2534
+    },
+    "see": {
+      "file": "see.svg",
+      "advance": 1208
+    },
+    "shot": {
+      "file": "shot.svg",
+      "advance": 1666
+    },
+    "should": {
+      "file": "should.svg",
+      "advance": 2715
+    },
+    "shouldn't": {
+      "file": "shouldn=27t.svg",
+      "advance": 3807
+    },
+    "single?": {
+      "file": "single=3f.svg",
+      "advance": 2918
+    },
+    "so": {
+      "file": "so.svg",
+      "advance": 823
+    },
+    "softly": {
+      "file": "softly.svg",
+      "advance": 2217
+    },
+    "something": {
+      "file": "something.svg",
+      "advance": 4240
+    },
+    "soon": {
+      "file": "soon.svg",
+      "advance": 1852
+    },
+    "stop": {
+      "file": "stop.svg",
+      "advance": 1647
+    },
+    "take": {
+      "file": "take.svg",
+      "advance": 1747
+    },
+    "talk": {
+      "file": "talk.svg",
+      "advance": 1604
+    },
+    "tell": {
+      "file": "tell.svg",
+      "advance": 1309
+    },
+    "thanks": {
+      "file": "thanks.svg",
+      "advance": 2759
+    },
+    "that": {
+      "file": "that.svg",
+      "advance": 1666
+    },
+    "the": {
+      "file": "the.svg",
+      "advance": 1272
+    },
+    "there": {
+      "file": "there.svg",
+      "advance": 2106
+    },
+    "thing": {
+      "file": "thing.svg",
+      "advance": 2188
+    },
+    "things": {
+      "file": "things.svg",
+      "advance": 2538
+    },
+    "think": {
+      "file": "think.svg",
+      "advance": 2199
+    },
+    "this": {
+      "file": "this.svg",
+      "advance": 1498
+    },
+    "thoughts?": {
+      "file": "thoughts=3f.svg",
+      "advance": 4047
+    },
+    "through": {
+      "file": "through.svg",
+      "advance": 3286
+    },
+    "time": {
+      "file": "time.svg",
+      "advance": 1842
+    },
+    "times'": {
+      "file": "times=27.svg",
+      "advance": 2420
+    },
+    "to": {
+      "file": "to.svg",
+      "advance": 781
+    },
+    "trapped": {
+      "file": "trapped.svg",
+      "advance": 3214
+    },
+    "troubling": {
+      "file": "troubling.svg",
+      "advance": 3849
+    },
+    "trust": {
+      "file": "trust.svg",
+      "advance": 1917
+    },
+    "truth": {
+      "file": "truth.svg",
+      "advance": 2102
+    },
+    "type": {
+      "file": "type.svg",
+      "advance": 1753
+    },
+    "understand": {
+      "file": "understand.svg",
+      "advance": 4675
+    },
+    "up": {
+      "file": "up.svg",
+      "advance": 1062
+    },
+    "us?": {
+      "file": "us=3f.svg",
+      "advance": 1404
+    },
+    "vie": {
+      "file": "vie.svg",
+      "advance": 1236
+    },
+    "wait": {
+      "file": "wait.svg",
+      "advance": 1874
+    },
+    "want": {
+      "file": "want.svg",
+      "advance": 2125
+    },
+    "war!": {
+      "file": "war=21.svg",
+      "advance": 1933
+    },
+    "was": {
+      "file": "was.svg",
+      "advance": 1611
+    },
+    "was...": {
+      "file": "was=2e=2e=2e.svg",
+      "advance": 2412
+    },
+    "way": {
+      "file": "way.svg",
+      "advance": 1761
+    },
+    "well": {
+      "file": "well.svg",
+      "advance": 1747
+    },
+    "what": {
+      "file": "what.svg",
+      "advance": 2104
+    },
+    "win": {
+      "file": "win.svg",
+      "advance": 1607
+    },
+    "wonderful": {
+      "file": "wonderful.svg",
+      "advance": 4266
+    },
+    "work": {
+      "file": "work.svg",
+      "advance": 2119
+    },
+    "would": {
+      "file": "would.svg",
+      "advance": 2576
+    },
+    "wrong": {
+      "file": "wrong.svg",
+      "advance": 2664
+    },
+    "you": {
+      "file": "you.svg",
+      "advance": 1519
+    },
+    "you,": {
+      "file": "you=2c.svg",
+      "advance": 1798
+    },
+    "you?": {
+      "file": "you=3f.svg",
+      "advance": 2027
+    },
+    "your": {
+      "file": "your.svg",
+      "advance": 1924
+    },
+    "yours": {
+      "file": "yours.svg",
+      "advance": 2234
+    },
+    "–": {
+      "file": "=2013.svg",
+      "advance": 685
+    }
+  },
+  "headings": [
+    "A Lexicon of Ciphers",
+    "Aaaaaaaaaa",
+    "About time",
+    "Acceptance",
+    "Admit it",
+    "Adventure",
+    "Alas",
+    "And my axe!",
+    "And so it begins...",
+    "Anger",
+    "Anything but that",
+    "Anything once",
+    "Are you single?",
+    "Attraction",
+    "Awkward",
+    "Be mine",
+    "Better luck next time",
+    "Big mistake",
+    "Browse",
+    "By way of introduction",
+    "C'est la vie",
+    "Can I help?",
+    "Cheer up",
+    "Condolences",
+    "Confusion",
+    "Congratulations",
+    "Consequences",
+    "Creep",
+    "Danger",
+    "Decode a Message",
+    "Despair",
+    "Do you feel the same?",
+    "Don't call me, I'll call you",
+    "Don't give up",
+    "Don't make promises you can't keep",
+    "Drink?",
+    "Encrypt and Decrypt Floral Bouquets",
+    "Enjoy",
+    "Evil laugh",
+    "Fair enough",
+    "Farewell",
+    "Fear",
+    "For old times' sake?",
+    "Forever yours",
+    "Forgive me",
+    "Forgiveness",
+    "Friendship",
+    "Get out of jail free",
+    "Get over it",
+    "Get well soon",
+    "Go and die in a hole",
+    "Good luck",
+    "Grow up",
+    "Help!",
+    "Help, I'm trapped in a florist's!",
+    "Here goes nothing",
+    "Hold your horses",
+    "How could you?",
+    "How you doin'?",
+    "I adore you",
+    "I can take it",
+    "I can wait",
+    "I can't wait",
+    "I dare you",
+    "I don't trust you",
+    "I forgive you",
+    "I give up",
+    "I have something to tell you",
+    "I like you",
+    "I love you",
+    "I miss you",
+    "I missed you",
+    "I need a favour",
+    "I need you",
+    "I promise",
+    "I see what you did there",
+    "I think not",
+    "I trust you",
+    "I understand",
+    "I want you",
+    "I'll do anything",
+    "I'll make it up to you",
+    "I'll never give you up",
+    "I'm yours",
+    "I've always loved you",
+    "I've never felt this way before",
+    "If only",
+    "Introduction",
+    "Is this the end?",
+    "It would be wrong",
+    "It's complicated",
+    "It's not what it looks like",
+    "It's not you, it's me",
+    "It's over",
+    "Jealousy",
+    "Joy",
+    "Keep calm & carry on",
+    "Kiss me, you fool!",
+    "Laugh out loud",
+    "Let's be friends",
+    "Let's pretend that never happened",
+    "Likewise",
+    "Lips sealed",
+    "Long time no see",
+    "Love",
+    "Make it stop",
+    "Maybe",
+    "Mind your own business",
+    "More",
+    "My heart bleeds",
+    "My pleasure",
+    "My work here is done",
+    "Never",
+    "Never again",
+    "Nice to meet you",
+    "No",
+    "No choice",
+    "No regrets",
+    "Obsession",
+    "Of course",
+    "On one condition",
+    "One last chance",
+    "Only you",
+    "Oops",
+    "Ouch",
+    "Patience",
+    "Penny for your thoughts?",
+    "Perfect",
+    "Perfunction",
+    "Please",
+    "Prove it",
+    "Psst",
+    "Question",
+    "Regret",
+    "Rejection",
+    "Reluctance",
+    "Rest easy",
+    "See you soon",
+    "Send a Message",
+    "Slow down",
+    "So it has come to this",
+    "Someone else?",
+    "Something I said?",
+    "Sorrow",
+    "Sorry",
+    "Squee",
+    "Sure thing",
+    "Surprise me",
+    "T",
+    "Tell me more",
+    "Tell me the truth",
+    "Thank God for that",
+    "Thank you",
+    "Thanks, but no thanks",
+    "That was wonderful",
+    "That was... interesting",
+    "The penny drops",
+    "Thinking of you",
+    "This means war!",
+    "Told you so",
+    "Tread softly",
+    "Truce",
+    "Trust me",
+    "Uh oh!",
+    "Unsure",
+    "Unwise",
+    "Unworthy",
+    "WTF?",
+    "Warning",
+    "We can get through this",
+    "We need to talk",
+    "We want different things",
+    "What do?",
+    "What's happened to us?",
+    "What's troubling you?",
+    "Whatever",
+    "Where now from here?",
+    "Who, me?",
+    "Worth a shot",
+    "Yes",
+    "You can't handle the truth",
+    "You dent my calm",
+    "You intrigue me",
+    "You lose",
+    "You rock!",
+    "You should be so lucky",
+    "You shouldn't have done that",
+    "You win",
+    "You'll do",
+    "You'll pay for that",
+    "You're beautiful",
+    "You're cute",
+    "You're imagining things",
+    "You're lovely",
+    "You're mine",
+    "You're not my type",
+    "You've changed",
+    "You've gotta be kidding me",
+    "– to –"
+  ]
+}

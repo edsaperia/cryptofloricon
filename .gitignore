@@ -1,2 +1,8 @@
 site/
 node_modules/
+# The title font is licensed to Ed and never goes in the repository
+# (scripts/draw-headings.mjs reads it from a path outside it).
+*.ttf
+*.otf
+*.woff
+*.woff2
