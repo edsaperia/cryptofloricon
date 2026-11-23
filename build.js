@@ -134,9 +134,30 @@ function build(out) {
       `<a href="${r}decode/">&bull; Decode &bull;</a></nav>`;
   }
 
+  /*
+   * The real dividers are inlined so site.css can draw their lines in the
+   * corners' brown and weight (the files themselves are black, 1.5 units).
+   * Each file also embeds the scanned drawing it was traced from, at 29%
+   * opacity (an Illustrator template layer left in on export); the page
+   * drops it. A stand-in divider stays an <img>.
+   */
+  const inlineSvg = {};
+  function dividerSvg(key) {
+    if (!(key in inlineSvg)) {
+      inlineSvg[key] = fs.readFileSync(path.join(SRC, ASSETS[key].final), 'utf8')
+        .replace(/^[\s\S]*?(?=<svg\b)/, '')                 // XML prolog, comment, DOCTYPE
+        .replace(/<image\b[\s\S]*?<\/image>\s*/g, '')          // the traced-from scan
+        .replace(/<svg\b[^>]*?(viewBox="[^"]*")[^>]*>/,
+          '<svg xmlns="http://www.w3.org/2000/svg" $1 width="280" height="40" aria-hidden="true" focusable="false">')
+        .replace(/\s*<\/svg>\s*$/, '</svg>');
+    }
+    return inlineSvg[key];
+  }
+
   function divider(r, size) {
-    const src = asset(size === 'small' ? 'dividerSmall' : 'dividerLarge', r);
-    return `<div class="divider divider-${size || 'large'}" role="presentation"><img src="${src}" alt=""></div>`;
+    const key = size === 'small' ? 'dividerSmall' : 'dividerLarge';
+    const art = assets[key] && assets[key].real ? dividerSvg(key) : `<img src="${asset(key, r)}" alt="">`;
+    return `<div class="divider divider-${size || 'large'}" role="presentation">${art}</div>`;
   }
 
   function logo(r) {
@@ -212,7 +233,7 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
     title: '',
     bodyClass: 'home',
     main: r => `
-<h1 class="title">A Lexicon of Ciphers <span class="joiner">&ndash; to &ndash;</span> Encrypt and Decrypt Floral Bouquets</h1>
+<h1 class="title"><span class="line">A Lexicon of Ciphers</span> <span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>
 ${divider(r, 'large')}
 <p class="intro">Emails, texts, tweets... we are a messaging culture, submerged in an endless deluge of communication. Sometimes, though, we are lost for words. This system makes it a little easier to say those difficult things.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`

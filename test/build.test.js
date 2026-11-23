@@ -57,6 +57,25 @@ test('#123 now links "Do you feel the same?" where it said #32', () => {
   assert.ok(!html.includes('#32'));
 });
 
+test('the home title is three parts: phrase, "– to –", phrase', () => {
+  assert.ok(read('index.html').includes('<h1 class="title"><span class="line">A Lexicon of Ciphers</span> ' +
+    '<span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>'));
+});
+
+test('the dividers are inlined, without the scan they were traced from', () => {
+  const home = read('index.html');
+  const large = home.match(/<div class="divider divider-large" role="presentation">(<svg[\s\S]*?<\/svg>)<\/div>/);
+  assert.ok(large, 'large divider inlined as <svg>');
+  assert.equal((large[1].match(/<path /g) || []).length, 14);
+  const browse = read('browse/index.html');
+  const small = browse.match(/<div class="divider divider-small" role="presentation">(<svg[\s\S]*?<\/svg>)<\/div>/);
+  assert.ok(small, 'small divider inlined as <svg>');
+  assert.equal((small[1].match(/<path /g) || []).length, 6);
+  for (const html of [home, browse]) {
+    assert.doesNotMatch(html, /<image|data:image\/jpeg|id="Layer_1"|<\?xml|<!DOCTYPE svg/);
+  }
+});
+
 test('no generated page has a broken internal link', () => {
   const files = allFiles(out);
   const checked = { refs: 0, pages: 0 };
