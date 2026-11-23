@@ -76,6 +76,38 @@ test('the dividers are inlined, without the scan they were traced from', () => {
   }
 });
 
+test('/1334/ shows its stems and flowers in the 2015 display order', () => {
+  const html = read('1334/index.html');
+  const stems = [...html.matchAll(/<img class="stem"[^>]*data-digit="(\d)"/g)].map(m => m[1]);
+  assert.deepEqual(stems, ['3', '3', '1', '4']);
+  assert.ok(html.includes('aria-label="2 Chrysanths, 1 Lily, 1 Carnation"'));
+  assert.ok(html.includes('<p class="flower-words">2 Chrysanths, 1 Lily, 1 Carnation</p>'));
+});
+
+test('the Key and the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
+  const key = read('index.html').match(/<ul class="key-flowers">([\s\S]*?)<\/ul>/)[1];
+  assert.deepEqual([...key.matchAll(/<span>([^<]+)<\/span>/g)].map(m => m[1]),
+    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+  const decode = read('decode/index.html');
+  assert.deepEqual([...decode.matchAll(/class="flower-btn" data-digit="(\d)" aria-label="([^"]+)"/g)].map(m => m[1] + ' ' + m[2]),
+    ['3 Add a chrysanth', '1 Add a lily', '5 Add a gerbera', '2 Add a rose', '4 Add a carnation']);
+});
+
+test('no page or script calls the flower "Chrysanthemum"', () => {
+  // The story's prose ("roses and chrysanthemums carpeted the church") is not a label and stays.
+  for (const f of allFiles(out).filter(f => /\.(html|js)$/.test(f))) {
+    assert.doesNotMatch(read(f), /Chrysanthemum/, f);
+  }
+});
+
+test('every page has the contact address in its footer', () => {
+  const pages = allFiles(out).filter(f => f.endsWith('.html'));
+  assert.ok(pages.length >= 196);
+  for (const f of pages) {
+    assert.ok(read(f).includes('&bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>'), f);
+  }
+});
+
 test('no generated page has a broken internal link', () => {
   const files = allFiles(out);
   const checked = { refs: 0, pages: 0 };

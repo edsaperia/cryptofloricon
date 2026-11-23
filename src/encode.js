@@ -39,7 +39,7 @@
     bq.className = 'bouquet bouquet-small';
     bq.setAttribute('role', 'img');
     bq.setAttribute('aria-label', Cipher.describe(e.code));
-    e.code.split('').forEach(function (d) {
+    Cipher.displayStems(e.code).forEach(function (d) {
       var img = document.createElement('img');
       img.className = 'stem';
       img.src = flowerSrc[d];

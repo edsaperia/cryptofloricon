@@ -159,10 +159,8 @@ img { vertical-align: middle; max-width: 100%; }
 /* Three lines, as on the 2015 site: the phrase, "– to –" on its own line, the phrase. */
 .title .line, .title .joiner { display: block; }
 .title .line { text-wrap: balance; }
-/* At full size the home page's long phrase needs 560px and the panel gives it
-   496, so it is set a little smaller to stay on one line on wide screens. On
-   phones it wraps, balanced, as "Encrypt and Decrypt / Floral Bouquets". */
-.home .title .line + .joiner + .line { font-size: 0.875em; }
+/* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
+   "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
 
 h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; margin: 1.4em 0 0.3em; }
 h2 a { text-decoration: none; }
@@ -351,7 +349,6 @@ h2 a { text-decoration: none; }
   .border { padding-left: 10px; padding-right: 10px; }
   /* Andrade's swash capitals and descenders reach well outside the letters' box. */
   .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
-  .home .title .line + .joiner + .line { font-size: 0.85em; }
   .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
   .flower-btn img { height: 72px; }
 }

@@ -117,7 +117,7 @@ function build(out) {
 
   function bouquet(code, r, cls) {
     const label = Cipher.describe(code);
-    const stems = code.split('').map(d =>
+    const stems = Cipher.displayStems(code).map(d =>
       `<img class="stem" src="${asset('flower' + d, r)}" alt="" data-digit="${d}">`).join('');
     return `<span class="bouquet${cls ? ' ' + cls : ''}" role="img" aria-label="${esc(label)}">${stems}</span>`;
   }
@@ -170,7 +170,7 @@ function build(out) {
 
   function footer(r) {
     return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}how-it-works/">How it works</a> &bull; <a href="${r}browse/">Browse</a> &bull;</p>
+  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}how-it-works/">How it works</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
   <p class="credits">Invented &amp; produced by Edward Saperia<br>
   Written by Sasha Garwood &amp; Grant Howitt<br>
   Website by Kimi Lawrie &amp; Eugen Rochko<br>
