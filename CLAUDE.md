@@ -28,6 +28,27 @@ Ed ran Cryptofloricon before, through Original Content London, and is resurrecti
 - **Build started 2026-11-23:** a builder on branch `site-rebuild` makes the static site (plain HTML/CSS/JS, a dependency-free Node build script, `node --test`), draft PR titled "Static rebuild of the Cryptofloricon site — do not merge". The real artwork waits on getting Dropbox files into the session: Dropbox's download host (`*.dl.dropboxusercontent.com`) is refused by the network.
 - **cryptofloricon.com** still resolves in DNS (2026-11-23); Ed's browser times out on it, so the old hosting is dead.
 
+## Content rulings (Ed, 2026-11-23)
+
+Cross-reference fixes, from the reviewers' findings (`#source: change`):
+- #187: cut the middle clause per the 2013 corrections list → "#193 less than politely denies the assertion, and #183 decidedly so."
+- #149: #113 → #173 *Better luck next time*.
+- #168: "as simple as #73 or #151" → "#73 or #74"; "as intensely inviting as #30" → "#47".
+- #59: swap #11 and #12 ("#12 invites explanation and #11 counsels caution").
+- #33: #121 → #61 *And so it begins...*.
+- #208: #73 → #76 *Unsure* ("tactfully with #27, #76 or a simple #74").
+- #103: #150 → #176 *I give up*.
+- #154: #118 → #159 *No regrets*.
+- #103: #26 → #48 *Big mistake*.
+- #31: #63 → #65 *Slow down*.
+- #4: #70 → #74 *No*.
+- #83: #81 → #55 *And my axe!*.
+- Fill the bare "#" self-references in #51, #100, #127, #175 and #198 with each entry's own number; "163" in #47 → "#163".
+- #44: point at #94 *On one condition*, reworded to fit: "whereas #82 recommends the Bearer tone down their demands" → "whereas #94 answers the Bearer's terms with conditions of the Receiver's own" (proposed wording; Ed approves it in the content PR).
+- Apply all the high-confidence fixes from both content reviews in one go (Decision 11a): the 2013 corrections list, spelling, Bearer/Receiver swaps, layout slips, the 7 confident cross-reference fixes, #146's own code 2445.
+- #164 *You're the one*: Ed checks his printed book for a passage; no draft of it exists anywhere (only citations calling it "passionate").
+- Still open: #192's tag; whether to restore #164; and whether to apply all the high-confidence fixes in one pull request.
+
 ## Glossary
 
 Names for the parts of Cryptofloricon, literal and stable, added as they are decided.
