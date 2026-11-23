@@ -1,38 +1,11 @@
-/* @license
- * MyFonts Webfont Build ID 2448905, 2013-01-14T06:01:38-0500
- * 
- * The fonts listed in this notice are subject to the End User License
- * Agreement(s) entered into by the website owner. All other parties are 
- * explicitly restricted from using the Licensed Webfonts(s).
- * 
- * You may obtain a valid license at the URLs below.
- * 
- * Webfont: Andrade Script Pro by DSType
- * URL: http://www.myfonts.com/fonts/dstype/andrade-pro/script/
- * Copyright: Copyright (c) Dino dos santos _DSType, 2006. All rights reserved.
- * 
- * 
- * License: http://www.myfonts.com/viewlicense?type=web&buildid=2448905
- * 
- * © 2013 Bitstream Inc
-*/
-
-/* The licence's page-view counter (from the MyFonts kit). It must stay first. */
-@import url("https://hello.myfonts.net/count/255e09");
-
-/* Andrade Script Pro: web licence owned by Ed Saperia (MyFonts order M4359904,
-   up to 10,000 page views a month). Self-hosted from the 2013 kit. */
-@font-face {
-  font-family: "AndradeScriptPro";
-  src: {{fontWoff}} format("woff"), {{fontTtf}} format("truetype");
-  font-display: swap;
-}
-
 /*
  * Cryptofloricon. Modelled on the 2015 site's stylesheet
  * (/Cryptofloricon Dev/css/main.css): brown ink (#581a0e) on paper, a
  * script title face, a Caslon body face, ornamental corners round the main
  * panel, small-caps "• Decode •" links, and a 600px column on wide screens.
+ *
+ * The script face (Andrade Script Pro) is not served: the build places each
+ * script heading as drawings of its words (see build.js, src/headings/).
  *
  * Double-brace asset names are filled in by build.js with the artwork's path: the real
  * file once it is in src/assets/, a labelled placeholder until then.
@@ -48,7 +21,8 @@
   /* The corners' line weight on screen: 1.5 units drawn at 75/340 of size on
      phones and 150/340 on wider screens. The dividers are drawn to match. */
   --ornament-stroke: 0.33px;
-  --title-font: "AndradeScriptPro", "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
+  /* Only for the text logotype, shown if the logo image is missing. */
+  --title-font: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
   --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
 }
 
@@ -152,13 +126,32 @@ img { vertical-align: middle; max-width: 100%; }
 
 .title {
   /* Andrade's swash capitals and descenders need room between lines (Ed, 2026-11-23). */
-  font: 2em/1.95 var(--title-font);
+  font: 2em/1.95 var(--body-font);
+  /* The words are drawings (see .drawn below); the spaces between them are
+     the body face's, narrowed to Andrade's own (0.23em; Libre Caslon's is 0.272em). */
+  word-spacing: -0.042em;
   margin: 0 auto;
   padding: 12px 0;
   font-weight: normal;
 }
+/*
+ * A drawn word: an SVG of its outlines, 1em tall from Andrade's ascender to
+ * its descender (the baseline 0.605em down), as wide as the word's advance.
+ * The margins make each line 1.95em with the baseline where the font put it
+ * (half the leading, 0.475em, above the ascender), whatever face the spaces
+ * are in. Swashes reach outside the box and are let show.
+ */
+.drawn svg {
+  height: 1em;
+  margin: 0.475em 0;
+  vertical-align: top;
+  overflow: visible;
+  fill: currentColor;
+}
 /* Three lines, as on the 2015 site: the phrase, "– to –" on its own line, the phrase. */
 .title .line, .title .joiner { display: block; }
+/* The webfont had no italic, so browsers slanted "– to –" by 14° (a quarter shear) about its baseline. */
+.title .joiner svg { transform: skewX(-14.04deg); transform-origin: 0 0.605em; }
 .title .line { text-wrap: balance; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
@@ -332,7 +325,11 @@ h2 a { text-decoration: none; }
 
 .prose { text-align: left; }
 .prose p { margin: 0 0 1em; }
-.prose p:first-child::first-letter { font: 3.2em/0.8 var(--title-font); float: left; padding: 0.12em 0.08em 0 0; }
+/* The story's drop cap is drawn (build.js); the letter stays in the text, unseen. */
+.dropcap { float: left; font-size: 3.2em; line-height: 1; padding: 0.12em 0.08em 0 0; }
+/* The webfont's float was 0.8em tall (its line-height), so the text wraps after two lines. */
+.dropcap svg { display: block; height: 1em; margin-bottom: -0.2em; overflow: visible; fill: currentColor; }
+.dropcap-letter { font-size: 0; }
 
 /* ---------- footer ---------- */
 

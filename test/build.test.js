@@ -27,15 +27,18 @@ test('every code has its page at /<code>/index.html', () => {
   assert.equal(result.codes.length, 177);
 });
 
+// A title is its text (visually hidden, for screen readers) and drawings of its words.
+const titleText = text => `<h1 class="title"><span class="visually-hidden">${text}</span><span class="drawn" aria-hidden="true">`;
+
 test('/2/ is "I love you"', () => {
-  assert.match(read('2/index.html'), /<h1 class="title">I love you<\/h1>/);
+  assert.ok(read('2/index.html').includes(titleText('I love you')));
 });
 
 test('/1334/ is My work here is done alone, and /2445/ is Despair', () => {
   const a = read('1334/index.html');
-  assert.match(a, /<h1 class="title">My work here is done<\/h1>/);
-  assert.doesNotMatch(a, /Despair<\/h1>/);
-  assert.match(read('2445/index.html'), /<h1 class="title">Despair<\/h1>/);
+  assert.ok(a.includes(titleText('My work here is done')));
+  assert.doesNotMatch(a, /Despair/);
+  assert.ok(read('2445/index.html').includes(titleText('Despair')));
 });
 
 test('the main pages exist', () => {
@@ -58,8 +61,11 @@ test('#123 now links "Do you feel the same?" where it said #32', () => {
 });
 
 test('the home title is three parts: phrase, "– to –", phrase', () => {
-  assert.ok(read('index.html').includes('<h1 class="title"><span class="line">A Lexicon of Ciphers</span> ' +
-    '<span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>'));
+  const h1 = read('index.html').match(/<h1 class="title">([\s\S]*?)<\/h1>/)[1];
+  assert.ok(h1.startsWith('<span class="visually-hidden">A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets</span>'));
+  // The drawings in three spans: 4 words, then "– to –" (3), then 5 words.
+  const parts = [...h1.matchAll(/<span class="(line|joiner)">([\s\S]*?)<\/span>/g)].map(m => m[1] + ' ' + (m[2].match(/<svg\b/g) || []).length);
+  assert.deepEqual(parts, ['line 4', 'joiner 3', 'line 5']);
 });
 
 test('the dividers are inlined, without the scan they were traced from', () => {

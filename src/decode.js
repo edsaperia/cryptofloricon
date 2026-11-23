@@ -90,9 +90,8 @@
     }
     // The old site's reply to a bouquet that spells nothing (msgs.php).
     result.innerHTML = '';
-    var h = document.createElement('p');
-    h.className = 'title';
-    h.textContent = 'Uh oh!';
+    // The heading is drawn (the script face is not served): the page carries it in a template.
+    var h = document.importNode(document.getElementById('uh-oh').content, true);
     var p = document.createElement('p');
     p.textContent = 'This is not a valid cipher. Are you sure you identified the flowers correctly?';
     var retry = document.createElement('button');
