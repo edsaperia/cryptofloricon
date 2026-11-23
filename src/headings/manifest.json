@@ -426,6 +426,10 @@
       "file": "_reluctance.svg",
       "advance": 5654
     },
+    "Request": {
+      "file": "_request.svg",
+      "advance": 4318
+    },
     "Rest": {
       "file": "_rest.svg",
       "advance": 2860
@@ -1476,6 +1480,7 @@
     "Regret",
     "Rejection",
     "Reluctance",
+    "Request",
     "Rest easy",
     "See you soon",
     "Send a Message",
