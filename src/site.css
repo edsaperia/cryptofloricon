@@ -19,7 +19,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; background-color: #f1e6cc; }
 
 body {
   margin: 0;
@@ -33,7 +33,7 @@ body {
     radial-gradient(ellipse at 20% 10%, rgba(255, 250, 235, 0.7), transparent 60%),
     radial-gradient(ellipse at 80% 90%, rgba(200, 170, 120, 0.25), transparent 55%);
   background-repeat: repeat, no-repeat, no-repeat;
-  background-attachment: scroll, fixed, fixed;
+  min-height: 100vh;
 }
 
 a { color: var(--ink); }
@@ -199,7 +199,7 @@ h2 a { text-decoration: none; }
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -208,10 +208,11 @@ h2 a { text-decoration: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 58px;
-  padding: 6px 2px 2px;
+  width: 60px;
+  padding: 6px 1px 2px;
   font: inherit;
-  font-size: 0.8em;
+  font-size: 0.72em;
+  letter-spacing: -0.01em;
   font-variant: small-caps;
   color: var(--ink);
   background: rgba(255, 252, 240, 0.35);
@@ -222,6 +223,7 @@ h2 a { text-decoration: none; }
 }
 .flower-btn img { height: 83px; width: auto; }
 .flower-btn:active { transform: translateY(1px); }
+.flower-btn:focus:not(:focus-visible) { outline: none; }
 .flower-btn.chosen { border-style: solid; background: rgba(255, 252, 240, 0.7); }
 .flower-count {
   position: absolute;
@@ -256,6 +258,7 @@ h2 a { text-decoration: none; }
   -webkit-appearance: none;
   appearance: none;
 }
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
 .search input::placeholder { color: var(--ink-soft); }
 .search input:focus { outline: none; background-color: rgba(255, 252, 240, 0.45); }
 
@@ -301,7 +304,7 @@ h2 a { text-decoration: none; }
     background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
   }
   .key-flowers img { height: 100px; }
-  .flower-btn { width: 72px; }
+  .flower-btn { width: 76px; font-size: 0.8em; }
   .flower-btn img { height: 100px; }
   .bouquet-build { min-height: 130px; }
 }
