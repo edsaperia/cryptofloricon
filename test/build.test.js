@@ -90,13 +90,39 @@ test('/1334/ shows its stems and flowers in the 2015 display order', () => {
   assert.ok(html.includes('<p class="flower-words">2 Chrysanths, 1 Lily, 1 Carnation</p>'));
 });
 
-test('the Key and the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
-  const key = read('index.html').match(/<ul class="key-flowers">([\s\S]*?)<\/ul>/)[1];
-  assert.deepEqual([...key.matchAll(/<span>([^<]+)<\/span>/g)].map(m => m[1]),
-    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+test('the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
   const decode = read('decode/index.html');
   assert.deepEqual([...decode.matchAll(/class="flower-btn" data-digit="(\d)" aria-label="([^"]+)"/g)].map(m => m[1] + ' ' + m[2]),
     ['3 Add a chrysanth', '1 Add a lily', '5 Add a gerbera', '2 Add a rose', '4 Add a carnation']);
+  assert.deepEqual([...decode.matchAll(/<span class="flower-name">([^<]+)<\/span>/g)].map(m => m[1]),
+    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+});
+
+// The Key is gone (Ed, 2026-11-23: "we write a text description underneath anyway").
+test('no page has the Key toggle, its panel or the word Key as a label', () => {
+  const pages = allFiles(out).filter(f => f.endsWith('.html'));
+  assert.ok(pages.length > 177, 'pages checked: ' + pages.length);
+  for (const f of pages) {
+    const html = read(f);
+    assert.doesNotMatch(html, /<details|<summary|class="key|key-flowers/, f);
+    const text = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+    assert.doesNotMatch(text, /\bKey\b/, f);
+  }
+  const css = read('assets/site.css');
+  assert.doesNotMatch(css, /\.key\b|key-flowers/);
+  for (const js of ['assets/encode.js', 'assets/decode.js']) assert.doesNotMatch(read(js), /key-flowers/, js);
+});
+
+test('Send a Message hands its script the five flower pictures', () => {
+  const html = read('encode/index.html');
+  const m = html.match(/<ul class="results" id="results"[^>]*data-flowers="([^"]+)"/);
+  assert.ok(m, 'data-flowers on #results');
+  const map = JSON.parse(m[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(Object.keys(map).sort(), ['1', '2', '3', '4', '5']);
+  for (const src of Object.values(map)) {
+    assert.match(src, /^\.\.\/assets\//);
+    assert.ok(fs.existsSync(path.join(out, 'encode', src)), src);
+  }
 });
 
 test('no page or script calls the flower "Chrysanthemum"', () => {
@@ -157,4 +183,27 @@ test('no generated page has a broken internal link', () => {
   assert.deepEqual(broken, []);
   assert.ok(checked.pages >= 196, `checked ${checked.pages} pages`);
   assert.ok(checked.refs > 5000, `checked ${checked.refs} links`);
+});
+
+// Message pages no longer list their tags (Ed, 2026-11-23: "you can get to them via the encode page").
+test('no message page shows its tags line; /2445/ does not link to Sorrow', () => {
+  const codes = [...new Set(loadLexicon().map(e => e.code))];
+  assert.equal(codes.length, 177);
+  for (const code of codes) assert.doesNotMatch(read(code + '/index.html'), /entry-tags/, code);
+  const despair = read('2445/index.html');
+  assert.doesNotMatch(despair, /browse\/sorrow\//);
+  assert.doesNotMatch(despair, />Sorrow</);
+  assert.doesNotMatch(read('assets/site.css'), /entry-tags/);
+});
+
+test('every tag page is still linked from Send a Message and from Browse', () => {
+  const tagPages = allFiles(out).filter(f => /^browse\/[^/]+\/index\.html$/.test(f)).map(f => f.split('/')[1]);
+  assert.equal(tagPages.length, 13);
+  for (const s of ['love', 'sorrow', 'anger', 'rejection', 'warning']) assert.ok(tagPages.includes(s), s);
+  const encode = read('encode/index.html');
+  const browse = read('browse/index.html');
+  for (const s of tagPages) {
+    assert.ok(encode.includes(`href="../browse/${s}/"`), 'encode -> ' + s);
+    assert.ok(browse.includes(`href="../browse/${s}/"`), 'browse -> ' + s);
+  }
 });

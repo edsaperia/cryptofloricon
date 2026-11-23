@@ -63,7 +63,7 @@ img { vertical-align: middle; max-width: 100%; }
   clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
 }
 
-/* ---------- masthead: logo, tabs, key ---------- */
+/* ---------- masthead: logo, tabs ---------- */
 
 .masthead { text-align: center; }
 
@@ -86,29 +86,6 @@ img { vertical-align: middle; max-width: 100%; }
 .tabs a { text-decoration: none; }
 .tabs a:hover { text-decoration: underline; }
 .tabs.bottom { margin-top: 1em; }
-
-.key { margin: 0 auto; font-variant: small-caps; }
-.key summary {
-  display: inline-block;
-  cursor: pointer;
-  list-style: none;
-  padding: 0 0.5em;
-}
-.key summary::-webkit-details-marker { display: none; }
-.key summary::before { content: "\2022\00a0"; }
-.key summary::after { content: "\00a0\2022"; }
-
-.key-flowers {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  list-style: none;
-  margin: 10px 0 0;
-  padding: 0;
-}
-.key-flowers li { display: flex; flex-direction: column; align-items: center; font-size: 0.85em; }
-.key-flowers img { height: 70px; width: auto; }
 
 /* ---------- the main panel with its ornamental corners ---------- */
 
@@ -219,7 +196,7 @@ h2 a { text-decoration: none; }
 .passage p { margin: 0 0 1em; }
 .xref { text-decoration: underline; }
 
-.entry-tags, .tag-list {
+.tag-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -229,9 +206,9 @@ h2 a { text-decoration: none; }
   padding: 0;
   font-variant: small-caps;
 }
-.entry-tags li + li::before, .tag-list li + li::before { content: "\00a0\2022\00a0"; }
-.entry-tags a, .tag-list a { text-decoration: none; }
-.entry-tags a:hover, .tag-list a:hover { text-decoration: underline; }
+.tag-list li + li::before { content: "\00a0\2022\00a0"; }
+.tag-list a { text-decoration: none; }
+.tag-list a:hover { text-decoration: underline; }
 .tag-list .current { text-decoration: underline; }
 
 .shared-note { font-style: italic; }
@@ -360,7 +337,6 @@ h2 a { text-decoration: none; }
     padding: 60px 40px 60px;
     background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
   }
-  .key-flowers img { height: 100px; }
   .flower-btn { flex-basis: 76px; font-size: 0.8em; }
   .flower-btn img { height: 100px; }
   .bouquet-build { min-height: 130px; }
@@ -368,5 +344,5 @@ h2 a { text-decoration: none; }
 
 @media print {
   body { background: none; }
-  .tabs, .key, .site-footer .footer-links { display: none; }
+  .tabs, .site-footer .footer-links { display: none; }
 }

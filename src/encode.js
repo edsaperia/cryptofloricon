@@ -11,11 +11,8 @@
   var input = document.getElementById('keyword');
   var results = document.getElementById('results');
 
-  // Flower pictures as the page already references them (real or placeholder).
-  var flowerSrc = {};
-  var keyImgs = document.querySelectorAll('.key-flowers img');
-  var order = Cipher.KEY_ORDER;
-  for (var i = 0; i < keyImgs.length && i < order.length; i++) flowerSrc[order[i]] = keyImgs[i].getAttribute('src');
+  // Flower pictures (real or placeholder), digit -> src, as build.js writes them.
+  var flowerSrc = JSON.parse(results.getAttribute('data-flowers'));
 
   function norm(s) {
     return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[‘’]/g, "'");
