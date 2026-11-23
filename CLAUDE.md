@@ -39,7 +39,12 @@ Cross-reference fixes, from the reviewers' findings (`#source: change`):
 - #208: #73 → #76 *Unsure* ("tactfully with #27, #76 or a simple #74").
 - #103: #150 → #176 *I give up*.
 - #154: #118 → #159 *No regrets*.
-- Still open: #44's #82, and questions 11–17.
+- #103: #26 → #48 *Big mistake*.
+- #31: #63 → #65 *Slow down*.
+- #4: #70 → #74 *No*.
+- #83: #81 → #55 *And my axe!*.
+- Fill the bare "#" self-references in #51, #100, #127, #175 and #198 with each entry's own number; "163" in #47 → "#163".
+- Still open: #44's #82 (options #49, #65, #165, #94, delete the clause as the 2013 book did, or leave it); #192's tag; whether to restore #164; and whether to apply all the high-confidence fixes in one pull request.
 
 ## Glossary
 
