@@ -1,0 +1,49 @@
+# Deploys the site to GitHub Pages on every push to main: the tests and the
+# build, then site/ published. Needs Settings → Pages → Source set to
+# "GitHub Actions". The build needs no font and no npm install (the script
+# headings are committed drawings, src/headings/).
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time. A deploy in progress is never cancelled; a newer push
+# waits for it (CONVENTIONS: the deploy never queues behind PR checks).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests
+        run: node --test
+      - name: Build
+        run: node build.js
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
