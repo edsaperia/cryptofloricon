@@ -115,7 +115,7 @@ test('no page has the Key toggle, its panel or the word Key as a label', () => {
 
 test('Send a Message hands its script the five flower pictures', () => {
   const html = read('encode/index.html');
-  const m = html.match(/<ul class="results" id="results"[^>]*data-flowers="([^"]+)"/);
+  const m = html.match(/<ul class="results entry-list" id="results"[^>]*data-flowers="([^"]+)"/);
   assert.ok(m, 'data-flowers on #results');
   const map = JSON.parse(m[1].replace(/&quot;/g, '"'));
   assert.deepEqual(Object.keys(map).sort(), ['1', '2', '3', '4', '5']);
@@ -239,4 +239,54 @@ test('each Browse row links to its message, title first and then its bouquet', (
   const first = rows.slice(0, 3).map(r => r.match(/href="\.\.\/([^"]+)"/)[1]);
   assert.deepEqual(first, ['1/', '11/', '111/']);
   assert.ok(rows.some(r => r.startsWith('<a href="../2/"><span class="row-title">I love you</span>')));
+});
+
+// Send a Message's search results match Browse (Ed, 28a, 2026-11-23): title left, bouquet right, no flower words.
+// Runs the built encode.js against a minimal DOM: only what the script touches, behaving as a browser's does.
+function runEncode(query) {
+  const vm = require('vm');
+  class El {
+    constructor(tag) { this.tagName = tag.toUpperCase(); this.children = []; this.attrs = {}; this.className = ''; this._text = ''; }
+    setAttribute(k, v) { this.attrs[k] = String(v); }
+    getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+    appendChild(c) { this.children.push(c); return c; }
+    set textContent(t) { this._text = String(t); this.children = []; }
+    get textContent() { return this._text + this.children.map(c => c.textContent).join(''); }
+    set innerHTML(h) { if (h !== '') throw new Error('unexpected innerHTML'); this.children = []; this._text = ''; }
+    addEventListener(type, fn) { this['on' + type] = fn; }
+    toHtml() {
+      const a = Object.entries({ class: this.className, href: this.href, src: this.src, ...this.attrs })
+        .filter(([, v]) => v).map(([k, v]) => ` ${k}="${v}"`).join('');
+      const t = this.tagName.toLowerCase();
+      return `<${t}${a}>${this._text}${this.children.map(c => c.toHtml()).join('')}</${t}>`;
+    }
+  }
+  const html = read('encode/index.html');
+  const results = new El('ul');
+  results.setAttribute('data-flowers', html.match(/data-flowers="([^"]+)"/)[1].replace(/&quot;/g, '"'));
+  const input = new El('input');
+  input.value = '';
+  const body = new El('body');
+  body.setAttribute('data-root', '../');
+  const document = { body, createElement: t => new El(t), getElementById: id => ({ keyword: input, results }[id]) };
+  const ctx = vm.createContext({ document });
+  ctx.window = ctx;
+  for (const f of ['assets/cipher.js', 'assets/lexicon.js', 'assets/encode.js']) vm.runInContext(read(f), ctx, { filename: f });
+  input.value = query;
+  input.oninput();
+  return results.children.map(li => li.toHtml());
+}
+
+test('a Send a Message result is title then bouquet, with no visible flower words', () => {
+  const rows = runEncode('love');
+  assert.ok(rows.length >= 50, 'results for "love": ' + rows.length);
+  for (const row of rows) {
+    assert.match(row, /^<li class="entry-row"><a href="\.\.\/\d+\/(#m\d+)?"><span class="row-title">[^<]+<\/span><span class="bouquet bouquet-small" role="img" aria-label="[^"]+">(<img class="stem" src="\.\.\/assets\/flowers\/\d\.png"><\/img>)+<\/span><\/a><\/li>$/, row);
+    assert.doesNotMatch(visibleText(row), /\b\d (Chrysanths?|Lil(y|ies)|Gerberas?|Roses?|Carnations?)\b/, row);
+  }
+  const iLoveYou = rows.find(r => r.includes('href="../2/"'));
+  assert.equal(visibleText(iLoveYou), 'I love you');
+  assert.ok(iLoveYou.includes('aria-label="1 Rose"'));
+  // The results list takes Browse's row styles.
+  assert.match(read('encode/index.html'), /<ul class="results entry-list" id="results"/);
 });

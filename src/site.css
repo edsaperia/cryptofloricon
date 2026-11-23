@@ -295,8 +295,7 @@ h2 a { text-decoration: none; }
 }
 .entry-row a { display: flex; align-items: flex-end; gap: 10px; text-decoration: none; }
 .entry-row a:hover .row-title { text-decoration: underline; }
-.row-flowers { font-size: 0.85em; font-variant: small-caps; color: var(--ink-soft); }
-/* Browse and the tag pages: title left, bouquet right, one row; the title wraps on a phone. */
+/* Browse, the tag pages and Send a Message's results: title left, bouquet right, one row; the title wraps on a phone. */
 .entry-list .entry-row a { flex: 1 1 auto; min-width: 0; align-items: center; justify-content: space-between; }
 .entry-list .row-title { min-width: 0; overflow-wrap: anywhere; }
 .entry-list .bouquet-small { flex: 0 0 auto; justify-content: flex-end; }
