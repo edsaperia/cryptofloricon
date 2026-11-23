@@ -44,7 +44,8 @@ Cross-reference fixes, from the reviewers' findings (`#source: change`):
 - #4: #70 → #74 *No*.
 - #83: #81 → #55 *And my axe!*.
 - Fill the bare "#" self-references in #51, #100, #127, #175 and #198 with each entry's own number; "163" in #47 → "#163".
-- Still open: #44's #82 (options #49, #65, #165, #94, delete the clause as the 2013 book did, or leave it); #192's tag; whether to restore #164; and whether to apply all the high-confidence fixes in one pull request.
+- #44: point at #94 *On one condition*, reworded to fit: "whereas #82 recommends the Bearer tone down their demands" → "whereas #94 answers the Bearer's terms with conditions of the Receiver's own" (proposed wording; Ed approves it in the content PR).
+- Still open: #192's tag; whether to restore #164; and whether to apply all the high-confidence fixes in one pull request.
 
 ## Glossary
 
