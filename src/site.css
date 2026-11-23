@@ -310,6 +310,8 @@ h2 a { text-decoration: none; }
 /* The webfont's float was 0.8em tall (its line-height), so the text wraps after two lines. */
 .dropcap svg { display: block; height: 1em; margin-bottom: -0.2em; overflow: visible; fill: currentColor; }
 .dropcap-letter { font-size: 0; }
+/* The author's initials close the introduction, as in the 2013 print master. */
+.prose .signature { text-align: right; font-style: italic; margin-top: 0.5em; }
 
 /* ---------- footer ---------- */
 
