@@ -43,6 +43,11 @@
   --ink-dark: #1e140f;
   --ink-soft: rgba(88, 26, 14, 0.55);
   --paper: #f1e6cc;
+  /* The ornaments' ink: the stroke colour of the corner filigree (assets/borders/*.svg). */
+  --ornament: #461408;
+  /* The corners' line weight on screen: 1.5 units drawn at 75/340 of size on
+     phones and 150/340 on wider screens. The dividers are drawn to match. */
+  --ornament-stroke: 0.33px;
   --title-font: "AndradeScriptPro", "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
   --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
 }
@@ -146,27 +151,40 @@ img { vertical-align: middle; max-width: 100%; }
 }
 
 .title {
-  font: 2em/1.4 var(--title-font);
+  /* Andrade's swash capitals and descenders need room between lines (Ed, 2026-11-23). */
+  font: 2em/1.95 var(--title-font);
   margin: 0 auto;
   padding: 12px 0;
   font-weight: normal;
 }
-.title .joiner { white-space: nowrap; }
+/* Three lines, as on the 2015 site: the phrase, "– to –" on its own line, the phrase. */
+.title .line, .title .joiner { display: block; }
+.title .line { text-wrap: balance; }
+/* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
+   "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
 
 h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; margin: 1.4em 0 0.3em; }
 h2 a { text-decoration: none; }
 
 .divider { margin: 14px auto; }
-.divider img { display: block; margin: 0 auto; }
-/* The original divider SVGs carry a faint embedded JPEG layer; multiply blends it into the paper. */
+.divider svg, .divider img { display: block; margin: 0 auto; height: auto; overflow: visible; }
+/* The divider is inlined by build.js; its lines take the corners' ink and weight. */
+.divider path {
+  stroke: var(--ornament);
+  stroke-width: var(--ornament-stroke);
+  vector-effect: non-scaling-stroke;
+}
+/* A stand-in divider (an <img>) blends into the paper. */
 .divider img { mix-blend-mode: multiply; }
-.divider-large img { width: 70%; max-width: 360px; }
-.divider-small img { width: 40%; max-width: 200px; }
+.divider-large svg, .divider-large img { width: 70%; max-width: 360px; }
+.divider-small svg, .divider-small img { width: 40%; max-width: 200px; }
 
 .intro { margin: 0 auto 1em; max-width: 30em; }
 
 .calls { font-size: 1.2em; font-variant: small-caps; margin: 1.2em 0 0.4em; }
 .call { text-decoration: none; white-space: nowrap; }
+/* "– or –" sits on its own line between the two calls, as on the 2015 site. */
+.calls .joiner { display: block; }
 .call:hover { text-decoration: underline; }
 .joiner { font-style: italic; font-variant: normal; font-size: 0.85em; }
 
@@ -310,13 +328,11 @@ h2 a { text-decoration: none; }
 .row-flowers { font-size: 0.85em; font-variant: small-caps; color: var(--ink-soft); }
 .no-results { font-style: italic; text-align: center; border: 0; }
 
-/* ---------- story and how it works ---------- */
+/* ---------- story ---------- */
 
 .prose { text-align: left; }
 .prose p { margin: 0 0 1em; }
 .prose p:first-child::first-letter { font: 3.2em/0.8 var(--title-font); float: left; padding: 0.12em 0.08em 0 0; }
-.how .prose p:first-child::first-letter { font: inherit; float: none; padding: 0; }
-.how .key-open img { height: 90px; }
 
 /* ---------- footer ---------- */
 
@@ -339,6 +355,7 @@ h2 a { text-decoration: none; }
 /* ---------- wider screens ---------- */
 
 @media (min-width: 480px) {
+  :root { --ornament-stroke: 0.66px; }
   body { padding-top: 40px; }
   .logo img { width: 90%; min-width: 400px; }
   .logotype { font-size: 4.6em; }

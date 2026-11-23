@@ -117,7 +117,7 @@ function build(out) {
 
   function bouquet(code, r, cls) {
     const label = Cipher.describe(code);
-    const stems = code.split('').map(d =>
+    const stems = Cipher.displayStems(code).map(d =>
       `<img class="stem" src="${asset('flower' + d, r)}" alt="" data-digit="${d}">`).join('');
     return `<span class="bouquet${cls ? ' ' + cls : ''}" role="img" aria-label="${esc(label)}">${stems}</span>`;
   }
@@ -134,9 +134,30 @@ function build(out) {
       `<a href="${r}decode/">&bull; Decode &bull;</a></nav>`;
   }
 
+  /*
+   * The real dividers are inlined so site.css can draw their lines in the
+   * corners' brown and weight (the files themselves are black, 1.5 units).
+   * Each file also embeds the scanned drawing it was traced from, at 29%
+   * opacity (an Illustrator template layer left in on export); the page
+   * drops it. A stand-in divider stays an <img>.
+   */
+  const inlineSvg = {};
+  function dividerSvg(key) {
+    if (!(key in inlineSvg)) {
+      inlineSvg[key] = fs.readFileSync(path.join(SRC, ASSETS[key].final), 'utf8')
+        .replace(/^[\s\S]*?(?=<svg\b)/, '')                 // XML prolog, comment, DOCTYPE
+        .replace(/<image\b[\s\S]*?<\/image>\s*/g, '')          // the traced-from scan
+        .replace(/<svg\b[^>]*?(viewBox="[^"]*")[^>]*>/,
+          '<svg xmlns="http://www.w3.org/2000/svg" $1 width="280" height="40" aria-hidden="true" focusable="false">')
+        .replace(/\s*<\/svg>\s*$/, '</svg>');
+    }
+    return inlineSvg[key];
+  }
+
   function divider(r, size) {
-    const src = asset(size === 'small' ? 'dividerSmall' : 'dividerLarge', r);
-    return `<div class="divider divider-${size || 'large'}" role="presentation"><img src="${src}" alt=""></div>`;
+    const key = size === 'small' ? 'dividerSmall' : 'dividerLarge';
+    const art = assets[key] && assets[key].real ? dividerSvg(key) : `<img src="${asset(key, r)}" alt="">`;
+    return `<div class="divider divider-${size || 'large'}" role="presentation">${art}</div>`;
   }
 
   function logo(r) {
@@ -149,7 +170,7 @@ function build(out) {
 
   function footer(r) {
     return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}how-it-works/">How it works</a> &bull; <a href="${r}browse/">Browse</a> &bull;</p>
+  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>
   <p class="credits">Invented &amp; produced by Edward Saperia<br>
   Written by Sasha Garwood &amp; Grant Howitt<br>
   Website by Kimi Lawrie &amp; Eugen Rochko<br>
@@ -212,7 +233,7 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
     title: '',
     bodyClass: 'home',
     main: r => `
-<h1 class="title">A Lexicon of Ciphers <span class="joiner">&ndash; to &ndash;</span> Encrypt and Decrypt Floral Bouquets</h1>
+<h1 class="title"><span class="line">A Lexicon of Ciphers</span> <span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>
 ${divider(r, 'large')}
 <p class="intro">Emails, texts, tweets... we are a messaging culture, submerged in an endless deluge of communication. Sometimes, though, we are lost for words. This system makes it a little easier to say those difficult things.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
@@ -326,7 +347,7 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
     });
   }
 
-  /* ---------- story and how it works ---------- */
+  /* ---------- story ---------- */
 
   page({
     file: 'story/index.html',
@@ -337,19 +358,6 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
 <div class="prose">
 ${fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8')}
 </div>`
-  });
-
-  page({
-    file: 'how-it-works/index.html',
-    title: 'How it works',
-    bodyClass: 'how',
-    main: r => {
-      const key = Cipher.KEY_ORDER.map(d =>
-        `<li><img src="${asset('flower' + d, r)}" alt=""><span>${Cipher.FLOWERS[d].key}</span></li>`).join('');
-      return fs.readFileSync(path.join(ROOT, 'content', 'how-it-works.html'), 'utf8')
-        .replace('{{key}}', `<ul class="key-flowers key-open">${key}</ul>`)
-        .replace(/\{\{root\}\}/g, r);
-    }
   });
 
   /* ---------- 404 ---------- */

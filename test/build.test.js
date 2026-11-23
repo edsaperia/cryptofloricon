@@ -40,7 +40,7 @@ test('/1334/ is My work here is done alone, and /2445/ is Despair', () => {
 
 test('the main pages exist', () => {
   for (const f of ['index.html', 'decode/index.html', 'encode/index.html', 'browse/index.html',
-    'browse/love/index.html', 'story/index.html', 'how-it-works/index.html', '404.html']) {
+    'browse/love/index.html', 'story/index.html', '404.html']) {
     assert.ok(fs.existsSync(path.join(out, f)), f);
   }
 });
@@ -55,6 +55,66 @@ test('#123 now links "Do you feel the same?" where it said #32', () => {
   const html = read(e.code + '/index.html');
   assert.ok(html.includes('<a class="xref" href="../14455/">Do you feel the same?</a> enable delicate enquiries'));
   assert.ok(!html.includes('#32'));
+});
+
+test('the home title is three parts: phrase, "– to –", phrase', () => {
+  assert.ok(read('index.html').includes('<h1 class="title"><span class="line">A Lexicon of Ciphers</span> ' +
+    '<span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt and Decrypt Floral Bouquets</span></h1>'));
+});
+
+test('the dividers are inlined, without the scan they were traced from', () => {
+  const home = read('index.html');
+  const large = home.match(/<div class="divider divider-large" role="presentation">(<svg[\s\S]*?<\/svg>)<\/div>/);
+  assert.ok(large, 'large divider inlined as <svg>');
+  assert.equal((large[1].match(/<path /g) || []).length, 14);
+  const browse = read('browse/index.html');
+  const small = browse.match(/<div class="divider divider-small" role="presentation">(<svg[\s\S]*?<\/svg>)<\/div>/);
+  assert.ok(small, 'small divider inlined as <svg>');
+  assert.equal((small[1].match(/<path /g) || []).length, 6);
+  for (const html of [home, browse]) {
+    assert.doesNotMatch(html, /<image|data:image\/jpeg|id="Layer_1"|<\?xml|<!DOCTYPE svg/);
+  }
+});
+
+test('/1334/ shows its stems and flowers in the 2015 display order', () => {
+  const html = read('1334/index.html');
+  const stems = [...html.matchAll(/<img class="stem"[^>]*data-digit="(\d)"/g)].map(m => m[1]);
+  assert.deepEqual(stems, ['3', '3', '1', '4']);
+  assert.ok(html.includes('aria-label="2 Chrysanths, 1 Lily, 1 Carnation"'));
+  assert.ok(html.includes('<p class="flower-words">2 Chrysanths, 1 Lily, 1 Carnation</p>'));
+});
+
+test('the Key and the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
+  const key = read('index.html').match(/<ul class="key-flowers">([\s\S]*?)<\/ul>/)[1];
+  assert.deepEqual([...key.matchAll(/<span>([^<]+)<\/span>/g)].map(m => m[1]),
+    ['Chrysanth', 'Lily', 'Gerbera', 'Rose', 'Carnation']);
+  const decode = read('decode/index.html');
+  assert.deepEqual([...decode.matchAll(/class="flower-btn" data-digit="(\d)" aria-label="([^"]+)"/g)].map(m => m[1] + ' ' + m[2]),
+    ['3 Add a chrysanth', '1 Add a lily', '5 Add a gerbera', '2 Add a rose', '4 Add a carnation']);
+});
+
+test('no page or script calls the flower "Chrysanthemum"', () => {
+  // The story's prose ("roses and chrysanthemums carpeted the church") is not a label and stays.
+  for (const f of allFiles(out).filter(f => /\.(html|js)$/.test(f))) {
+    assert.doesNotMatch(read(f), /Chrysanthemum/, f);
+  }
+});
+
+test('every page has the contact address in its footer', () => {
+  const pages = allFiles(out).filter(f => f.endsWith('.html'));
+  assert.ok(pages.length >= 196);
+  for (const f of pages) {
+    assert.ok(read(f).includes('&bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house</a> &bull;</p>'), f);
+  }
+});
+
+test('How it works is gone (Ed, 20c): no page, no link, footer is Story, Browse, address', () => {
+  assert.ok(!fs.existsSync(path.join(out, 'how-it-works')));
+  for (const f of allFiles(out).filter(f => f.endsWith('.html'))) {
+    const html = read(f);
+    assert.doesNotMatch(html, /how-it-works|How it works/, f);
+    assert.match(html, /<p class="footer-links">&bull; <a href="[^"]*story\/">Story<\/a> &bull; <a href="[^"]*browse\/">Browse<\/a> &bull; <a href="mailto:ed@newspeak.house">ed@newspeak.house<\/a> &bull;<\/p>/, f);
+  }
 });
 
 test('no generated page has a broken internal link', () => {

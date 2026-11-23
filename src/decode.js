@@ -35,7 +35,7 @@
   function render() {
     var code = stems.slice().sort();
     built.innerHTML = '';
-    code.forEach(function (d, idx) {
+    Cipher.displayStems(code.join('')).forEach(function (d) {
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'stem-button';

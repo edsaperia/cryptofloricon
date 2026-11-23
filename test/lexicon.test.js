@@ -90,9 +90,25 @@ test('a well-formed bouquet that spells nothing decodes to no entries', () => {
   assert.deepEqual(res, { ok: true, code: '555555', entries: [] });
 });
 
-test('describe names the flowers and counts in words', () => {
+test('describe names the flowers and counts in words, in the 2015 display order', () => {
+  // Display order (Ed, 18c): Chrysanth, Lily, Gerbera, Rose, Carnation; label "Chrysanth" (19b).
   assert.equal(Cipher.describe('2'), '1 Rose');
-  assert.equal(Cipher.describe('13444'), '1 Lily, 1 Chrysanthemum, 3 Carnations');
-  assert.equal(Cipher.describe('1334'), '1 Lily, 2 Chrysanthemums, 1 Carnation');
-  assert.equal(Cipher.describe('2445'), '1 Rose, 2 Carnations, 1 Gerbera');
+  assert.equal(Cipher.describe('13444'), '1 Chrysanth, 1 Lily, 3 Carnations');
+  assert.equal(Cipher.describe('1334'), '2 Chrysanths, 1 Lily, 1 Carnation');
+  assert.equal(Cipher.describe('2445'), '1 Gerbera, 1 Rose, 2 Carnations');
+  assert.equal(Cipher.describe('12345'), '1 Chrysanth, 1 Lily, 1 Gerbera, 1 Rose, 1 Carnation');
+});
+
+test("displayStems orders a bouquet's stems Chrysanth, Lily, Gerbera, Rose, Carnation", () => {
+  assert.deepEqual(Cipher.displayStems('1334'), ['3', '3', '1', '4']);
+  assert.deepEqual(Cipher.displayStems('12345'), ['3', '1', '5', '2', '4']);
+  assert.deepEqual(Cipher.displayStems('2445'), ['5', '2', '4', '4']);
+  assert.deepEqual(Cipher.displayStems('222555'), ['5', '5', '5', '2', '2', '2']);
+});
+
+test("Ed's text rulings 25a and 26a are in #7 and #30", () => {
+  const body = id => entries.find(e => e.id === id).body;
+  assert.ok(body(7).includes('a disparaging #169'));
+  assert.ok(!body(7).includes('a cutting #169'));
+  assert.ok(body(30).startsWith('Dangerous to bear, and perhaps even more dangerous to receive, this marks'));
 });
