@@ -35,7 +35,7 @@ test('every #NN in every passage names an existing entry, so every one becomes a
 
 test('the three references that were never written are re-pointed (Ed, 2026-11-23)', () => {
   assert.ok(renderBody(byId[123].body, byId, href).includes('<a class="xref" href="entry-153/">Do you feel the same?</a> enable delicate enquiries'));
-  assert.ok(renderBody(byId[44].body, byId, href).includes('whereas <a class="xref" href="entry-94/">On one condition</a> answers the Bearer'));
+  assert.ok(renderBody(byId[44].body, byId, href).includes('whereas <a class="xref" href="entry-94/">On one condition</a> answers the Bearer’s terms with conditions of the Receiver’s own'));
   assert.ok(renderBody(byId[103].body, byId, href).includes('while <a class="xref" href="entry-176/">I give up</a> admits defeat'));
 });
 
