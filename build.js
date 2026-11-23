@@ -43,10 +43,13 @@ const ASSETS = {
   dividerSmall: { final: 'assets/dividers/small.svg', from: '/Cryptofloricon Dev/img/sdiv.svg', placeholder: 'placeholders/dividers/small.svg' },
   bracketLeft: { final: 'assets/brackets/left.png', from: '/Cryptofloricon Dev/img/brl.png', placeholder: 'placeholders/brackets/left.svg' },
   bracketRight: { final: 'assets/brackets/right.png', from: '/Cryptofloricon Dev/img/brr.png', placeholder: 'placeholders/brackets/right.svg' },
-  favicon: { final: 'assets/favicon.ico', from: '/Cryptofloricon Dev/favicon.ico', placeholder: null }
+  favicon: { final: 'assets/favicon.ico', from: '/Cryptofloricon Dev/favicon.ico', placeholder: null },
+  // Andrade Script Pro, the title font (licensed to Ed; the repository is private for this reason).
+  fontWoff: { final: 'assets/fonts/andrade-script-pro.woff', from: '/Cryptofloricon Dev/css/fonts/title.woff', placeholder: null },
+  fontTtf: { final: 'assets/fonts/andrade-script-pro.ttf', from: '/Cryptofloricon Dev/css/fonts/title.ttf', placeholder: null }
 };
 
-const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Pinyon+Script&display=swap';
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
 
 // The marker the 404 page looks for to find the site's root (see src/notfound.js).
 const ROOT_MARKER = 'cryptofloricon-root.txt';

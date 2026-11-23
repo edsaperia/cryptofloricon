@@ -1,3 +1,33 @@
+/* @license
+ * MyFonts Webfont Build ID 2448905, 2013-01-14T06:01:38-0500
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Andrade Script Pro by DSType
+ * URL: http://www.myfonts.com/fonts/dstype/andrade-pro/script/
+ * Copyright: Copyright (c) Dino dos santos _DSType, 2006. All rights reserved.
+ * 
+ * 
+ * License: http://www.myfonts.com/viewlicense?type=web&buildid=2448905
+ * 
+ * © 2013 Bitstream Inc
+*/
+
+/* The licence's page-view counter (from the MyFonts kit). It must stay first. */
+@import url("https://hello.myfonts.net/count/255e09");
+
+/* Andrade Script Pro: web licence owned by Ed Saperia (MyFonts order M4359904,
+   up to 10,000 page views a month). Self-hosted from the 2013 kit. */
+@font-face {
+  font-family: "AndradeScriptPro";
+  src: {{fontWoff}} format("woff"), {{fontTtf}} format("truetype");
+  font-display: swap;
+}
+
 /*
  * Cryptofloricon. Modelled on the 2015 site's stylesheet
  * (/Cryptofloricon Dev/css/main.css): brown ink (#581a0e) on paper, a
@@ -13,7 +43,7 @@
   --ink-dark: #1e140f;
   --ink-soft: rgba(88, 26, 14, 0.55);
   --paper: #f1e6cc;
-  --title-font: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
+  --title-font: "AndradeScriptPro", "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
   --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
 }
 
@@ -300,6 +330,8 @@ h2 a { text-decoration: none; }
 
 @media (max-width: 379px) {
   .border { padding-left: 10px; padding-right: 10px; }
+  /* Andrade's swash capitals and descenders reach well outside the letters' box. */
+  .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
   .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
   .flower-btn img { height: 72px; }
 }
