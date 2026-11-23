@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 100" width="38" height="100">
+<title>PLACEHOLDER: Lily (flower 1). Replace with the woodcut drawing, /Cryptofloricon Dev/img/1.png</title>
+<path d="M19 98 C19 80 20 60 19 40" stroke="#581a0e" stroke-width="1.4" fill="none"/>
+<path d="M19 72 C12 68 8 62 7 56 C13 58 17 63 19 70Z" fill="#cbb98f" stroke="#581a0e" stroke-width="0.8"/>
+<path d="M19 62 C26 58 30 52 31 46 C25 48 21 53 19 60Z" fill="#cbb98f" stroke="#581a0e" stroke-width="0.8"/>
+<path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(0 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(60 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(120 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(180 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(240 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><path d="M19 30 C15 22 16 14 19 8 C22 14 23 22 19 30Z" transform="rotate(300 19 30)" fill="#f6f1e4" stroke="#581a0e" stroke-width="0.8"/><circle cx="19" cy="30" r="2" fill="#581a0e"/>
+<text x="19" y="97" font-family="Georgia,serif" font-size="5.2" text-anchor="middle" fill="#581a0e" opacity="0.75">placeholder</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" width="200" height="30">
+<title>PLACEHOLDER divider. Replace with /Cryptofloricon Dev/img/sdiv.svg</title>
+<g fill="none" stroke="#581a0e" stroke-linecap="round">
+<path d="M6 15 L78 15 M122 15 L194 15" stroke-width="1"/>
+<path d="M78 15 C86 5 94 25 100 15 C106 5 114 25 122 15" stroke-width="1.2"/>
+</g>
+<circle cx="100" cy="15" r="2.4" fill="#581a0e"/><circle cx="6" cy="15" r="1.6" fill="#581a0e"/><circle cx="194" cy="15" r="1.6" fill="#581a0e"/>
+<text x="100" y="29" font-family="Georgia,serif" font-size="6" text-anchor="middle" fill="#581a0e" opacity="0.5">placeholder</text>
+</svg>

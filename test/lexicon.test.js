@@ -1,0 +1,89 @@
+'use strict';
+// The lexicon and the cipher. Expected values are written by hand, never read
+// from data/lexicon.json, so a missing or stray entry fails a test.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const Cipher = require('../lib/cipher');
+const { loadLexicon } = require('../build');
+
+const entries = loadLexicon();
+const byCode = Cipher.indexByCode(entries);
+const titles = res => res.entries.map(e => e.title);
+
+test('the lexicon has exactly 177 entries with unique IDs', () => {
+  assert.equal(entries.length, 177);
+  assert.equal(new Set(entries.map(e => e.id)).size, 177);
+});
+
+test('every code is valid: digits 1-5, non-decreasing, 1-6 long', () => {
+  for (const e of entries) {
+    assert.match(e.code, /^[1-5]{1,6}$/, `#${e.id} ${e.title}: ${e.code}`);
+    assert.equal(e.code, e.code.split('').sort().join(''), `#${e.id} code ${e.code} is not in order`);
+    assert.ok(Cipher.isValidCode(e.code), `#${e.id} ${e.code}`);
+  }
+});
+
+test('isValidCode refuses bad codes', () => {
+  for (const bad of ['', '6', '0', '21', '1111111', '12a', 2]) assert.equal(Cipher.isValidCode(bad), false, String(bad));
+  for (const good of ['1', '5', '14', '1334', '222555']) assert.equal(Cipher.isValidCode(good), true, good);
+});
+
+test('176 codes are in use: 1334 is the only code shared by two entries', () => {
+  assert.equal(Object.keys(byCode).length, 176);
+  const shared = Object.keys(byCode).filter(c => byCode[c].length > 1);
+  assert.deepEqual(shared, ['1334']);
+});
+
+test('a single rose ("2") decodes to "I love you"', () => {
+  const res = Cipher.decode('2', byCode);
+  assert.equal(res.ok, true);
+  assert.deepEqual(titles(res), ['I love you']);
+});
+
+test('a lily and a carnation ("14") decode to "Kiss me, you fool!"', () => {
+  assert.deepEqual(titles(Cipher.decode('14', byCode)), ['Kiss me, you fool!']);
+});
+
+test('"1334" decodes to both #146 Despair and #162 My work here is done', () => {
+  const res = Cipher.decode('1334', byCode);
+  assert.deepEqual(res.entries.map(e => [e.id, e.title]), [[146, 'Despair'], [162, 'My work here is done']]);
+});
+
+test('a bouquet given in any order decodes the same', () => {
+  for (const b of ['41', '14', [4, 1], [1, 4], { 4: 1, 1: 1 }, { 1: 1, 4: 1 }]) {
+    const res = Cipher.decode(b, byCode);
+    assert.equal(res.code, '14', JSON.stringify(b));
+    assert.deepEqual(titles(res), ['Kiss me, you fool!'], JSON.stringify(b));
+  }
+  for (const b of ['4313', '3341', [3, 4, 1, 3], { 3: 2, 4: 1, 1: 1 }]) {
+    assert.deepEqual(titles(Cipher.decode(b, byCode)), ['Despair', 'My work here is done'], JSON.stringify(b));
+  }
+});
+
+test('an empty bouquet is refused', () => {
+  for (const b of ['', [], {}, { 1: 0 }]) assert.deepEqual(Cipher.decode(b, byCode), { ok: false, reason: 'empty' }, JSON.stringify(b));
+});
+
+test('a bouquet of 7 stems is refused', () => {
+  for (const b of ['1111111', '1234512', { 2: 7 }, [1, 1, 2, 2, 3, 3, 4]]) {
+    assert.deepEqual(Cipher.decode(b, byCode), { ok: false, reason: 'too-many' }, JSON.stringify(b));
+  }
+});
+
+test('something that is not one of the five flowers is refused', () => {
+  for (const b of ['6', '0', '1x', { 7: 1 }, { 1: 1.5 }, null]) {
+    assert.deepEqual(Cipher.decode(b, byCode), { ok: false, reason: 'not-a-flower' }, JSON.stringify(b));
+  }
+});
+
+test('a well-formed bouquet that spells nothing decodes to no entries', () => {
+  // 2445 was #146's code in the January 2013 Code Generator; no entry uses it now.
+  const res = Cipher.decode('2445', byCode);
+  assert.deepEqual(res, { ok: true, code: '2445', entries: [] });
+});
+
+test('describe names the flowers and counts in words', () => {
+  assert.equal(Cipher.describe('2'), '1 Rose');
+  assert.equal(Cipher.describe('13444'), '1 Lily, 1 Chrysanthemum, 3 Carnations');
+  assert.equal(Cipher.describe('1334'), '1 Lily, 2 Chrysanthemums, 1 Carnation');
+});
