@@ -234,7 +234,7 @@ function build(out, options = {}) {
   const tagHref = (tag, r) => r + 'browse/' + slug(tag) + '/';
 
   function bouquet(code, r, cls) {
-    const label = Cipher.describe(code);
+    const label = Cipher.inWords(code);
     const stems = Cipher.displayStems(code).map(d =>
       `<img class="stem" src="${asset('flower' + d, r)}" alt="" data-digit="${d}">`).join('');
     return `<span class="bouquet${cls ? ' ' + cls : ''}" role="img" aria-label="${esc(label)}">${stems}</span>`;
@@ -430,7 +430,7 @@ ${divider(r, 'small')}
         const articles = list.map(e => `
 <article class="entry" id="m${e.id}">
   ${bouquet(code, r, 'bouquet-large')}
-  <p class="flower-words">${esc(Cipher.describe(code))}</p>
+  <p class="flower-words">${esc(Cipher.inWords(code))}</p>
   <h1 class="title">${drawn(e.title)}</h1>
   <div class="passage">
 ${renderBody(e.body, byId, id => entryHref(id, r))}

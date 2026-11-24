@@ -86,8 +86,8 @@ test('/1334/ shows its stems and flowers in the 2015 display order', () => {
   const html = read('1334/index.html');
   const stems = [...html.matchAll(/<img class="stem"[^>]*data-digit="(\d)"/g)].map(m => m[1]);
   assert.deepEqual(stems, ['3', '3', '1', '4']);
-  assert.ok(html.includes('aria-label="2 Chrysanths, 1 Lily, 1 Carnation"'));
-  assert.ok(html.includes('<p class="flower-words">2 Chrysanths, 1 Lily, 1 Carnation</p>'));
+  assert.ok(html.includes('aria-label="Two chrysanths, a lily and a carnation"'));
+  assert.ok(html.includes('<p class="flower-words">Two chrysanths, a lily and a carnation</p>'));
 });
 
 test('the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
@@ -222,7 +222,7 @@ test('Browse rows show no flowers-in-words text, but keep it for screen readers'
   }
   const despair = browseRows(read('browse/index.html')).find(r => r.includes('href="../2445/"'));
   assert.equal(visibleText(despair), 'Despair');
-  assert.ok(despair.includes('role="img" aria-label="1 Gerbera, 1 Rose, 2 Carnations"'));
+  assert.ok(despair.includes('role="img" aria-label="A gerbera, a rose and two carnations"'));
 });
 
 test('each Browse row links to its message, title first and then its bouquet', () => {
@@ -286,7 +286,73 @@ test('a Send a Message result is title then bouquet, with no visible flower word
   }
   const iLoveYou = rows.find(r => r.includes('href="../2/"'));
   assert.equal(visibleText(iLoveYou), 'I love you');
-  assert.ok(iLoveYou.includes('aria-label="1 Rose"'));
+  assert.ok(iLoveYou.includes('aria-label="A rose"'));
   // The results list takes Browse's row styles.
   assert.match(read('encode/index.html'), /<ul class="results entry-list" id="results"/);
+});
+
+// Flowers in natural words everywhere (Ed, 2026-11-24): "Two roses and two carnations", never "2 Roses, 2 Carnations".
+test('/2244/ and /2/ name their flowers in natural words under the bouquet', () => {
+  assert.ok(read('2244/index.html').includes('<p class="flower-words">Two roses and two carnations</p>'));
+  assert.ok(read('2/index.html').includes('<p class="flower-words">A rose</p>'));
+  assert.ok(read('2244/index.html').includes('role="img" aria-label="Two roses and two carnations"'));
+  assert.ok(read('1334/index.html').includes('<p class="flower-words">Two chrysanths, a lily and a carnation</p>'));
+});
+
+test('no built file names flowers in the counted style', () => {
+  const counted = /\b\d+ (Chrysanths?|Lil(y|ies)|Gerberas?|Roses?|Carnations?)\b/i;
+  const files = allFiles(out).filter(f => /\.(html|js|json|xml|txt)$/.test(f));
+  assert.ok(files.length > 177, 'files scanned: ' + files.length);
+  for (const f of files) assert.doesNotMatch(read(f), counted, f);
+});
+
+// Runs the built decode.js against a minimal DOM: only what the script touches, behaving as a browser's does.
+function runDecode() {
+  const vm = require('vm');
+  class El {
+    constructor(tag) { this.tagName = tag; this.children = []; this.attrs = {}; this.textContent = ''; this.classes = new Set(); }
+    setAttribute(k, v) { this.attrs[k] = String(v); }
+    getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+    appendChild(c) { this.children.push(c); return c; }
+    set innerHTML(h) { if (h !== '') throw new Error('unexpected innerHTML'); this.children = []; }
+    addEventListener(type, fn) { this['on' + type] = fn; }
+    get classList() { const s = this.classes; return { toggle: (c, on) => (on ? s.add(c) : s.delete(c)) }; }
+  }
+  const html = read('decode/index.html');
+  const buttons = [...html.matchAll(/class="flower-btn" data-digit="(\d)"[^>]*><img src="([^"]+)"/g)].map(([, d, src]) => {
+    const b = new El('button');
+    b.setAttribute('data-digit', d);
+    const img = new El('img'); img.setAttribute('src', src);
+    const count = new El('span');
+    b.querySelector = sel => ({ img, '.flower-count': count }[sel]);
+    return b;
+  });
+  assert.equal(buttons.length, 5);
+  const els = { built: new El('span'), 'stem-count': new El('p'), result: new El('div'), clear: new El('button'), submit: new El('button') };
+  const body = new El('body');
+  body.setAttribute('data-root', '../');
+  const document = {
+    body,
+    createElement: t => new El(t),
+    getElementById: id => els[id],
+    querySelectorAll: sel => (sel === '.flower-btn' ? buttons : [])
+  };
+  const ctx = vm.createContext({ document });
+  ctx.window = ctx;
+  for (const f of ['assets/cipher.js', 'assets/lexicon.js', 'assets/decode.js']) vm.runInContext(read(f), ctx, { filename: f });
+  const tap = d => { const b = buttons.find(x => x.getAttribute('data-digit') === d); b.onclick({ currentTarget: b }); };
+  return { tap, line: () => els['stem-count'].textContent, clear: () => els.clear.onclick() };
+}
+
+test('Decode names the bouquet in natural words as flowers are tapped', () => {
+  const d = runDecode();
+  assert.equal(d.line(), '');
+  d.tap('3');
+  assert.equal(d.line(), 'A chrysanth');
+  d.tap('1');
+  assert.equal(d.line(), 'A chrysanth and a lily');
+  d.tap('4'); d.tap('4');
+  assert.equal(d.line(), 'A chrysanth, a lily and two carnations');
+  d.clear();
+  assert.equal(d.line(), '');
 });

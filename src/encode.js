@@ -35,7 +35,7 @@
     var bq = document.createElement('span');
     bq.className = 'bouquet bouquet-small';
     bq.setAttribute('role', 'img');
-    bq.setAttribute('aria-label', Cipher.describe(e.code));
+    bq.setAttribute('aria-label', Cipher.inWords(e.code));
     Cipher.displayStems(e.code).forEach(function (d) {
       var img = document.createElement('img');
       img.className = 'stem';
