@@ -81,6 +81,64 @@ function loadDrawings() {
   };
 }
 
+/*
+ * Share previews (Ed, 2026-11-23): the card a chat or social site shows for
+ * a pasted link. Its image must be at an absolute address, so the site's
+ * address is here, once. A message page's card shows its bouquet and the
+ * flowers in words, never the message; the pictures are drawn by
+ * scripts/draw-previews.mjs into src/previews/ and the build fails if a code
+ * has none. Every other page shares the site's card.
+ */
+const SITE_URL = 'https://cryptofloricon.com';
+const PREVIEWS = path.join(SRC, 'previews');
+const PREVIEW_SIZE = { width: 1200, height: 630 };
+const SITE_SHARE = {
+  title: 'Cryptofloricon',
+  description: 'A lexicon of ciphers to encrypt and decrypt floral bouquets',
+  image: 'site.jpg',
+  alt: 'The Cryptofloricon logotype over a chrysanth, a lily, a gerbera, a rose and a carnation'
+};
+const MESSAGE_DESCRIPTION = 'What could it mean?';
+
+/*
+ * Search-engine basics (Ed, 2026-11-23): every page has a meta description,
+ * a canonical link and a place in sitemap.xml. Unlike the share card, a
+ * message page's description names the message.
+ */
+const LANGUAGE = 'a Victorian-inspired language of flowers';
+const DESCRIPTIONS = {
+  home: `A lexicon of ciphers to encrypt and decrypt floral bouquets: ${LANGUAGE} in which a bouquet spells a message.`,
+  decode: 'Decode a bouquet: pick its flowers, stem by stem, and read the message it spells in the Cryptofloricon.',
+  encode: 'Send a message in flowers: search the Cryptofloricon for what you want to say and find the bouquet that spells it.',
+  browse: `Every message in the Cryptofloricon, ${LANGUAGE}, with the bouquet that spells it.`,
+  story: `The story of the Cryptofloricon, ${LANGUAGE}, and of the people who made it.`,
+  notFound: `Page not found. The Cryptofloricon is ${LANGUAGE}.`
+};
+const tagDescription = tag => `Messages tagged ${tag} in the Cryptofloricon, ${LANGUAGE}, with the bouquet that spells each.`;
+/* "I love you: the meaning of a rose in the Cryptofloricon, …"; shorter if that runs past 160 characters. */
+function messageDescription(title, code) {
+  const head = `${title}: the meaning of ${Cipher.inWords(code).toLowerCase()} in the Cryptofloricon`;
+  const full = `${head}, ${LANGUAGE}.`;
+  return full.length <= 160 ? full : head + '.';
+}
+
+/* The share tags for a page at urlPath ("" for the home page, "2244/"; null for none). */
+function shareTags(urlPath, share) {
+  const tags = [
+    ['property', 'og:type', 'website'],
+    ['property', 'og:site_name', 'Cryptofloricon'],
+    urlPath === null ? null : ['property', 'og:url', SITE_URL + '/' + urlPath],
+    ['property', 'og:title', share.title],
+    ['property', 'og:description', share.description],
+    ['property', 'og:image', SITE_URL + '/previews/' + share.image],
+    ['property', 'og:image:width', String(PREVIEW_SIZE.width)],
+    ['property', 'og:image:height', String(PREVIEW_SIZE.height)],
+    ['property', 'og:image:alt', share.alt],
+    ['name', 'twitter:card', 'summary_large_image']
+  ].filter(Boolean);
+  return tags.map(([attr, key, value]) => `<meta ${attr}="${key}" content="${esc(value)}">\n`).join('');
+}
+
 const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
 
 // The marker the 404 page looks for to find the site's root (see src/notfound.js).
@@ -234,8 +292,11 @@ function build(out, options = {}) {
 </footer>`;
   }
 
-  function page({ file, title, main, scripts = [], bodyClass = '', head = '', mainClass = 'border' }) {
+  function page({ file, title, description, main, scripts = [], bodyClass = '', head = '', mainClass = 'border', share = SITE_SHARE }) {
+    if (!description) throw new Error(file + ': no meta description');
     const depth = file.split('/').length - 1;
+    // The 404 page is served at any missing address, so it names no URL of its own.
+    const urlPath = file === '404.html' ? null : file.replace(/index\.html$/, '');
     const r = rootOf(depth);
     const fav = asset('favicon', r);
     const html = `<!doctype html>
@@ -244,12 +305,12 @@ function build(out, options = {}) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title ? esc(title) + ' &middot; ' : ''}Cryptofloricon</title>
-<meta name="description" content="A Lexicon of Ciphers to Encrypt and Decrypt Floral Bouquets">
-${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="description" content="${esc(description)}">
+${urlPath === null ? '' : `<link rel="canonical" href="${SITE_URL}/${urlPath}">\n`}${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS_CSS}">
 <link rel="stylesheet" href="${r}assets/site.css" data-site-css>
-${head}</head>
+${shareTags(urlPath, share)}${head}</head>
 <body class="${bodyClass}" data-root="${r}">
 <div class="wrapper">
 <header class="masthead">
@@ -285,6 +346,7 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
   page({
     file: 'index.html',
     title: '',
+    description: DESCRIPTIONS.home,
     bodyClass: 'home',
     main: r => `
 <h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
@@ -299,6 +361,7 @@ ${divider(r, 'large')}
   page({
     file: 'decode/index.html',
     title: 'Decode a Message',
+    description: DESCRIPTIONS.decode,
     bodyClass: 'decode',
     scripts: ['cipher.js', 'lexicon.js', 'decode.js'],
     main: r => {
@@ -324,6 +387,7 @@ ${divider(r, 'large')}
   page({
     file: 'encode/index.html',
     title: 'Send a Message',
+    description: DESCRIPTIONS.encode,
     bodyClass: 'encode',
     scripts: ['cipher.js', 'lexicon.js', 'encode.js'],
     main: r => `
@@ -339,13 +403,25 @@ ${divider(r, 'small')}
 <p class="buttons"><a href="${r}browse/">&bull; Browse &bull;</a></p>`
   });
 
+  /* ---------- share previews ---------- */
+
+  const noPreview = [...codes, 'site'].filter(name => !fs.existsSync(path.join(PREVIEWS, name + '.jpg')));
+  if (noPreview.length) {
+    throw new Error(`no share preview for ${noPreview.join(', ')}. Draw it: node scripts/draw-previews.mjs`);
+  }
+  for (const name of [...codes, 'site']) copy(out, path.join(PREVIEWS, name + '.jpg'), 'previews/' + name + '.jpg');
+
   /* ---------- a page per code (the old site's /<code> scheme) ---------- */
 
   for (const code of codes) {
     const list = byCode[code];
+    const words = Cipher.inWords(code);
     page({
       file: code + '/index.html',
       title: list.map(e => e.title).join(' / '),
+      description: messageDescription(list.map(e => e.title).join(' / '), code),
+      // The flowers, never the message: people click to find out.
+      share: { title: words, description: MESSAGE_DESCRIPTION, image: code + '.jpg', alt: words },
       bodyClass: 'message',
       main: r => {
         const shared = list.length > 1
@@ -377,6 +453,7 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
   page({
     file: 'browse/index.html',
     title: 'Browse',
+    description: DESCRIPTIONS.browse,
     bodyClass: 'browse',
     main: r => `
 <h1 class="title">${drawn('Browse')}</h1>
@@ -391,6 +468,7 @@ ${byCodeOrder.map(e => entryRow(e, r)).join('\n')}
     page({
       file: 'browse/' + slug(tag) + '/index.html',
       title: tag,
+      description: tagDescription(tag),
       bodyClass: 'browse',
       main: r => `
 <h1 class="title">${drawn(tag)}</h1>
@@ -417,6 +495,7 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
   page({
     file: 'story/index.html',
     title: 'Story',
+    description: DESCRIPTIONS.story,
     bodyClass: 'story',
     main: () => `
 <h1 class="title">${drawn('Introduction')}</h1>
@@ -433,6 +512,7 @@ ${dropCap(fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8'))}
   page({
     file: '404.html',
     title: 'Not found',
+    description: DESCRIPTIONS.notFound,
     bodyClass: 'notfound',
     // Inlined: a relative script path would itself break at a deep address.
     head: `<script>\n${fs.readFileSync(path.join(SRC, 'notfound.js'), 'utf8').replace('{{marker}}', ROOT_MARKER)}</script>\n`,
@@ -441,6 +521,13 @@ ${dropCap(fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8'))}
 <p>Sorry, but the page you were trying to view does not exist.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
   });
+
+  /* ---------- sitemap and robots.txt ---------- */
+
+  const listed = pages.filter(f => f !== '404.html').map(f => SITE_URL + '/' + f.replace(/index\.html$/, ''));
+  write(out, 'sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    listed.map(u => `<url><loc>${esc(u)}</loc></url>\n`).join('') + '</urlset>\n');
+  write(out, 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
   if (missing.size && !options.collectHeadings) {
     throw new Error(`Script headings with no drawing for ${[...missing].map(w => JSON.stringify(w)).join(', ')}. ` +
@@ -460,7 +547,7 @@ function siteCss(assets) {
     });
 }
 
-module.exports = { build, loadLexicon, ASSETS, ROOT_MARKER };
+module.exports = { build, loadLexicon, ASSETS, ROOT_MARKER, SITE_URL };
 
 if (require.main === module) {
   const result = build(process.argv[2]);
