@@ -59,6 +59,8 @@ Cross-reference fixes, from the reviewers' findings (`#source: change`):
 - Print-master edits adopted (Ed, 2026-11-23, 39–43a): #208 reads "…tactfully with #27, #76 or a simple #74, sarcastically with #180, or with a marginally condescending #173"; #71 "similar ventures may have miscarried…"; #41 "send #41s" → "send I can wait" (twice, as a linked title); "box set" (#158), "off key" (#35); the Story ends with the signature "S.G."; the Story's "isle" → "aisle".
 - **Share previews (Ed, 2026-11-23, idea 1):** a message link shared in chat or social media shows the bouquet's flowers as the image, the flowers in words as the title ("Two roses", "A chrysanth and a rose": the site's display order, Ed 44a), JPEG previews at q60 (45a), and the description "What could it mean?". The preview must not reveal the message; people click to find out. Ed (2026-11-24) wants this natural wording everywhere the site said "1 Chrysanth, 2 Roses". Previews are drawn by `scripts/draw-previews.mjs` (Playwright) into `src/previews/`, committed; the build fails if a code lacks one.
 
+- **Book (Ed, 2026-11-24):** a print-on-demand edition, with no stock to hold ("I don't want more boxes of past art projects"); Amazon's own printing is convenient but not beautiful enough. Provider research under way.
+
 ## Glossary
 
 Names for the parts of Cryptofloricon, literal and stable, added as they are decided.
