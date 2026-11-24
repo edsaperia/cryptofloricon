@@ -58,7 +58,7 @@
       buttons[j].querySelector('.flower-count').textContent = n ? '×' + n : '';
       buttons[j].classList.toggle('chosen', n > 0);
     }
-    stemCount.textContent = stems.length ? Cipher.describe(code.join('')) : '';
+    stemCount.textContent = stems.length ? Cipher.inWords(code.join('')) : '';
   }
 
   function clearResult() { result.innerHTML = ''; }

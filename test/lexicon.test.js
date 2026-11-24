@@ -90,13 +90,14 @@ test('a well-formed bouquet that spells nothing decodes to no entries', () => {
   assert.deepEqual(res, { ok: true, code: '555555', entries: [] });
 });
 
-test('describe names the flowers and counts in words, in the 2015 display order', () => {
+test('inWords names the flowers in natural words, in the 2015 display order', () => {
   // Display order (Ed, 18c): Chrysanth, Lily, Gerbera, Rose, Carnation; label "Chrysanth" (19b).
-  assert.equal(Cipher.describe('2'), '1 Rose');
-  assert.equal(Cipher.describe('13444'), '1 Chrysanth, 1 Lily, 3 Carnations');
-  assert.equal(Cipher.describe('1334'), '2 Chrysanths, 1 Lily, 1 Carnation');
-  assert.equal(Cipher.describe('2445'), '1 Gerbera, 1 Rose, 2 Carnations');
-  assert.equal(Cipher.describe('12345'), '1 Chrysanth, 1 Lily, 1 Gerbera, 1 Rose, 1 Carnation');
+  assert.equal(Cipher.inWords('2'), 'A rose');
+  assert.equal(Cipher.inWords('13444'), 'A chrysanth, a lily and three carnations');
+  assert.equal(Cipher.inWords('1334'), 'Two chrysanths, a lily and a carnation');
+  assert.equal(Cipher.inWords('2445'), 'A gerbera, a rose and two carnations');
+  assert.equal(Cipher.inWords('12345'), 'A chrysanth, a lily, a gerbera, a rose and a carnation');
+  assert.equal(Cipher.describe, undefined, 'one helper: the counted style is gone');
 });
 
 test("displayStems orders a bouquet's stems Chrysanth, Lily, Gerbera, Rose, Carnation", () => {
