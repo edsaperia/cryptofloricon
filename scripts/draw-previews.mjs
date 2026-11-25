@@ -6,7 +6,9 @@
  * two or more stems fanned into a bunch and tied with two crossed bands of
  * ribbon (Ed, 2026-11-25, 49–50), a single stem standing alone, with no
  * logotype (48a); and src/previews/site.jpg, the logotype over one stem of
- * each flower, for every other page.
+ * each flower, for every other page. Each bunch is also drawn on its own, on
+ * a clear background and cropped, into src/bunches/<code>.webp, shown under
+ * the passage on the message page (Ed, 2026-11-25).
  *
  *   node scripts/draw-previews.mjs           draw any preview that is missing
  *   node scripts/draw-previews.mjs --all     redraw every preview
@@ -27,6 +29,7 @@ const Cipher = require('../lib/cipher.js');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'src', 'previews');
+const BUNCHES = path.join(ROOT, 'src', 'bunches');
 const WIDTH = 1200;
 const HEIGHT = 630;
 const QUALITY = 60; // JPEG: the paper texture makes PNGs several times larger
@@ -159,11 +162,14 @@ function tie(x, n) {
   x.save(); x.translate(0, 8); x.rotate(0.42); band(x, w, 12, 7); x.restore();
 }
 
-window.draw = async stems => {
+window.draw = async (stems, clear) => {
   const c = document.getElementById('c'), x = c.getContext('2d');
   PAP = PAP || await load(PAPER_URI);
+  x.clearRect(0, 0, c.width, c.height);
+  if (!clear) {
   x.save(); x.filter = 'blur(0.5px)'; x.fillStyle = '#f1e6cc'; x.fillRect(0, 0, c.width, c.height);
   x.fillStyle = x.createPattern(PAP, 'repeat'); x.fillRect(-10, -10, c.width + 20, c.height + 20); x.restore();
+  }
   const n = stems.length, SCALE = 1.5, PIVOT = 0.80, TIE_X = c.width / 2, TIE_Y = 470;
   const spread = Math.min(50, 50 * (n - 1) / 3) / (n - 1) * Math.PI / 180;
   // The middle stems stand in front and a little taller; the outer ones lean out behind.
@@ -176,6 +182,20 @@ window.draw = async stems => {
     x.save(); x.translate(TIE_X, TIE_Y); x.rotate(off * spread); x.drawImage(stem, -w / 2, -h * PIVOT, w, h); x.restore();
   }
   x.save(); x.translate(TIE_X, TIE_Y); tie(x, n); x.restore();
+};
+
+/* The bunch alone: drawn on a clear canvas, cropped to its ink, as WebP. */
+window.bunchImage = async stems => {
+  await window.draw(stems, true);
+  const c = document.getElementById('c'), a = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+  let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+    if (a[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  const m = 4, w = x1 - x0 + 1 + 2 * m, h = y1 - y0 + 1 + 2 * m, out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  out.getContext('2d').drawImage(c, x0 - m, y0 - m, w, h, 0, 0, w, h);
+  return out.toDataURL('image/webp', 0.8);
 };
 </script></body></html>`;
 
@@ -214,14 +234,20 @@ const jobs = codes.map(code => {
 jobs.push({ name: 'site', html: card(Cipher.KEY_ORDER.map(String), { logoWidth: 640, maxStem: 300 }) });
 
 fs.mkdirSync(OUT, { recursive: true });
+fs.mkdirSync(BUNCHES, { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
 let drawn = 0;
 for (const job of jobs) {
   const file = path.join(OUT, job.name + '.jpg');
-  if (!all && fs.existsSync(file)) continue;
+  if (!all && fs.existsSync(file) && (!job.bunch || fs.existsSync(path.join(BUNCHES, job.name + '.webp')))) continue;
   if (job.bunch) {
     await page.setContent(BUNCH_PAGE, { waitUntil: 'load' });
+    const alone = path.join(BUNCHES, job.name + '.webp');
+    if (all || !fs.existsSync(alone)) {
+      const uri = await page.evaluate(stems => window.bunchImage(stems), job.bunch);
+      fs.writeFileSync(alone, Buffer.from(uri.split(',')[1], 'base64'));
+    }
     await page.evaluate(stems => window.draw(stems), job.bunch);
   } else {
     await page.setContent(job.html, { waitUntil: 'load' });

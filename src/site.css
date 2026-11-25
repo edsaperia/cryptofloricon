@@ -193,6 +193,9 @@ h2 a { text-decoration: none; }
 .entry { margin: 0 auto; }
 .passage { text-align: left; }
 .passage p { margin: 0 0 1em; }
+/* The bouquet gathered and tied, under the passage (Ed, 2026-11-25). */
+.bunch { margin: 1.4em auto 0; text-align: center; }
+.bunch img { max-width: 80%; height: auto; }
 .xref { text-decoration: underline; }
 
 .tag-list {
