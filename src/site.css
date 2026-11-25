@@ -208,6 +208,11 @@ h2 a { text-decoration: none; }
 /* ---------- message pages ---------- */
 
 .entry { margin: 0 auto; }
+/* On a message page the title belongs to its text, not to the bouquet above
+   it (Ed, 2026-11-25): a full line clear of the flowers in words, and only
+   its own half-leading above the passage. */
+.entry .flower-words { margin-bottom: var(--line); }
+.entry .title { padding: 0 0 var(--half); }
 .passage { text-align: left; }
 .passage p, .prose p { margin: 0 0 var(--line); }
 .passage p:last-child, .prose p:last-child { margin-bottom: 0; }
