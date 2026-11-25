@@ -344,7 +344,8 @@ function runDecode() {
   ctx.window = ctx;
   for (const f of ['assets/cipher.js', 'assets/lexicon.js', 'assets/decode.js']) vm.runInContext(read(f), ctx, { filename: f });
   const tap = d => { const b = buttons.find(x => x.getAttribute('data-digit') === d); b.onclick({ currentTarget: b }); };
-  return { tap, line: () => els['stem-count'].textContent, clear: () => els.clear.onclick() };
+  const marks = d => buttons.find(x => x.getAttribute('data-digit') === d).querySelector('.flower-count').textContent;
+  return { tap, line: () => els['stem-count'].textContent, clear: () => els.clear.onclick(), marks };
 }
 
 test('Decode names the bouquet in natural words as flowers are tapped', () => {
@@ -356,6 +357,11 @@ test('Decode names the bouquet in natural words as flowers are tapped', () => {
   assert.equal(d.line(), 'A chrysanth and a lily');
   d.tap('4'); d.tap('4');
   assert.equal(d.line(), 'A chrysanth, a lily, and two carnations');
+  // A fleuron under each name per stem chosen (Ed, 51b).
+  assert.equal(d.marks('4'), '\u2766\u2766');
+  assert.equal(d.marks('3'), '\u2766');
+  assert.equal(d.marks('5'), '');
   d.clear();
+  assert.equal(d.marks('4'), '');
   assert.equal(d.line(), '');
 });

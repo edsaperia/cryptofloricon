@@ -236,11 +236,15 @@ h2 a { text-decoration: none; }
 
 /* ---------- decode ---------- */
 
+/* The flowers stand on one ruled ground line, like a botanical plate, with
+   their names beneath it; each stem chosen adds a mark under the name
+   (Ed, 2026-11-25, 51b). No boxes: ink, small capitals and ornament only. */
 .flower-picker {
+  --flower-img: 83px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 0;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -249,31 +253,45 @@ h2 a { text-decoration: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 1 60px;
+  flex: 0 1 64px;
   min-width: 0;
-  padding: 6px 1px 2px;
+  padding: 6px 1px 0;
   font: inherit;
   font-size: 0.72em;
   letter-spacing: -0.01em;
   font-variant: small-caps;
   color: var(--ink);
-  background: rgba(255, 252, 240, 0.35);
-  border: 1px dotted var(--ink-soft);
-  border-radius: 4px;
+  background: none;
+  border: 0;
   cursor: pointer;
   touch-action: manipulation;
 }
-.flower-btn img { height: 83px; width: auto; }
-.flower-btn:active { transform: translateY(1px); }
-.flower-btn:focus:not(:focus-visible) { outline: none; }
-.flower-btn.chosen { border-style: solid; background: rgba(255, 252, 240, 0.7); }
-.flower-count {
+/* The ground line: a double rule at the foot of the stems, unbroken from flower to flower. */
+.flower-btn::before {
+  content: "";
   position: absolute;
-  top: 2px;
-  right: 4px;
-  font-variant: normal;
-  font-weight: bold;
+  left: 0; right: 0;
+  top: calc(6px + var(--flower-img));
+  height: 3px;
+  border-top: 1px solid var(--ink-soft);
+  border-bottom: 1px solid var(--ink-soft);
 }
+.flower-btn img { height: var(--flower-img); width: auto; position: relative; }
+.flower-name { margin-top: 9px; }
+.flower-count {
+  display: block;
+  min-height: 1.5em;
+  font-variant: normal;
+  font-size: 1.15em;
+  letter-spacing: 0.08em;
+}
+/* Hovering lifts the flower a little off the line and underlines its name, as links do. */
+@media (hover: hover) {
+  .flower-btn:hover img { transform: translateY(-3px); }
+  .flower-btn:hover .flower-name { text-decoration: underline; }
+}
+.flower-btn:active img { transform: translateY(0); }
+.flower-btn:focus:not(:focus-visible) { outline: none; }
 
 .bouquet-build { min-height: 112px; margin-top: 14px; display: flex; justify-content: center; align-items: flex-end; }
 .stem-button { background: none; border: 0; padding: 0; cursor: pointer; }
@@ -356,7 +374,7 @@ h2 a { text-decoration: none; }
   /* Andrade's swash capitals and descenders reach well outside the letters' box. */
   .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
   .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
-  .flower-btn img { height: 72px; }
+  .flower-picker { --flower-img: 72px; }
 }
 
 /* ---------- wider screens ---------- */
@@ -372,7 +390,7 @@ h2 a { text-decoration: none; }
     background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
   }
   .flower-btn { flex-basis: 76px; font-size: 0.8em; }
-  .flower-btn img { height: 100px; }
+  .flower-picker { --flower-img: 100px; }
   .bouquet-build { min-height: 130px; }
 }
 
