@@ -130,3 +130,21 @@ test('the build fails when a code has no preview', () => {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+// The bunch under the passage (Ed, 2026-11-25): every message page of two or
+// more stems ends with its bouquet gathered and tied; a single stem has none.
+test('message pages of two or more stems show the tied bunch under the text', () => {
+  for (const code of [...new Set(loadLexicon().map(e => e.code))]) {
+    const html = read(code + '/index.html');
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    if (code.length === 1) {
+      assert.doesNotMatch(main, /class="bunch"/, code);
+      continue;
+    }
+    const m = main.match(/<figure class="bunch"><img src="\.\.\/bunches\/(\d+)\.webp" alt="" width="(\d+)" height="(\d+)"><\/figure>\s*$/);
+    assert.ok(m, code + ': the bunch is the last thing in the main panel');
+    assert.equal(m[1], code);
+    assert.ok(fs.existsSync(path.join(out, 'bunches', code + '.webp')), code);
+    assert.ok(main.indexOf('class="bunch"') > main.lastIndexOf('class="passage"'), code + ': under the passage');
+  }
+});

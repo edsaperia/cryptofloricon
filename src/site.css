@@ -24,6 +24,16 @@
   /* Only for the text logotype, shown if the logo image is missing. */
   --title-font: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
   --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
+  /* Vertical rhythm (Ed, 2026-11-25): every space between blocks is a whole
+     or half line of the body text (16px at 1.65), so the page keeps one beat. */
+  --line: 1.65rem;
+  --half: 0.825rem;
+  /* The stems above a message's title, and the tied bunch under its text (BUNCH_HEIGHT in build.js). */
+  --stem-large: 100px;
+  /* The panel's padding above and below: clear of the corners' ink, which
+     reaches 32px into the text column on a phone and 64px on wider screens,
+     with at least a half line to spare. */
+  --panel-pad: calc(2 * var(--line));
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -32,7 +42,7 @@ html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
 
 body {
   margin: 0;
-  padding: 10px 0 20px;
+  padding: var(--half) 0 var(--line);
   color: var(--ink);
   font: 16px/1.65 var(--body-font);
   background-color: var(--paper);
@@ -79,20 +89,21 @@ img { vertical-align: middle; max-width: 100%; }
   display: flex;
   justify-content: center;
   gap: 2.2em;
-  margin: 0.4em auto 0.2em;
+  margin: var(--half) auto 0;
   font-size: 1.3em;
+  line-height: var(--line);
   font-variant: small-caps;
 }
 .tabs a { text-decoration: none; }
 .tabs a:hover { text-decoration: underline; }
-.tabs.bottom { margin-top: 1em; }
+.tabs.bottom { margin-top: var(--line); }
 
 /* ---------- the main panel with its ornamental corners ---------- */
 
 .border {
   display: block;
-  margin: 10px auto 0;
-  padding: 56px 18px 56px;
+  margin: var(--half) auto 0;
+  padding: var(--panel-pad) 18px;
   text-align: center;
   background:
     {{cornerTL}} left top / 75px 100px no-repeat,
@@ -101,6 +112,12 @@ img { vertical-align: middle; max-width: 100%; }
     {{cornerBR}} right bottom / 75px 100px no-repeat;
 }
 
+/* Nothing adds its own margin at the panel's top or bottom edge: the padding is the space. */
+.border > :first-child { margin-top: 0; }
+.border > :last-child { margin-bottom: 0; }
+/* A script title opening the panel already has its swashes' half-leading above it. */
+.border > .title:first-child { padding-top: 0; }
+
 .title {
   /* Andrade's swash capitals and descenders need room between lines (Ed, 2026-11-23). */
   font: 2em/1.95 var(--body-font);
@@ -108,7 +125,7 @@ img { vertical-align: middle; max-width: 100%; }
      the body face's, narrowed to Andrade's own (0.23em; Libre Caslon's is 0.272em). */
   word-spacing: -0.042em;
   margin: 0 auto;
-  padding: 12px 0;
+  padding: var(--half) 0;
   font-weight: normal;
 }
 /*
@@ -132,10 +149,10 @@ img { vertical-align: middle; max-width: 100%; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
 
-h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; margin: 1.4em 0 0.3em; }
+h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; line-height: var(--line); margin: var(--line) 0 var(--half); }
 h2 a { text-decoration: none; }
 
-.divider { margin: 14px auto; }
+.divider { margin: var(--line) auto; }
 .divider svg, .divider img { display: block; margin: 0 auto; height: auto; overflow: visible; }
 /* The divider is inlined by build.js; its lines take the corners' ink and weight. */
 .divider path {
@@ -148,16 +165,16 @@ h2 a { text-decoration: none; }
 .divider-large svg, .divider-large img { width: 70%; max-width: 360px; }
 .divider-small svg, .divider-small img { width: 40%; max-width: 200px; }
 
-.intro { margin: 0 auto 1em; max-width: 30em; }
+.intro { margin: 0 auto var(--line); max-width: 30em; }
 
-.calls { font-size: 1.2em; font-variant: small-caps; margin: 1.2em 0 0.4em; }
+.calls { font-size: 1.2em; line-height: var(--line); font-variant: small-caps; margin: var(--line) 0 0; }
 .call { text-decoration: none; white-space: nowrap; }
 /* "– or –" sits on its own line between the two calls, as on the 2015 site. */
 .calls .joiner { display: block; }
 .call:hover { text-decoration: underline; }
 .joiner { font-style: italic; font-variant: normal; font-size: 0.85em; }
 
-.buttons { margin: 1em 0; font-size: 1.2em; font-variant: small-caps; }
+.buttons { margin: var(--line) 0 0; font-size: 1.2em; font-variant: small-caps; }
 .buttons a { text-decoration: none; }
 .link-button {
   font: inherit;
@@ -170,7 +187,7 @@ h2 a { text-decoration: none; }
 }
 .link-button:hover { color: var(--ink-dark); text-decoration: underline; }
 
-.hint { font-style: italic; margin: 0 0 0.6em; }
+.hint { font-style: italic; margin: 0 0 var(--half); }
 
 /* ---------- bouquets: the stems side by side ---------- */
 
@@ -182,17 +199,27 @@ h2 a { text-decoration: none; }
   min-height: 1px;
 }
 .bouquet .stem { height: 60px; width: auto; }
-.bouquet-large .stem { height: 100px; }
+.bouquet-large .stem { height: var(--stem-large); }
 .bouquet-small .stem { height: 36px; }
 .bouquet-small { min-width: 48px; }
 
-.flower-words { margin: 4px 0 0; font-variant: small-caps; color: var(--ink-soft); }
+.flower-words { margin: 0; font-variant: small-caps; color: var(--ink-soft); }
 
 /* ---------- message pages ---------- */
 
 .entry { margin: 0 auto; }
+/* On a message page the title belongs to its text, not to the bouquet above
+   it (Ed, 2026-11-25): a full line clear of the flowers in words, and only
+   its own half-leading above the passage. */
+.entry .flower-words { margin-bottom: var(--line); }
+.entry .title { padding: 0 0 var(--half); }
 .passage { text-align: left; }
-.passage p { margin: 0 0 1em; }
+.passage p, .prose p { margin: 0 0 var(--line); }
+.passage p:last-child, .prose p:last-child { margin-bottom: 0; }
+/* The bouquet gathered and tied, under the passage (Ed, 2026-11-25). */
+.bunch { margin: var(--line) auto 0; text-align: center; }
+/* As tall as the stems above the title (Ed, 2026-11-25). */
+.bunch img { display: block; margin: 0 auto; height: var(--stem-large); width: auto; }
 .xref { text-decoration: underline; }
 
 .tag-list {
@@ -210,15 +237,19 @@ h2 a { text-decoration: none; }
 .tag-list a:hover { text-decoration: underline; }
 .tag-list .current { text-decoration: underline; }
 
-.shared-note { font-style: italic; }
+.shared-note { font-style: italic; margin: 0 0 var(--line); }
 
 /* ---------- decode ---------- */
 
+/* The flowers stand on one ruled ground line, like a botanical plate, with
+   their names beneath it; each stem chosen adds a mark under the name
+   (Ed, 2026-11-25, 51b). No boxes: ink, small capitals and ornament only. */
 .flower-picker {
+  --flower-img: 83px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 0;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -227,31 +258,45 @@ h2 a { text-decoration: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 1 60px;
+  flex: 0 1 64px;
   min-width: 0;
-  padding: 6px 1px 2px;
+  padding: 6px 1px 0;
   font: inherit;
   font-size: 0.72em;
   letter-spacing: -0.01em;
   font-variant: small-caps;
   color: var(--ink);
-  background: rgba(255, 252, 240, 0.35);
-  border: 1px dotted var(--ink-soft);
-  border-radius: 4px;
+  background: none;
+  border: 0;
   cursor: pointer;
   touch-action: manipulation;
 }
-.flower-btn img { height: 83px; width: auto; }
-.flower-btn:active { transform: translateY(1px); }
-.flower-btn:focus:not(:focus-visible) { outline: none; }
-.flower-btn.chosen { border-style: solid; background: rgba(255, 252, 240, 0.7); }
-.flower-count {
+/* The ground line: a double rule at the foot of the stems, unbroken from flower to flower. */
+.flower-btn::before {
+  content: "";
   position: absolute;
-  top: 2px;
-  right: 4px;
-  font-variant: normal;
-  font-weight: bold;
+  left: 0; right: 0;
+  top: calc(6px + var(--flower-img));
+  height: 3px;
+  border-top: 1px solid var(--ink-soft);
+  border-bottom: 1px solid var(--ink-soft);
 }
+.flower-btn img { height: var(--flower-img); width: auto; position: relative; }
+.flower-name { margin-top: 9px; }
+.flower-count {
+  display: block;
+  min-height: 1.5em;
+  font-variant: normal;
+  font-size: 1.15em;
+  letter-spacing: 0.08em;
+}
+/* Hovering lifts the flower a little off the line and underlines its name, as links do. */
+@media (hover: hover) {
+  .flower-btn:hover img { transform: translateY(-3px); }
+  .flower-btn:hover .flower-name { text-decoration: underline; }
+}
+.flower-btn:active img { transform: translateY(0); }
+.flower-btn:focus:not(:focus-visible) { outline: none; }
 
 .bouquet-build { min-height: 112px; margin-top: 14px; display: flex; justify-content: center; align-items: flex-end; }
 .stem-button { background: none; border: 0; padding: 0; cursor: pointer; }
@@ -303,18 +348,17 @@ h2 a { text-decoration: none; }
 /* ---------- story ---------- */
 
 .prose { text-align: left; }
-.prose p { margin: 0 0 1em; }
 /* The story's drop cap is drawn (build.js); the letter stays in the text, unseen. */
 .dropcap { float: left; font-size: 3.2em; line-height: 1; padding: 0.12em 0.08em 0 0; }
 /* The webfont's float was 0.8em tall (its line-height), so the text wraps after two lines. */
 .dropcap svg { display: block; height: 1em; margin-bottom: -0.2em; overflow: visible; fill: currentColor; }
 .dropcap-letter { font-size: 0; }
 /* The author's initials close the introduction, as in the 2013 print master. */
-.prose .signature { text-align: right; font-style: italic; margin-top: 0.5em; }
+.prose .signature { text-align: right; font-style: italic; margin-top: var(--half); }
 
 /* ---------- footer ---------- */
 
-.site-footer { text-align: center; font-size: 0.72em; line-height: 1.5; margin-top: 0.8em; }
+.site-footer { text-align: center; font-size: 0.72em; line-height: 1.5; margin-top: var(--half); }
 .credits { margin: 0.3em 0; }
 .credits i { color: var(--ink-soft); }
 .credit { white-space: nowrap; }
@@ -335,22 +379,23 @@ h2 a { text-decoration: none; }
   /* Andrade's swash capitals and descenders reach well outside the letters' box. */
   .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
   .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
-  .flower-btn img { height: 72px; }
+  .flower-picker { --flower-img: 72px; }
 }
 
 /* ---------- wider screens ---------- */
 
 @media (min-width: 480px) {
   :root { --ornament-stroke: 0.66px; }
-  body { padding-top: 40px; }
+  body { padding-top: calc(1.5 * var(--line)); }
   .logo img { width: 90%; min-width: 400px; }
   .logotype { font-size: 4.6em; }
+  :root { --panel-pad: calc(3 * var(--line)); }
   .border {
-    padding: 60px 40px 60px;
+    padding: var(--panel-pad) 40px;
     background-size: 150px 200px, 150px 200px, 150px 200px, 150px 200px;
   }
   .flower-btn { flex-basis: 76px; font-size: 0.8em; }
-  .flower-btn img { height: 100px; }
+  .flower-picker { --flower-img: 100px; }
   .bouquet-build { min-height: 130px; }
 }
 

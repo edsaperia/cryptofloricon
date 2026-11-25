@@ -55,7 +55,8 @@
     for (var j = 0; j < buttons.length; j++) {
       var dg = buttons[j].getAttribute('data-digit');
       var n = stems.filter(function (s) { return s === dg; }).length;
-      buttons[j].querySelector('.flower-count').textContent = n ? '×' + n : '';
+      // A fleuron under the name for each stem of that flower chosen (Ed, 51b).
+      buttons[j].querySelector('.flower-count').textContent = '\u2766'.repeat(n);
       buttons[j].classList.toggle('chosen', n > 0);
     }
     stemCount.textContent = stems.length ? Cipher.inWords(code.join('')) : '';

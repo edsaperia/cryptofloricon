@@ -91,6 +91,17 @@ function loadDrawings() {
  */
 const SITE_URL = 'https://cryptofloricon.com';
 const PREVIEWS = path.join(SRC, 'previews');
+// The bunch alone, under the passage on a message page (Ed, 2026-11-25): drawn
+// with the previews by scripts/draw-previews.mjs, one per code of two or more stems.
+const BUNCHES = path.join(SRC, 'bunches');
+/* A bunch's width and height, from its WebP header (VP8X, as the browser writes it with alpha). */
+// Every bunch is shown as tall as the stems above the title (Ed, 2026-11-25).
+const BUNCH_HEIGHT = 100;
+function BUNCH_SIZE(code) {
+  const b = fs.readFileSync(path.join(BUNCHES, code + '.webp'));
+  if (b.toString('ascii', 12, 16) !== 'VP8X') throw new Error(code + '.webp: expected an extended WebP');
+  return { width: 1 + b.readUIntLE(24, 3), height: 1 + b.readUIntLE(27, 3) };
+}
 const PREVIEW_SIZE = { width: 1200, height: 630 };
 const SITE_SHARE = {
   title: 'Cryptofloricon',
@@ -414,6 +425,12 @@ ${divider(r, 'small')}
     throw new Error(`no share preview for ${noPreview.join(', ')}. Draw it: node scripts/draw-previews.mjs`);
   }
   for (const name of [...codes, 'site']) copy(out, path.join(PREVIEWS, name + '.jpg'), 'previews/' + name + '.jpg');
+  const bunched = codes.filter(code => code.length > 1);
+  const noBunch = bunched.filter(code => !fs.existsSync(path.join(BUNCHES, code + '.webp')));
+  if (noBunch.length) {
+    throw new Error(`no bunch drawing for ${noBunch.join(', ')}. Draw it: node scripts/draw-previews.mjs`);
+  }
+  for (const code of bunched) copy(out, path.join(BUNCHES, code + '.webp'), 'bunches/' + code + '.webp');
 
   /* ---------- a page per code (the old site's /<code> scheme) ---------- */
 
@@ -440,7 +457,11 @@ ${divider(r, 'small')}
 ${renderBody(e.body, byId, id => entryHref(id, r))}
   </div>
 </article>`).join(`\n${divider(r, 'small')}\n`);
-        return shared + articles;
+        // The bouquet gathered and tied, under the text; a single stem is already shown above.
+        const bunch = code.length > 1
+          ? `\n<figure class="bunch"><img src="${r}bunches/${code}.webp" alt="" width="${Math.round(BUNCH_SIZE(code).width * BUNCH_HEIGHT / BUNCH_SIZE(code).height)}" height="${BUNCH_HEIGHT}"></figure>`
+          : '';
+        return shared + articles + bunch;
       }
     });
   }

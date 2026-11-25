@@ -2,9 +2,13 @@
 /*
  * Draws the share previews: the 1200x630 picture a chat or social site
  * shows when someone pastes a message link (Ed, 2026-11-23). One per code,
- * src/previews/<code>.jpg, showing the bouquet's woodcut stems on the paper
- * with the logotype small above; and src/previews/site.jpg, the logotype
- * over one stem of each flower, for every other page.
+ * src/previews/<code>.jpg, showing the bouquet's woodcut stems on the paper:
+ * two or more stems fanned into a bunch and tied with two crossed bands of
+ * ribbon (Ed, 2026-11-25, 49–50), a single stem standing alone, with no
+ * logotype (48a); and src/previews/site.jpg, the logotype over one stem of
+ * each flower, for every other page. Each bunch is also drawn on its own, on
+ * a clear background and cropped, into src/bunches/<code>.webp, shown under
+ * the passage on the message page (Ed, 2026-11-25).
  *
  *   node scripts/draw-previews.mjs           draw any preview that is missing
  *   node scripts/draw-previews.mjs --all     redraw every preview
@@ -25,6 +29,7 @@ const Cipher = require('../lib/cipher.js');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'src', 'previews');
+const BUNCHES = path.join(ROOT, 'src', 'bunches');
 const WIDTH = 1200;
 const HEIGHT = 630;
 const QUALITY = 60; // JPEG: the paper texture makes PNGs several times larger
@@ -63,25 +68,191 @@ function card(stems, { logoWidth, maxStem }) {
   .bouquet { display: flex; align-items: flex-end; justify-content: center; gap: ${GAP}px; }
   .stem { height: ${stemHeight}px; width: auto; display: block; }
 </style></head><body>
-<img class="logo" src="${LOGO}" alt="">
+${logoWidth ? `<img class="logo" src="${LOGO}" alt="">` : ''}
 <div class="bouquet">${imgs}</div>
 </body></html>`;
 }
 
+/* The bunch: the stems fanned from one point and tied there. Drawn on a
+   canvas so that each flower can be filled with paper (a flower in front
+   then hides the ones behind) and the ribbon drawn in uneven, woodcut-like
+   lines. The randomness is seeded, so a redraw gives the same picture. */
+const BUNCH_PAGE = `<!doctype html><html><head><style>html,body{margin:0}</style></head><body>
+<canvas id="c" width="${WIDTH}" height="${HEIGHT}"></canvas><script>
+const FLOWER = ${JSON.stringify(FLOWER)};
+const PAPER_URI = "${PAPER}";
+const INK = '#4f1606';
+const load = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = src; });
+let PAP;
+
+/* A copy of a stem with everything inside its outline filled with paper. */
+function filled(img) {
+  const w = img.width + 2, h = img.height + 2, c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const x = c.getContext('2d');
+  x.drawImage(img, 1, 1);
+  const d = x.getImageData(0, 0, w, h), a = d.data, outside = new Uint8Array(w * h), stack = [0];
+  outside[0] = 1;
+  while (stack.length) {
+    const p = stack.pop(), px = p % w;
+    for (const q of [p - 1, p + 1, p - w, p + w]) {
+      if (q < 0 || q >= outside.length || outside[q] || Math.abs(q % w - px) > 1 || a[q * 4 + 3] > 60) continue;
+      outside[q] = 1; stack.push(q);
+    }
+  }
+  for (let p = 0; p < outside.length; p++) if (!outside[p] && a[p * 4 + 3] <= 60) a[p * 4 + 3] = 255;
+  x.putImageData(d, 0, 0);
+  x.globalCompositeOperation = 'source-atop';
+  x.fillStyle = x.createPattern(PAP, 'repeat'); x.fillRect(0, 0, w, h);
+  x.globalCompositeOperation = 'source-over';
+  x.drawImage(img, 1, 1);
+  return c;
+}
+
+/* Uneven ink: a line that wanders a little and swells and thins along its length. */
+let seed = 1;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+function curve(p0, c, p1, n = 28) {
+  const out = [];
+  for (let i = 0; i <= n; i++) { const t = i / n, u = 1 - t; out.push([u*u*p0[0] + 2*u*t*c[0] + t*t*p1[0], u*u*p0[1] + 2*u*t*c[1] + t*t*p1[1]]); }
+  return out;
+}
+function straight(p0, p1, n = 10) {
+  const out = [];
+  for (let i = 0; i <= n; i++) { const t = i / n; out.push([p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t]); }
+  return out;
+}
+const wobble = (pts, a = 1.8) => pts.map(([x, y], i) => i === 0 || i === pts.length - 1 ? [x, y] : [x + (rnd() - 0.5) * a, y + (rnd() - 0.5) * a]);
+function ink(x, pts, w) {
+  const r = pts.map(() => rnd()), sm = r.map((v, i) => (r[Math.max(0, i - 1)] + v + r[Math.min(r.length - 1, i + 1)]) / 3);
+  for (let i = 1; i < pts.length; i++) {
+    x.lineWidth = w * (0.55 + 0.9 * sm[i]);
+    x.beginPath(); x.moveTo(...pts[i - 1]); x.lineTo(...pts[i]); x.stroke();
+  }
+}
+function outline(x, pts) { x.beginPath(); pts.forEach(([a, b], i) => i ? x.lineTo(a, b) : x.moveTo(a, b)); x.closePath(); }
+
+/* One band of ribbon round the stems, half-width W and height H, its edges
+   curving by S as a ring does seen from a little above, shaded at the sides. */
+function band(x, W, H, S) {
+  const top = curve([-W, -H / 2], [0, -H / 2 + S * 2], [W, -H / 2]);
+  const bottom = curve([W, H / 2], [0, H / 2 + S * 2], [-W, H / 2]);
+  const shape = [...top, ...bottom];
+  outline(x, shape); x.fill();
+  x.save(); outline(x, shape); x.clip();
+  const hatch = (from, to, step, w) => {
+    for (let xx = from; xx <= to; xx += step) {
+      const t = xx / W;
+      ink(x, wobble(straight([xx, -H / 2 + S * (1 - t * t) * 2 - 3], [xx, H / 2 + S * (1 - t * t) * 2 + 3], 6), 1.2), w);
+    }
+  };
+  hatch(W * 0.55, W, 3.2, 1.6); hatch(-W, -W * 0.78, 3.6, 1.3);
+  x.restore();
+  ink(x, wobble(top), 4); ink(x, wobble(bottom), 4);
+  ink(x, wobble(straight(top[top.length - 1], bottom[0], 4)), 4);
+  ink(x, wobble(straight(bottom[bottom.length - 1], top[0], 4)), 4);
+}
+
+/* Two tight bands crossing, one set a little above the other (50b). */
+function tie(x, n) {
+  seed = 23;
+  x.strokeStyle = INK; x.lineCap = 'round'; x.lineJoin = 'round'; x.fillStyle = x.createPattern(PAP, 'repeat');
+  const w = (13 + 4.5 * n) * 0.55;
+  x.save(); x.translate(0, -6); x.rotate(-0.42); band(x, w, 12, 7); x.restore();
+  x.save(); x.translate(0, 8); x.rotate(0.42); band(x, w, 12, 7); x.restore();
+}
+
+window.draw = async (stems, clear) => {
+  const c = document.getElementById('c'), x = c.getContext('2d');
+  PAP = PAP || await load(PAPER_URI);
+  x.clearRect(0, 0, c.width, c.height);
+  if (!clear) {
+  x.save(); x.filter = 'blur(0.5px)'; x.fillStyle = '#f1e6cc'; x.fillRect(0, 0, c.width, c.height);
+  x.fillStyle = x.createPattern(PAP, 'repeat'); x.fillRect(-10, -10, c.width + 20, c.height + 20); x.restore();
+  }
+  const n = stems.length, SCALE = 1.5, PIVOT = 0.80, TIE_X = c.width / 2, TIE_Y = 470;
+  const spread = Math.min(50, 50 * (n - 1) / 3) / (n - 1) * Math.PI / 180;
+  // The middle stems stand in front and a little taller; the outer ones lean out behind.
+  const order = stems.map((d, i) => i).sort((p, q) => Math.abs(q - (n - 1) / 2) - Math.abs(p - (n - 1) / 2));
+  for (const i of order) {
+    const stem = filled(await load(FLOWER[stems[i]]));
+    const off = i - (n - 1) / 2;
+    const h = ${STEM_NATURAL_HEIGHT} * SCALE * (1 - 0.10 * Math.abs(off) / Math.max(1, (n - 1) / 2));
+    const w = stem.width * h / stem.height;
+    x.save(); x.translate(TIE_X, TIE_Y); x.rotate(off * spread); x.drawImage(stem, -w / 2, -h * PIVOT, w, h); x.restore();
+  }
+  x.save(); x.translate(TIE_X, TIE_Y); tie(x, n); x.restore();
+};
+
+/* The bunch alone: drawn on a clear canvas, cropped to its ink, as WebP. */
+window.bunchImage = async stems => {
+  await window.draw(stems, true);
+  const c = document.getElementById('c'), a = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+  let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+    if (a[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  const m = 4, w = x1 - x0 + 1 + 2 * m, h = y1 - y0 + 1 + 2 * m, out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  out.getContext('2d').drawImage(c, x0 - m, y0 - m, w, h, 0, 0, w, h);
+  return out.toDataURL('image/webp', 0.8);
+};
+</script></body></html>`;
+
 const lexicon = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'lexicon.json'), 'utf8'));
 const codes = [...new Set(lexicon.map(e => e.code))].sort();
-const jobs = codes.map(code => ({ name: code, html: card(Cipher.displayStems(code), { logoWidth: 300, maxStem: 440 }) }));
+/* The order of the stems across a bunch, left to right (Ed, 2026-11-25):
+   flowers of a kind are mixed in among the others rather than standing
+   together, but not in a strict alternation either. A seeded shuffle per
+   code, keeping the first arrangement that has as few side-by-side pairs
+   of a kind as the code allows, or one more if that would only alternate. */
+function arrange(code) {
+  const stems = Cipher.displayStems(code);
+  const pairs = a => a.reduce((k, d, i) => k + (i > 0 && a[i - 1] === d), 0);
+  const alternates = a => a.length >= 4 && a.every((d, i) => i < 2 || d === a[i - 2]);
+  let seed = [...code].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 2147483647, 7) || 1;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const shuffles = [];
+  for (let t = 0; t < 400; t++) {
+    const a = stems.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    shuffles.push(a);
+  }
+  const least = Math.min(...shuffles.map(pairs));
+  const irregular = shuffles.filter(a => !alternates(a));
+  const fewest = irregular.length ? Math.min(...irregular.map(pairs)) : least;
+  const allowed = fewest <= least + 1 ? fewest : least;
+  return shuffles.find(a => pairs(a) === allowed && (!alternates(a) || !irregular.length));
+}
+
+const jobs = codes.map(code => {
+  const stems = Cipher.displayStems(code);
+  return stems.length === 1
+    ? { name: code, html: card(stems, { logoWidth: 0, maxStem: 440 }) }
+    : { name: code, bunch: arrange(code) };
+});
 jobs.push({ name: 'site', html: card(Cipher.KEY_ORDER.map(String), { logoWidth: 640, maxStem: 300 }) });
 
 fs.mkdirSync(OUT, { recursive: true });
+fs.mkdirSync(BUNCHES, { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
 let drawn = 0;
 for (const job of jobs) {
   const file = path.join(OUT, job.name + '.jpg');
-  if (!all && fs.existsSync(file)) continue;
-  await page.setContent(job.html, { waitUntil: 'load' });
-  await page.evaluate(() => Promise.all([...document.images].map(i => i.decode())));
+  if (!all && fs.existsSync(file) && (!job.bunch || fs.existsSync(path.join(BUNCHES, job.name + '.webp')))) continue;
+  if (job.bunch) {
+    await page.setContent(BUNCH_PAGE, { waitUntil: 'load' });
+    const alone = path.join(BUNCHES, job.name + '.webp');
+    if (all || !fs.existsSync(alone)) {
+      const uri = await page.evaluate(stems => window.bunchImage(stems), job.bunch);
+      fs.writeFileSync(alone, Buffer.from(uri.split(',')[1], 'base64'));
+    }
+    await page.evaluate(stems => window.draw(stems), job.bunch);
+  } else {
+    await page.setContent(job.html, { waitUntil: 'load' });
+    await page.evaluate(() => Promise.all([...document.images].map(i => i.decode())));
+  }
   await page.screenshot({ path: file, type: 'jpeg', quality: QUALITY });
   drawn++;
 }
