@@ -93,10 +93,10 @@ test('a well-formed bouquet that spells nothing decodes to no entries', () => {
 test('inWords names the flowers in natural words, in the 2015 display order', () => {
   // Display order (Ed, 18c): Chrysanth, Lily, Gerbera, Rose, Carnation; label "Chrysanth" (19b).
   assert.equal(Cipher.inWords('2'), 'A rose');
-  assert.equal(Cipher.inWords('13444'), 'A chrysanth, a lily and three carnations');
-  assert.equal(Cipher.inWords('1334'), 'Two chrysanths, a lily and a carnation');
-  assert.equal(Cipher.inWords('2445'), 'A gerbera, a rose and two carnations');
-  assert.equal(Cipher.inWords('12345'), 'A chrysanth, a lily, a gerbera, a rose and a carnation');
+  assert.equal(Cipher.inWords('13444'), 'A chrysanth, a lily, and three carnations');
+  assert.equal(Cipher.inWords('1334'), 'Two chrysanths, a lily, and a carnation');
+  assert.equal(Cipher.inWords('2445'), 'A gerbera, a rose, and two carnations');
+  assert.equal(Cipher.inWords('12345'), 'A chrysanth, a lily, a gerbera, a rose, and a carnation');
   assert.equal(Cipher.describe, undefined, 'one helper: the counted style is gone');
 });
 

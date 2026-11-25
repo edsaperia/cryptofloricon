@@ -86,8 +86,8 @@ test('/1334/ shows its stems and flowers in the 2015 display order', () => {
   const html = read('1334/index.html');
   const stems = [...html.matchAll(/<img class="stem"[^>]*data-digit="(\d)"/g)].map(m => m[1]);
   assert.deepEqual(stems, ['3', '3', '1', '4']);
-  assert.ok(html.includes('aria-label="Two chrysanths, a lily and a carnation"'));
-  assert.ok(html.includes('<p class="flower-words">Two chrysanths, a lily and a carnation</p>'));
+  assert.ok(html.includes('aria-label="Two chrysanths, a lily, and a carnation"'));
+  assert.ok(html.includes('<p class="flower-words">Two chrysanths, a lily, and a carnation</p>'));
 });
 
 test('the Decode buttons run Chrysanth, Lily, Gerbera, Rose, Carnation', () => {
@@ -225,7 +225,7 @@ test('Browse rows show no flowers-in-words text, but keep it for screen readers'
   }
   const despair = browseRows(read('browse/index.html')).find(r => r.includes('href="../2445/"'));
   assert.equal(visibleText(despair), 'Despair');
-  assert.ok(despair.includes('role="img" aria-label="A gerbera, a rose and two carnations"'));
+  assert.ok(despair.includes('role="img" aria-label="A gerbera, a rose, and two carnations"'));
 });
 
 test('each Browse row links to its message, title first and then its bouquet', () => {
@@ -299,7 +299,7 @@ test('/2244/ and /2/ name their flowers in natural words under the bouquet', () 
   assert.ok(read('2244/index.html').includes('<p class="flower-words">Two roses and two carnations</p>'));
   assert.ok(read('2/index.html').includes('<p class="flower-words">A rose</p>'));
   assert.ok(read('2244/index.html').includes('role="img" aria-label="Two roses and two carnations"'));
-  assert.ok(read('1334/index.html').includes('<p class="flower-words">Two chrysanths, a lily and a carnation</p>'));
+  assert.ok(read('1334/index.html').includes('<p class="flower-words">Two chrysanths, a lily, and a carnation</p>'));
 });
 
 test('no built file names flowers in the counted style', () => {
@@ -355,7 +355,7 @@ test('Decode names the bouquet in natural words as flowers are tapped', () => {
   d.tap('1');
   assert.equal(d.line(), 'A chrysanth and a lily');
   d.tap('4'); d.tap('4');
-  assert.equal(d.line(), 'A chrysanth, a lily and two carnations');
+  assert.equal(d.line(), 'A chrysanth, a lily, and two carnations');
   d.clear();
   assert.equal(d.line(), '');
 });

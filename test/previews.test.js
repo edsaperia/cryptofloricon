@@ -47,11 +47,11 @@ test('the flowers in words, in the site order with number words', () => {
   assert.equal(Cipher.inWords('22'), 'Two roses');
   assert.equal(Cipher.inWords('111'), 'Three lilies');
   assert.equal(Cipher.inWords('23'), 'A chrysanth and a rose');
-  assert.equal(Cipher.inWords('1344'), 'A chrysanth, a lily and two carnations');
+  assert.equal(Cipher.inWords('1344'), 'A chrysanth, a lily, and two carnations');
   assert.equal(Cipher.inWords('2244'), 'Two roses and two carnations');
-  assert.equal(Cipher.inWords('14455'), 'A lily, two gerberas and two carnations');
+  assert.equal(Cipher.inWords('14455'), 'A lily, two gerberas, and two carnations');
   assert.equal(Cipher.inWords('555555'), 'Six gerberas');
-  assert.equal(Cipher.inWords('12345'), 'A chrysanth, a lily, a gerbera, a rose and a carnation');
+  assert.equal(Cipher.inWords('12345'), 'A chrysanth, a lily, a gerbera, a rose, and a carnation');
 });
 
 test('/2/ shares as "A rose", "What could it mean?"', () => {
@@ -76,7 +76,7 @@ test('/2244/ shares as "Two roses and two carnations"', () => {
 
 test('/1334/, the code two entries once shared, has its own preview', () => {
   const t = shareTags(read('1334/index.html'));
-  assert.equal(t['og:title'], 'Two chrysanths, a lily and a carnation');
+  assert.equal(t['og:title'], 'Two chrysanths, a lily, and a carnation');
   assert.equal(t['og:image'], 'https://cryptofloricon.com/previews/1334.jpg');
 });
 
