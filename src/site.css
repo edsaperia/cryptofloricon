@@ -127,8 +127,7 @@ img { vertical-align: middle; max-width: 100%; }
 }
 /* Three lines, as on the 2015 site: the phrase, "– to –" on its own line, the phrase. */
 .title .line, .title .joiner { display: block; }
-/* The webfont had no italic, so browsers slanted "– to –" by 14° (a quarter shear) about its baseline. */
-.title .joiner svg { transform: skewX(-14.04deg); transform-origin: 0 0.605em; }
+/* "– to –" stands upright, like the rest of the title (Ed, 2026-11-25); the 2015 site slanted it. */
 .title .line { text-wrap: balance; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
