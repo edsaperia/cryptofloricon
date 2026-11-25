@@ -280,15 +280,20 @@ function build(out, options = {}) {
     return `<a class="logo" href="${r}">${inner}</a>`;
   }
 
+  /*
+   * The foot of every page (Ed, 46b): the reading links as a second row of
+   * tabs (Encode and Decode stay at the top), then a small colophon. The
+   * credits run on two lines on wide screens and one per line on a phone;
+   * the copyright and the contact address share the last line.
+   */
   function footer(r) {
-    return `<footer class="site-footer">
-  <p class="footer-links">&bull; <a href="${r}story/">Story</a> &bull; <a href="${r}browse/">Browse</a> &bull;</p>
-  <p class="credits">Invented &amp; produced by Edward Saperia<br>
-  Written by Sasha Garwood &amp; Grant Howitt<br>
-  Website by Kimi Lawrie &amp; Eugen Rochko<br>
-  Graphics by Sam Ballard &amp; Евгений Олегович</p>
-  <p class="credits">&copy; Original Content London</p>
-  <p class="credits contact"><a href="mailto:ed@newspeak.house">ed@newspeak.house</a></p>
+    const credit = (role, names) => `<span class="credit"><i>${role}</i> ${names}</span>`;
+    const sep = '<span class="sep"> &middot; </span>';
+    return `<nav class="tabs bottom"><a href="${r}story/">&bull; Story &bull;</a><a href="${r}browse/">&bull; Browse &bull;</a></nav>
+<footer class="site-footer">
+  <p class="credits">${credit('Invented &amp; produced by', 'Edward Saperia')}${sep}${credit('written by', 'Sasha Garwood &amp; Grant Howitt')}<br>
+  ${credit('website by', 'Kimi Lawrie &amp; Eugen Rochko')}${sep}${credit('graphics by', 'Sam Ballard &amp; Евгений Олегович')}</p>
+  <p class="colophon">&copy; Original Content London<span class="sep"> &middot; </span><a href="mailto:ed@newspeak.house">ed@newspeak.house</a></p>
 </footer>`;
   }
 
@@ -320,7 +325,6 @@ ${tabs(r)}
 <main class="${mainClass}">
 ${main(r)}
 </main>
-${tabs(r, 'bottom')}
 ${footer(r)}
 </div>
 ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
