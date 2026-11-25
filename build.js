@@ -95,8 +95,8 @@ const PREVIEWS = path.join(SRC, 'previews');
 // with the previews by scripts/draw-previews.mjs, one per code of two or more stems.
 const BUNCHES = path.join(SRC, 'bunches');
 /* A bunch's width and height, from its WebP header (VP8X, as the browser writes it with alpha). */
-// Every bunch at one scale, so a bunch of six is wider than a bunch of two.
-const BUNCH_SCALE = 0.68;
+// Every bunch is shown as tall as the stems above the title (Ed, 2026-11-25).
+const BUNCH_HEIGHT = 100;
 function BUNCH_SIZE(code) {
   const b = fs.readFileSync(path.join(BUNCHES, code + '.webp'));
   if (b.toString('ascii', 12, 16) !== 'VP8X') throw new Error(code + '.webp: expected an extended WebP');
@@ -459,7 +459,7 @@ ${renderBody(e.body, byId, id => entryHref(id, r))}
 </article>`).join(`\n${divider(r, 'small')}\n`);
         // The bouquet gathered and tied, under the text; a single stem is already shown above.
         const bunch = code.length > 1
-          ? `\n<figure class="bunch"><img src="${r}bunches/${code}.webp" alt="" width="${Math.round(BUNCH_SIZE(code).width * BUNCH_SCALE)}" height="${Math.round(BUNCH_SIZE(code).height * BUNCH_SCALE)}"></figure>`
+          ? `\n<figure class="bunch"><img src="${r}bunches/${code}.webp" alt="" width="${Math.round(BUNCH_SIZE(code).width * BUNCH_HEIGHT / BUNCH_SIZE(code).height)}" height="${BUNCH_HEIGHT}"></figure>`
           : '';
         return shared + articles + bunch;
       }
