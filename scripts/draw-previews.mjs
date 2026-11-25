@@ -181,11 +181,35 @@ window.draw = async stems => {
 
 const lexicon = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'lexicon.json'), 'utf8'));
 const codes = [...new Set(lexicon.map(e => e.code))].sort();
+/* The order of the stems across a bunch, left to right (Ed, 2026-11-25):
+   flowers of a kind are mixed in among the others rather than standing
+   together, but not in a strict alternation either. A seeded shuffle per
+   code, keeping the first arrangement that has as few side-by-side pairs
+   of a kind as the code allows, or one more if that would only alternate. */
+function arrange(code) {
+  const stems = Cipher.displayStems(code);
+  const pairs = a => a.reduce((k, d, i) => k + (i > 0 && a[i - 1] === d), 0);
+  const alternates = a => a.length >= 4 && a.every((d, i) => i < 2 || d === a[i - 2]);
+  let seed = [...code].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 2147483647, 7) || 1;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const shuffles = [];
+  for (let t = 0; t < 400; t++) {
+    const a = stems.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    shuffles.push(a);
+  }
+  const least = Math.min(...shuffles.map(pairs));
+  const irregular = shuffles.filter(a => !alternates(a));
+  const fewest = irregular.length ? Math.min(...irregular.map(pairs)) : least;
+  const allowed = fewest <= least + 1 ? fewest : least;
+  return shuffles.find(a => pairs(a) === allowed && (!alternates(a) || !irregular.length));
+}
+
 const jobs = codes.map(code => {
   const stems = Cipher.displayStems(code);
   return stems.length === 1
     ? { name: code, html: card(stems, { logoWidth: 0, maxStem: 440 }) }
-    : { name: code, bunch: stems };
+    : { name: code, bunch: arrange(code) };
 });
 jobs.push({ name: 'site', html: card(Cipher.KEY_ORDER.map(String), { logoWidth: 640, maxStem: 300 }) });
 
