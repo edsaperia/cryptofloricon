@@ -127,8 +127,7 @@ img { vertical-align: middle; max-width: 100%; }
 }
 /* Three lines, as on the 2015 site: the phrase, "– to –" on its own line, the phrase. */
 .title .line, .title .joiner { display: block; }
-/* The webfont had no italic, so browsers slanted "– to –" by 14° (a quarter shear) about its baseline. */
-.title .joiner svg { transform: skewX(-14.04deg); transform-origin: 0 0.605em; }
+/* "– to –" stands upright, like the rest of the title (Ed, 2026-11-25); the 2015 site slanted it. */
 .title .line { text-wrap: balance; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
@@ -315,11 +314,19 @@ h2 a { text-decoration: none; }
 
 /* ---------- footer ---------- */
 
-.site-footer { text-align: center; font-size: 0.85em; margin-top: 1.4em; }
-.footer-links { font-variant: small-caps; font-size: 1.1em; }
-.footer-links a { text-decoration: none; }
-.footer-links a:hover { text-decoration: underline; }
-.credits { margin: 0.6em 0; line-height: 1.6; }
+.site-footer { text-align: center; font-size: 0.72em; line-height: 1.5; margin-top: 0.8em; }
+.credits { margin: 0.3em 0; }
+.credits i { color: var(--ink-soft); }
+.credit { white-space: nowrap; }
+.colophon { margin: 0.7em 0 0; font-variant: small-caps; letter-spacing: 0.04em; }
+.colophon a { text-decoration: none; }
+.colophon a:hover { text-decoration: underline; }
+.site-footer .sep { white-space: pre; }
+/* On a phone, one credit to a line. */
+@media (max-width: 479px) {
+  .credit { display: block; }
+  .credits .sep, .credits br { display: none; }
+}
 
 /* ---------- the narrowest phones (320-379px) ---------- */
 
@@ -349,5 +356,5 @@ h2 a { text-decoration: none; }
 
 @media print {
   body { background: none; }
-  .tabs, .site-footer .footer-links { display: none; }
+  .tabs { display: none; }
 }
