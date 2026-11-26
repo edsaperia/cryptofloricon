@@ -79,6 +79,7 @@ const SIZES = {
     title: 15,                        // pt: one em of the drawn script, ascender to descender
     appendix: 34,                     // pt: one em of Church Text (2013: 30 pt on a 90 mm wide page)
     stems: 13,                        // mm: the bouquet above each title
+    gapAbove: 5.3, gapBelow: 3.5,     // mm, ink to ink: stems to title, title to text (see spaceTitles)
     folio: 7,                         // pt
     index: { stem: 7, row: 9.6, head: 6, rowsPer: 12, text: 7.4, leading: 10.4 }
   },
@@ -91,7 +92,8 @@ const SIZES = {
     paraGap: 0.5,
     title: 20,
     appendix: 44,
-    stems: 20,
+    stems: 17,
+    gapAbove: 8, gapBelow: 5.3,
     folio: 8.5,
     index: { stem: 8.4, row: 12, head: 7.5, rowsPer: 14, text: 9, leading: 13 }
   }
@@ -270,7 +272,7 @@ function divider(name, cls) {
 
 /* ---------- the pages ---------- */
 
-function html(size, art, fit = new Map()) {
+function html(size, art, fit = new Map(), spacing = new Map()) {
   const S = SIZES[size];
   const img = (key, cls, heightMm) => {
     const { width, height } = art[key];
@@ -368,9 +370,17 @@ p { margin: 0; orphans: 2; widows: 2; }
 .entry { break-before: page; }
 /* Entry 1 on a left-hand page, as in 2013, so the entries face each other in pairs (1 | 2 I love you | I like you). */
 .entry.first { break-before: left; counter-reset: page 1; }
-.bouquet { text-align: center; height: ${S.stems}mm; margin: 0 0 ${(S.stems * 0.12).toFixed(1)}mm; line-height: 0; }
-.bouquet .stem { display: inline-block; margin: 0 -${(S.stems * 0.04).toFixed(2)}mm; vertical-align: bottom; }
-.entry .title { margin: 0 0 ${(S.leading * 0.25).toFixed(1)}pt; }
+.bouquet { text-align: center; height: ${S.stems}mm; margin: 0 0 ${S.gapAbove}mm; line-height: 0; }
+/* The stems stand apart, as in 2013, not overlapping. */
+.bouquet .stem { display: inline-block; margin: 0 ${(S.stems * 0.035).toFixed(2)}mm; vertical-align: bottom; }
+/*
+ * The space above the title is clearly larger than the space below it (Ed,
+ * 2026-11-26: about 1.5 times, ink to ink). The title's half-leading is
+ * trimmed at its top and foot (each line is 1.95em; the drawing 1em), so the
+ * boxes start from the drawing itself; lines inside a long title keep their
+ * full spacing. spaceTitles then sets each entry's two gaps from the ink.
+ */
+.entry .title { margin: -0.475em 0 calc(${S.gapBelow}mm - 0.475em); }
 .passage p { text-align: justify; text-indent: 1.2em; }
 .passage p + p { margin-top: ${(S.leading * S.paraGap).toFixed(2)}pt; }
 /* The few entries too long for the common setting (see fitEntries): first a smaller bouquet, then also slightly closer lines. */
@@ -452,8 +462,8 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 
   const entryPages = entries.map((e, i) => `
 <section class="entry${i === 0 ? ' first' : ''}${fit.has(e.id) ? ' fit' + fit.get(e.id) : ''}" id="e${e.id}" data-id="e${e.id}">
-  <div class="bouquet">${bouquet(e.code, S.stems)}</div>
-  <h2 class="title">${drawn(e.title)}</h2>
+  <div class="bouquet"${spacing.has(e.id) ? ` style="margin-bottom:${spacing.get(e.id).above}mm"` : ''}>${bouquet(e.code, S.stems)}</div>
+  <h2 class="title"${spacing.has(e.id) ? ` style="margin-bottom:${spacing.get(e.id).below}mm"` : ''}>${drawn(e.title)}</h2>
   <div class="passage">
 ${passage(e.body)}
   </div>
@@ -664,6 +674,31 @@ async function fitEntries(browser, size, art) {
   await page.evaluate(() => document.fonts.ready);
   const heightMm = parseFloat(S.height) * (S.height.endsWith('in') ? 25.4 : 1) - S.top - S.bottom;
   const avail = heightMm * 96 / 25.4 - FIT_SPARE * S.leading * 96 / 72;
+  // Optical spacing (Ed, 2026-11-26): the gap from the stems to the title's ink, and from the
+  // title's ink to the first line's ink, are the same on every page, whatever the swashes do.
+  const spacing = await page.evaluate(([above, below, bodyPt, leadingPt]) => {
+    const px = mm => mm * 96 / 25.4;
+    // How far below its line box's top the first line of text starts to show ink.
+    const g = document.createElement('canvas').getContext('2d');
+    g.font = `${bodyPt}pt 'Libre Caslon Text'`;
+    const m = g.measureText('Hdlbkft');
+    const lh = leadingPt * 96 / 72;
+    const textInk = (lh - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent - m.actualBoundingBoxAscent;
+    const out = {};
+    document.querySelectorAll('.entry').forEach(el => {
+      const bq = el.querySelector('.bouquet'), title = el.querySelector('.title'), passage = el.querySelector('.passage');
+      const ink = [...title.querySelectorAll('.drawn path')].map(p => p.getBoundingClientRect());
+      const inkTop = Math.min(...ink.map(r => r.top)), inkBottom = Math.max(...ink.map(r => r.bottom));
+      const nowAbove = inkTop - bq.getBoundingClientRect().bottom;
+      const nowBelow = passage.getBoundingClientRect().top + textInk - inkBottom;
+      const mb = parseFloat(getComputedStyle(bq).marginBottom) + px(above) - nowAbove;
+      const tb = parseFloat(getComputedStyle(title).marginBottom) + px(below) - nowBelow;
+      bq.style.marginBottom = mb + 'px';
+      title.style.marginBottom = tb + 'px';
+      out[el.dataset.id] = { above: +(mb * 25.4 / 96).toFixed(2), below: +(tb * 25.4 / 96).toFixed(2) };
+    });
+    return out;
+  }, [S.gapAbove, S.gapBelow, S.body, S.leading]);
   const heights = await page.evaluate(() => {
     const els = [...document.querySelectorAll('.entry')];
     const out = {};
@@ -681,7 +716,8 @@ async function fitEntries(browser, size, art) {
     if (level > 0) fit.set(id, level);
     return { id, level, fill: (level < 0 ? h[2] : h[level]) / avail, natural: h[0] / avail };
   });
-  return { fit, rows, tooLong: rows.filter(r => r.level < 0) };
+  return { fit, rows, tooLong: rows.filter(r => r.level < 0),
+    spacing: new Map(Object.entries(spacing).map(([key, v]) => [Number(key.slice(1)), v])) };
 }
 
 /* Each passage as the reader should see it, letters only: the text with each "#NN" as its title. */
@@ -689,9 +725,9 @@ const expectedText = Object.fromEntries(entries.map(e => [`e${e.id}`,
   e.body.replace(/\B#(\d+)/g, (m, id) => byId.get(Number(id)).title).toLowerCase().replace(/[^a-z]/g, '')]));
 
 /* Lay one size out with Paged.js; the page stays open for printing. */
-async function layout(browser, size, art, fit) {
+async function layout(browser, size, art, fit, spacing) {
   const htmlFile = path.join(OUT, `book-${size}.html`);
-  fs.writeFileSync(htmlFile, html(size, art, fit));
+  fs.writeFileSync(htmlFile, html(size, art, fit, spacing));
   if (htmlOnly) return { htmlFile };
   const page = await browser.newPage();
   // A script error in the page would leave the layout waiting for ever: stop on the first.
@@ -729,7 +765,7 @@ try {
   for (const size of sizes) {
     const S = SIZES[size];
     const title = id => byId.get(id).title;
-    const { fit, rows, tooLong } = await fitEntries(browser, size, art);
+    const { fit, rows, tooLong, spacing } = await fitEntries(browser, size, art);
     const tightest = rows.filter(r => r.level >= 0).sort((a, b) => b.fill - a.fill).slice(0, 5)
       .map(r => `${title(r.id)} ${Math.round(r.fill * 100)}%${r.level ? ' (fit' + r.level + ')' : ''}`).join('; ');
     const longest = rows.slice().sort((a, b) => b.natural - a.natural).slice(0, 5)
@@ -743,7 +779,7 @@ try {
       if (tooLong.length && !measureOnly) throw new Error(`${S.file}: ${tooLong.length} entries do not fit on one page`);
       continue;
     }
-    const result = await layout(browser, size, art, fit);
+    const result = await layout(browser, size, art, fit, spacing);
     if (htmlOnly) { console.log('wrote', path.relative(ROOT, result.htmlFile)); continue; }
     const { page, report } = result;
     // The checks (54a): no entry may run past its page, and none may lose any of its text.
