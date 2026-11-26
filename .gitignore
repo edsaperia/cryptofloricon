@@ -6,3 +6,6 @@ node_modules/
 *.otf
 *.woff
 *.woff2
+
+# The book interior PDFs and their working files (scripts/build-book.mjs).
+book/out/
