@@ -6,11 +6,13 @@
  *   book/out/cryptofloricon-5.5x8.5-interior.pdf  5.5 × 8.5 in (the Amazon edition)
  *
  * Usage:  cd scripts && npm ci         (once: Paged.js, hyphenation patterns, the body face)
- *         node scripts/build-book.mjs [--size a6|us] [--html]
+ *         node scripts/build-book.mjs [--size a6|us] [--html] [--measure] [--title-index]
  *
  * --html writes the pages' HTML and stops (open it in Chromium to see the
  * layout live); otherwise each size is laid out by Paged.js in Playwright's
  * Chromium (pre-installed, as for draw-previews.mjs) and printed to PDF.
+ * --measure only fits the entries to their pages and reports (seconds, not
+ * minutes). The build stops if any entry runs past its page or loses text.
  * Nothing here runs in CI; test/book.test.js checks the book's data instead.
  *
  * The book follows the 2013 print master (April 2013, 90 × 140 mm): a half
@@ -18,12 +20,15 @@
  * (book/order.json), each with its bouquet, its drawn script title and its
  * passage, cross-references printed as the referenced title with its page
  * number set small; at the back the table for decoding a bouquet by its
- * flowers, which 2013 had, and an index of titles, which it did not.
+ * flowers, as 2013 had, without rules; then the colophon on the last
+ * left-hand page. An index of titles (2013 had none) is left out for now
+ * (Ed, 53); --title-index puts it back.
  *
  * Print: black ink only. Text and the drawn titles are pure black; the brown
- * woodcut stems and the logo are turned into black ink on white (each pixel's
- * ink is its opacity times its darkness, the darkest brown counting as solid
- * black) and flattened, so the PDF has no colour and no transparency. The
+ * woodcut stems and the logo become black line art at 1,200 ppi or more,
+ * placed as stencils (image masks) that print black on the strokes and
+ * nothing elsewhere, so no box shows round them; every colour is rewritten as
+ * grey, and the PDF has no colour and no transparency. The
  * body face, Libre Caslon Text (SIL Open Font License), and EB Garamond for
  * the Cyrillic in the credits (OFL; Libre Caslon has no Cyrillic) come from
  * npm and are embedded by Chromium as subsets; no font file is written into
@@ -50,33 +55,40 @@ const SRC = path.join(ROOT, 'src');
  * Margins, read 2026-11-26), for a book with no bleed: outside, top and bottom
  * at least 6.4 mm (0.25 in); the inside (gutter) at least 9.6 mm for 24–150
  * pages, 12.7 mm for 151–300, 15.9 mm for 301–500. Both books are 151–300
- * pages, so the gutter is at least 12.7 mm; each size here clears that, with
- * room to spare for a hardback's tighter opening. Bookvault publishes no fixed
+ * pages, so the gutter is at least 12.7 mm. Bookvault publishes no fixed
  * interior margins (its templates come from its quote tool), so A6 uses the
- * same rule. The folio sits in the bottom margin, still well inside 6.4 mm.
+ * same rule. The folio sits in the bottom margin, its foot at least 7.4 mm
+ * from the edge.
+ *
+ * Every entry fits on one page (Ed, 54a), as in the 2013 book, which set
+ * Adobe Caslon at 8 pt on 10 pt, about 72 mm wide, on a 90 × 140 mm page. Libre
+ * Caslon Text is larger and wider for its size than Adobe Caslon, so 7.6 pt
+ * here reads about as large as 2013's 8 pt.
  */
 const SIZES = {
   a6: {
     file: 'cryptofloricon-a6-interior.pdf',
     label: 'A6, 105 × 148 mm',
     width: '105mm', height: '148mm',
-    inside: 14, outside: 10, top: 12, bottom: 16,
-    body: 8.2, leading: 11.4,         // pt
-    title: 17,                        // pt: one em of the drawn script, ascender to descender
-    stems: 16,                        // mm: the bouquet above each title
+    inside: 13, outside: 8, top: 8.5, bottom: 12.5,
+    body: 7.6, leading: 10,           // pt
+    paraGap: 0.4,                     // the space between paragraphs, in lines
+    title: 15,                        // pt: one em of the drawn script, ascender to descender
+    stems: 13,                        // mm: the bouquet above each title
     folio: 7,                         // pt
-    index: { stem: 7, row: 9, head: 6, rowsFirst: 10, rowsPer: 12, text: 7.4, leading: 10.4 }
+    index: { stem: 7, row: 9.6, head: 6, rowsFirst: 10, rowsPer: 12, text: 7.4, leading: 10.4 }
   },
   us: {
     file: 'cryptofloricon-5.5x8.5-interior.pdf',
     label: '5.5 × 8.5 in',
     width: '5.5in', height: '8.5in',
-    inside: 17, outside: 14, top: 17, bottom: 22,
-    body: 10.6, leading: 15,
-    title: 22,
-    stems: 26,
+    inside: 14, outside: 11, top: 13, bottom: 17,
+    body: 10, leading: 13.4,
+    paraGap: 0.5,
+    title: 20,
+    stems: 20,
     folio: 8.5,
-    index: { stem: 8.4, row: 11.2, head: 7.5, rowsFirst: 11, rowsPer: 14, text: 9, leading: 13 }
+    index: { stem: 8.4, row: 12, head: 7.5, rowsFirst: 12, rowsPer: 15, text: 9, leading: 13 }
   }
 };
 
@@ -87,6 +99,14 @@ const sizeArg = args.includes('--size') ? args[args.indexOf('--size') + 1] : nul
 if (sizeArg && !SIZES[sizeArg]) throw new Error(`--size must be one of ${Object.keys(SIZES).join(', ')}`);
 const sizes = sizeArg ? [sizeArg] : Object.keys(SIZES);
 const htmlOnly = args.includes('--html');
+// --measure: fit the entries to their pages and report, without the slow Paged.js layout.
+const measureOnly = args.includes('--measure');
+// --title-index: add the Index of Messages (titles A–Z with pages). Left out for now (Ed, 53).
+const withTitleIndex = args.includes('--title-index');
+// BOOK_SETTINGS='{"a6":{"body":7.8}}' tries other settings without editing SIZES.
+if (process.env.BOOK_SETTINGS) {
+  for (const [k, v] of Object.entries(JSON.parse(process.env.BOOK_SETTINGS))) Object.assign(SIZES[k], v);
+}
 
 for (const need of ['pagedjs/dist/paged.polyfill.js', 'hyphen/en-gb', 'pdf-lib', '@fontsource/libre-caslon-text/files', '@fontsource/eb-garamond/files']) {
   const p = path.join(MODULES, need);
@@ -159,11 +179,15 @@ const ART = {
 };
 
 /*
- * Turn each brown drawing into black ink on white, in Chromium's canvas: a
- * pixel's ink is its opacity times its darkness, scaled so the darkest brown
- * (the 95th percentile of the solid pixels) is solid black, then flattened
- * onto white. The result is a neutral grey image with no alpha channel.
+ * Turn each brown drawing into black line art, in Chromium's canvas: a pixel's
+ * ink is its opacity times its darkness, scaled so the darkest brown (the 95th
+ * percentile of the solid pixels) is solid black. That ink is enlarged
+ * smoothly (ART_SCALE) and cut at half, so the result is pure black and pure
+ * white at 1,200 ppi or more: line art, as a printer wants it. finishPdf then
+ * makes each one a stencil (an image mask) that lays black ink on the strokes
+ * and nothing anywhere else, so no box can show around a drawing.
  */
+const ART_SCALE = { flower1: 4, flower2: 4, flower3: 4, flower4: 4, flower5: 4, logo: 3 };
 async function inkArt(browser) {
   const dir = path.join(OUT, 'img');
   fs.mkdirSync(dir, { recursive: true });
@@ -172,7 +196,7 @@ async function inkArt(browser) {
   for (const [key, rel] of Object.entries(ART)) {
     const src = path.join(SRC, rel);
     const b64 = fs.readFileSync(src).toString('base64');
-    const png = await page.evaluate(async (data) => {
+    const png = await page.evaluate(async ([data, scale]) => {
       const img = new Image();
       img.src = 'data:image/png;base64,' + data;
       await img.decode();
@@ -191,12 +215,24 @@ async function inkArt(browser) {
       for (let i = 0; i < px.length; i += 4) {
         const d = 1 - (0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]) / 255;
         const ink = (px[i + 3] / 255) * Math.min(1, d / ref);
-        const v = Math.round(255 * (1 - ink));
-        px[i] = px[i + 1] = px[i + 2] = v; px[i + 3] = 255;
+        px[i] = px[i + 1] = px[i + 2] = 0; px[i + 3] = Math.round(255 * ink);
       }
       g.putImageData(id, 0, 0);
-      return c.toDataURL('image/png').split(',')[1];
-    }, b64);
+      const big = document.createElement('canvas');
+      big.width = c.width * scale; big.height = c.height * scale;
+      const bg = big.getContext('2d');
+      bg.imageSmoothingEnabled = true;
+      bg.imageSmoothingQuality = 'high';
+      bg.drawImage(c, 0, 0, big.width, big.height);
+      const bd = bg.getImageData(0, 0, big.width, big.height);
+      const bp = bd.data;
+      for (let i = 0; i < bp.length; i += 4) {
+        const v = bp[i + 3] >= 128 ? 0 : 255;
+        bp[i] = bp[i + 1] = bp[i + 2] = v; bp[i + 3] = 255;
+      }
+      bg.putImageData(bd, 0, 0);
+      return big.toDataURL('image/png').split(',')[1];
+    }, [b64, ART_SCALE[key]]);
     fs.writeFileSync(path.join(dir, key + '.png'), Buffer.from(png, 'base64'));
     sizes[key] = pngSize(src);
   }
@@ -217,7 +253,7 @@ function divider(name, cls) {
 
 /* ---------- the pages ---------- */
 
-function html(size, art, fit = new Set()) {
+function html(size, art, fit = new Map()) {
   const S = SIZES[size];
   const img = (key, cls, heightMm) => {
     const { width, height } = art[key];
@@ -249,7 +285,7 @@ ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-
     font: ${S.folio}pt 'Libre Caslon Text', serif;
     color: #000;
     vertical-align: top;
-    padding-top: ${(S.bottom * 0.3).toFixed(1)}mm;
+    padding-top: ${(S.bottom - 7.4 - S.folio * 0.3528 * 1.2).toFixed(2)}mm;
   }
 }
 @page :left  { margin-left: ${S.outside}mm; margin-right: ${S.inside}mm; }
@@ -318,12 +354,11 @@ p { margin: 0; orphans: 2; widows: 2; }
 .bouquet .stem { display: inline-block; margin: 0 -${(S.stems * 0.04).toFixed(2)}mm; vertical-align: bottom; }
 .entry .title { margin: 0 0 ${(S.leading * 0.25).toFixed(1)}pt; }
 .passage p { text-align: justify; text-indent: 1.2em; }
-.passage p + p { margin-top: ${S.leading / 2}pt; }
-/* Copyfitted entries (see FIT_LINES): a smaller bouquet, lines a touch closer, no gap between paragraphs. */
-.entry.fit .bouquet { height: ${(S.stems * 0.72).toFixed(1)}mm; }
-.entry.fit .bouquet .stem { height: ${(S.stems * 0.72).toFixed(1)}mm !important; width: auto !important; }
-.entry.fit .passage { line-height: ${(S.leading * 0.96).toFixed(2)}pt; }
-.entry.fit .passage p + p { margin-top: 0; }
+.passage p + p { margin-top: ${(S.leading * S.paraGap).toFixed(2)}pt; }
+/* The few entries too long for the common setting (see fitEntries): first a smaller bouquet, then also slightly closer lines. */
+.entry.fit1 .bouquet, .entry.fit2 .bouquet { height: ${(S.stems * FIT_STEMS).toFixed(1)}mm; }
+.entry.fit1 .bouquet .stem, .entry.fit2 .bouquet .stem { height: ${(S.stems * FIT_STEMS).toFixed(1)}mm !important; width: auto !important; }
+.entry.fit2 .passage { line-height: ${(S.leading * FIT_LEADING).toFixed(2)}pt; }
 .xref { color: #000; text-decoration: none; font-style: italic; }
 /* The referenced title's page, set small after it as in 2013. */
 .xref::after { content: target-counter(attr(href url), page); font-style: italic; font-size: 0.62em; vertical-align: -0.25em; line-height: 0; margin-left: 0.08em; font-variant-numeric: lining-nums; }
@@ -335,10 +370,10 @@ p { margin: 0; orphans: 2; widows: 2; }
 .decode-page { break-before: page; }
 .decode-page.first { break-before: right; }
 table.decode { width: 100%; border-collapse: collapse; table-layout: fixed; }
-table.decode th { font: normal ${S.index.head}pt/1.2 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.02em; padding: 0 0 1.2mm; border-bottom: 0.4pt solid #000; text-align: center; }
+table.decode th { font: normal ${S.index.head}pt/1.2 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.02em; padding: 0 0 1.6mm; text-align: center; }
 table.decode th.pg, table.decode td.pg { width: 11%; text-align: right; }
 table.decode td { height: ${S.index.row}mm; text-align: center; vertical-align: bottom; padding: 0 0 0.6mm; line-height: 0; }
-table.decode tr + tr td { border-top: 0.25pt solid #000; }
+/* No rules (Ed, 2026-11-26): the rows are carried by their spacing alone. */
 table.decode td .stem { margin: 0 -0.25mm; vertical-align: bottom; }
 table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-align: bottom; padding-bottom: 1mm; font-variant-numeric: lining-nums; }
 .titles { break-before: right; }
@@ -396,7 +431,7 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 </section>`;
 
   const entryPages = entries.map((e, i) => `
-<section class="entry${i === 0 ? ' first' : ''}${fit.has(e.id) ? ' fit' : ''}" id="e${e.id}" data-id="e${e.id}">
+<section class="entry${i === 0 ? ' first' : ''}${fit.has(e.id) ? ' fit' + fit.get(e.id) : ''}" id="e${e.id}" data-id="e${e.id}">
   <div class="bouquet">${bouquet(e.code, S.stems)}</div>
   <h2 class="title">${drawn(e.title)}</h2>
   <div class="passage">
@@ -496,7 +531,7 @@ ${storySection}
 ${partTitle}
 ${entryPages}
 ${decode}
-${titles}
+${withTitleIndex ? titles : ''}
 ${colophon}
 </body>
 </html>
@@ -539,22 +574,36 @@ async function finishPdf(file, S) {
     if (String(dict.get(PDFName.of('Subtype'))) === '/Image') {
       const cs = dict.get(PDFName.of('ColorSpace'));
       if (!(cs instanceof PDFArray) || String(cs.get(0)) !== '/ICCBased') throw new Error(`image ${ref}: unexpected colour space ${cs}`);
+      // Each drawing is pure black and white (inkArt): make it a 1-bit stencil.
+      // Sample 0 paints with the current fill colour (black, set where it is
+      // drawn, below); 1 leaves the paper untouched.
       const rgb = zlib.inflateSync(Buffer.from(obj.contents));
-      const grey = Buffer.alloc(rgb.length / 3);
-      for (let i = 0; i < grey.length; i++) {
-        const [r, g, b] = [rgb[3 * i], rgb[3 * i + 1], rgb[3 * i + 2]];
-        if (Math.abs(r - g) > 2 || Math.abs(g - b) > 2) throw new Error(`image ${ref}: not grey`);
-        grey[i] = g;
+      const w = dict.get(PDFName.of('Width')).asNumber(), h = dict.get(PDFName.of('Height')).asNumber();
+      if (rgb.length !== w * h * 3) throw new Error(`image ${ref}: unexpected data size`);
+      const rowBytes = Math.ceil(w / 8);
+      const bits = Buffer.alloc(rowBytes * h);
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const o = 3 * (y * w + x);
+          const [r, g, b] = [rgb[o], rgb[o + 1], rgb[o + 2]];
+          if (Math.abs(r - g) > 2 || Math.abs(g - b) > 2 || (g > 8 && g < 247)) throw new Error(`image ${ref}: not pure black and white`);
+          if (g >= 128) bits[y * rowBytes + (x >> 3)] |= 0x80 >> (x & 7);
+        }
       }
-      dict.set(PDFName.of('ColorSpace'), PDFName.of('DeviceGray'));
-      doc.context.assign(ref, PDFRawStream.of(dict, zlib.deflateSync(grey, { level: 9 })));
+      dict.delete(PDFName.of('ColorSpace'));
+      dict.set(PDFName.of('BitsPerComponent'), doc.context.obj(1));
+      dict.set(PDFName.of('ImageMask'), doc.context.obj(true));
+      doc.context.assign(ref, PDFRawStream.of(dict, zlib.deflateSync(bits, { level: 9 })));
       continue;
     }
     if (dict.get(PDFName.of('Length1')) || dict.get(PDFName.of('Subtype'))) continue;  // fonts and the like
     let text;
     try { text = zlib.inflateSync(Buffer.from(obj.contents)).toString('latin1'); } catch { continue; }
-    if (!/\b(rg|RG)\b/.test(text)) continue;
-    const out = text.replace(/(^|\s)([\d.]+) ([\d.]+) ([\d.]+) (rg|RG)(?=\s)/g, (m, sp, r, g, b, op) => {
+    if (!/\b(rg|RG|Do)\b/.test(text)) continue;
+    const out = text
+      // A stencil paints in the current fill colour: make it black for each drawing.
+      .replace(/(^|\s)(\/X\w+ Do)(?=\s)/g, '$1q 0 g $2 Q')
+      .replace(/(^|\s)([\d.]+) ([\d.]+) ([\d.]+) (rg|RG)(?=\s)/g, (m, sp, r, g, b, op) => {
       if (r !== g || g !== b) throw new Error(`content ${ref}: colour ${r} ${g} ${b} is not grey`);
       return `${sp}${g} ${op === 'rg' ? 'g' : 'G'}`;
     });
@@ -570,6 +619,55 @@ async function finishPdf(file, S) {
   fs.writeFileSync(file, await doc.save({ useObjectStreams: false }));
 }
 
+/*
+ * Fitting (Ed, 54a): every entry fits on its one page, as in 2013. Before the
+ * slow Paged.js layout, every entry is set in one plain column at the text
+ * block's width and measured. An entry too tall for the common setting is
+ * helped, subtly and always the same way: first a smaller bouquet (fit1), then
+ * also slightly closer lines (fit2); its type is never smaller than the rest.
+ * An entry that fits at none of these stops the build.
+ */
+const FIT_STEMS = 0.72;     // the bouquet's height in fit1 and fit2
+const FIT_LEADING = 0.95;   // the passage's leading in fit2
+const FIT_SPARE = 1;        // lines kept spare at the foot of each page: the paged layout can differ slightly from this measure
+
+async function fitEntries(browser, size, art) {
+  const S = SIZES[size];
+  const file = path.join(OUT, `measure-${size}.html`);
+  // The same pages without Paged.js: everything in one column the text block's width.
+  const textMm = parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside;
+  fs.writeFileSync(file, html(size, art)
+    .replace(/<script>[\s\S]*?<\/script>\s*<script src=[^>]*><\/script>/, '')
+    .replace('</style>', `body { width: ${textMm}mm; } .front, .story, .part-title, .back, .colophon { display: none; } .entry { display: flow-root; }</style>`));
+  const page = await browser.newPage();
+  await page.goto(pathToFileURL(file).href);
+  await page.evaluate(() => document.fonts.ready);
+  const heightMm = parseFloat(S.height) * (S.height.endsWith('in') ? 25.4 : 1) - S.top - S.bottom;
+  const avail = heightMm * 96 / 25.4 - FIT_SPARE * S.leading * 96 / 72;
+  const heights = await page.evaluate(() => {
+    const els = [...document.querySelectorAll('.entry')];
+    const out = {};
+    for (const level of [0, 1, 2]) {
+      els.forEach(el => { el.classList.remove('fit1', 'fit2'); if (level) el.classList.add('fit' + level); });
+      els.forEach(el => { (out[el.dataset.id] = out[el.dataset.id] || [])[level] = el.getBoundingClientRect().height; });
+    }
+    return out;
+  });
+  await page.close();
+  const fit = new Map();
+  const rows = Object.entries(heights).map(([key, h]) => {
+    const id = Number(key.slice(1));
+    const level = h.findIndex(v => v <= avail);
+    if (level > 0) fit.set(id, level);
+    return { id, level, fill: (level < 0 ? h[2] : h[level]) / avail, natural: h[0] / avail };
+  });
+  return { fit, rows, tooLong: rows.filter(r => r.level < 0) };
+}
+
+/* Each passage as the reader should see it, letters only: the text with each "#NN" as its title. */
+const expectedText = Object.fromEntries(entries.map(e => [`e${e.id}`,
+  e.body.replace(/\B#(\d+)/g, (m, id) => byId.get(Number(id)).title).toLowerCase().replace(/[^a-z]/g, '')]));
+
 /* Lay one size out with Paged.js; the page stays open for printing. */
 async function layout(browser, size, art, fit) {
   const htmlFile = path.join(OUT, `book-${size}.html`);
@@ -582,30 +680,22 @@ async function layout(browser, size, art, fit) {
   page.on('pageerror', err => failed(new Error('page error: ' + err.message)));
   await page.goto(pathToFileURL(htmlFile).href);
   await Promise.race([page.waitForFunction(() => window.__paged, null, { timeout: 600000, polling: 500 }), failure]);
-  // What the layout came to: the pages, and each entry that runs past its page with the lines it carries over.
-  const report = await page.evaluate(() => {
+  // What the layout came to: the pages, and any entry that runs past its page.
+  const report = await page.evaluate((expected) => {
     const pages = [...document.querySelectorAll('.pagedjs_page')];
-    const runOn = [];
-    pages.forEach(pg => pg.querySelectorAll('.entry[data-split-from]').forEach(el => {
-      const ps = [...el.querySelectorAll('p')];
-      const lh = parseFloat(getComputedStyle(ps[0] || el).lineHeight) || 1;
-      runOn.push({ id: Number(el.dataset.id.slice(1)), lines: Math.round(ps.reduce((n, p) => n + p.getBoundingClientRect().height, 0) / lh) });
-    }));
+    // Every word of every passage must be on the page: compare letters with the source.
+    const letters = t => t.toLowerCase().replace(/[^a-z]/g, '');
+    const lost = Object.entries(expected).filter(([id, want]) =>
+      letters([...document.querySelectorAll('.entry[data-id="' + id + '"] .passage')].map(el => el.textContent).join(' ')) !== want).map(([id]) => Number(id.slice(1)));
+    const runOn = [...new Set([...document.querySelectorAll('.entry[data-split-from]')].map(el => Number(el.dataset.id.slice(1))))];
     const overflow = pages.filter(pg => {
       const area = pg.querySelector('.pagedjs_page_content');
       return area && area.scrollHeight > area.clientHeight + 2;
     }).map(pg => pages.indexOf(pg) + 1);
-    return { total: pages.length, runOn, overflow };
-  });
+    return { total: pages.length, runOn, overflow, lost };
+  }, expectedText);
   return { page, report, htmlFile };
 }
-
-/*
- * Copyfitting: an entry that would carry three lines or fewer over to a second
- * page is set a little tighter (a smaller bouquet, slightly closer lines, no
- * gap between paragraphs) so it keeps to one page, then the book is laid out again.
- */
-const FIT_LINES = 3;
 
 fs.mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
@@ -613,22 +703,36 @@ try {
   const art = await inkArt(browser);
   for (const size of sizes) {
     const S = SIZES[size];
-    let result = await layout(browser, size, art, new Set());
-    if (htmlOnly) { console.log('wrote', path.relative(ROOT, result.htmlFile)); continue; }
-    const fit = new Set(result.report.runOn.filter(r => r.lines <= FIT_LINES).map(r => r.id));
-    if (fit.size) {
-      await result.page.close();
-      result = await layout(browser, size, art, fit);
+    const title = id => byId.get(id).title;
+    const { fit, rows, tooLong } = await fitEntries(browser, size, art);
+    const tightest = rows.filter(r => r.level >= 0).sort((a, b) => b.fill - a.fill).slice(0, 5)
+      .map(r => `${title(r.id)} ${Math.round(r.fill * 100)}%${r.level ? ' (fit' + r.level + ')' : ''}`).join('; ');
+    const longest = rows.slice().sort((a, b) => b.natural - a.natural).slice(0, 5)
+      .map(r => `${title(r.id)} ${Math.round(r.natural * 100)}%`).join('; ');
+    const helped = [1, 2].map(l => rows.filter(r => r.level === l).map(r => title(r.id)));
+    const summary = `${S.label}: ${S.body}/${S.leading} pt, margins ${S.inside}/${S.outside}/${S.top}/${S.bottom} mm (inside/outside/top/bottom), bouquet ${S.stems} mm.\n` +
+      `  Smaller bouquet: ${helped[0].length}${helped[0].length ? ' (' + helped[0].join('; ') + ')' : ''}. Also closer lines: ${helped[1].length}${helped[1].length ? ' (' + helped[1].join('; ') + ')' : ''}.\n` +
+      `  Tallest as set (share of the page): ${tightest}.\n  Tallest in the common setting: ${longest}.`;
+    if (measureOnly || tooLong.length) {
+      console.log(summary + (tooLong.length ? `\n  TOO LONG for one page: ${tooLong.map(r => `${title(r.id)} ${Math.round(r.fill * 100)}%`).join('; ')}` : ''));
+      if (tooLong.length && !measureOnly) throw new Error(`${S.file}: ${tooLong.length} entries do not fit on one page`);
+      continue;
     }
+    const result = await layout(browser, size, art, fit);
+    if (htmlOnly) { console.log('wrote', path.relative(ROOT, result.htmlFile)); continue; }
     const { page, report } = result;
+    // The checks (54a): no entry may run past its page, and none may lose any of its text.
+    if (report.runOn.length || report.lost.length) {
+      await page.close();
+      throw new Error(`${S.file}: ` + [report.runOn.length && `entries run past their page: ${report.runOn.map(title).join('; ')}`,
+        report.lost.length && `entries missing text: ${report.lost.map(title).join('; ')}`].filter(Boolean).join('. '));
+    }
     const pdf = path.join(OUT, S.file);
     await page.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true, displayHeaderFooter: false, tagged: false, outline: false });
     await page.close();
     await finishPdf(pdf, S);
-    const titled = r => `${byId.get(r.id).title} (+${r.lines})`;
-    console.log(`${S.file}: ${report.total} pages. Set tighter to fit one page: ${fit.size}${fit.size ? ' (' + [...fit].map(id => byId.get(id).title).join('; ') + ')' : ''}. ` +
-      `Running past one page: ${report.runOn.length}${report.runOn.length ? ' (' + report.runOn.map(titled).join('; ') + ')' : ''}.` +
-      (report.overflow.length ? ` Overflowing pages: ${report.overflow.join(', ')}` : ''));
+    console.log(`${S.file}: ${report.total} pages; every entry on one page.\n${summary}` +
+      (report.overflow.length ? `\n  Overflowing pages: ${report.overflow.join(', ')}` : ''));
   }
 } finally {
   await browser.close();

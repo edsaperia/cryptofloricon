@@ -64,6 +64,8 @@ test('the decoding index has every code once, sorted by flower counts in display
   assert.deepEqual(rows.slice(0, 3).map(r => r.code), ['4', '44', '444']);
 });
 
+// The title index is left out of the book for now (Ed, 53) but kept behind
+// build-book.mjs --title-index, so its data stays checked.
 test('the title index has every entry once, in alphabetical order', () => {
   const index = Book.titleIndex(lexicon);
   assert.equal(index.length, lexicon.length);
