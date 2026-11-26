@@ -6,7 +6,10 @@
  *   book/out/cryptofloricon-5.5x8.5-interior.pdf  5.5 × 8.5 in (the Amazon edition)
  *
  * Usage:  cd scripts && npm ci         (once: Paged.js, hyphenation patterns, the body face)
- *         node scripts/build-book.mjs [--size a6|us] [--html] [--measure] [--title-index]
+ *         node scripts/build-book.mjs [--size us|a6|all] [--html] [--measure] [--title-index]
+ *
+ * The default is the Amazon edition alone (5.5 × 8.5 in); the A6 edition is
+ * shelved for now and made only with --size a6 or --size all.
  *
  * --html writes the pages' HTML and stops (open it in Chromium to see the
  * layout live); otherwise each size is laid out by Paged.js in Playwright's
@@ -74,9 +77,10 @@ const SIZES = {
     body: 7.6, leading: 10,           // pt
     paraGap: 0.4,                     // the space between paragraphs, in lines
     title: 15,                        // pt: one em of the drawn script, ascender to descender
+    appendix: 34,                     // pt: one em of Church Text (2013: 30 pt on a 90 mm wide page)
     stems: 13,                        // mm: the bouquet above each title
     folio: 7,                         // pt
-    index: { stem: 7, row: 9.6, head: 6, rowsFirst: 10, rowsPer: 12, text: 7.4, leading: 10.4 }
+    index: { stem: 7, row: 9.6, head: 6, rowsPer: 12, text: 7.4, leading: 10.4 }
   },
   us: {
     file: 'cryptofloricon-5.5x8.5-interior.pdf',
@@ -86,9 +90,10 @@ const SIZES = {
     body: 10, leading: 13.4,
     paraGap: 0.5,
     title: 20,
+    appendix: 44,
     stems: 20,
     folio: 8.5,
-    index: { stem: 8.4, row: 12, head: 7.5, rowsFirst: 12, rowsPer: 15, text: 9, leading: 13 }
+    index: { stem: 8.4, row: 12, head: 7.5, rowsPer: 14, text: 9, leading: 13 }
   }
 };
 
@@ -96,8 +101,10 @@ const SIZES = {
 
 const args = process.argv.slice(2);
 const sizeArg = args.includes('--size') ? args[args.indexOf('--size') + 1] : null;
-if (sizeArg && !SIZES[sizeArg]) throw new Error(`--size must be one of ${Object.keys(SIZES).join(', ')}`);
-const sizes = sizeArg ? [sizeArg] : Object.keys(SIZES);
+if (sizeArg && sizeArg !== 'all' && !SIZES[sizeArg]) throw new Error(`--size must be one of ${Object.keys(SIZES).join(', ')}, all`);
+// The Amazon edition by default; the A6 special edition is shelved for now (Ed, 2026-11-26)
+// and built only on request (--size a6 or --size all). Its settings are kept but no longer checked.
+const sizes = sizeArg === 'all' ? Object.keys(SIZES) : [sizeArg || 'us'];
 const htmlOnly = args.includes('--html');
 // --measure: fit the entries to their pages and report, without the slow Paged.js layout.
 const measureOnly = args.includes('--measure');
@@ -138,6 +145,16 @@ function drawWord(w) {
   svgCache.set(w, out);
   return out;
 }
+// "Appendix" in Church Text, drawn by scripts/draw-word.mjs: the font may not be
+// embedded, so only its outlines are placed. The licence for printing them is unconfirmed.
+const appendixArt = (() => {
+  const svg = fs.readFileSync(path.join(SRC, 'headings', 'appendix-church-text.svg'), 'utf8');
+  const [, , , height] = svg.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
+  return {
+    svg: svg.replace(/<title>[^<]*<\/title>/, '').replace(/^<svg /, '<svg aria-hidden="true" ').trim(),
+    height, upem: Number(svg.match(/data-upem="(\d+)"/)[1]), advance: Number(svg.match(/data-advance="(\d+)"/)[1])
+  };
+})();
 const drawWords = text => text.split(' ').filter(Boolean).map(drawWord).join(' ');
 // The text stays in the page, unseen, so the PDF can be searched and copied.
 const drawn = (text, parts) => `<span class="hidden-text">${esc(text)}</span><span class="drawn" aria-hidden="true">${
@@ -349,7 +366,8 @@ p { margin: 0; orphans: 2; widows: 2; }
 /* ---------- the entries ---------- */
 .part-title { page: blank; }
 .entry { break-before: page; }
-.entry.first { break-before: right; counter-reset: page 1; }
+/* Entry 1 on a left-hand page, as in 2013, so the entries face each other in pairs (1 | 2 I love you | I like you). */
+.entry.first { break-before: left; counter-reset: page 1; }
 .bouquet { text-align: center; height: ${S.stems}mm; margin: 0 0 ${(S.stems * 0.12).toFixed(1)}mm; line-height: 0; }
 .bouquet .stem { display: inline-block; margin: 0 -${(S.stems * 0.04).toFixed(2)}mm; vertical-align: bottom; }
 .entry .title { margin: 0 0 ${(S.leading * 0.25).toFixed(1)}pt; }
@@ -367,8 +385,10 @@ p { margin: 0; orphans: 2; widows: 2; }
 .back h2 { font: normal ${(S.body * 1.25).toFixed(1)}pt/${S.leading * 1.2}pt 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.06em; text-align: center; margin: 0; }
 .back .note { font-style: italic; text-align: center; text-wrap: balance; margin: ${S.leading * 0.4}pt 0 ${S.leading * 0.6}pt; font-size: ${(S.body * 0.92).toFixed(2)}pt; line-height: ${(S.leading * 0.92).toFixed(1)}pt; }
 .back .divider { margin: ${S.leading * 0.4}pt 0 0; }
+/* The appendix opens as in 2013: the one word, in Church Text, a third of the way down a right-hand page. */
+.appendix { page: blank; break-before: right; height: calc(${S.height} - ${S.top + S.bottom}mm); position: relative; text-align: center; }
+.appendix svg { position: absolute; left: 50%; top: calc(${S.height} / 3 - ${S.top}mm); transform: translate(-50%, -50%); font-size: ${S.appendix}pt; height: ${(appendixArt.height / appendixArt.upem).toFixed(3)}em; width: ${(appendixArt.advance / appendixArt.upem).toFixed(3)}em; fill: #000; overflow: visible; }
 .decode-page { break-before: page; }
-.decode-page.first { break-before: right; }
 table.decode { width: 100%; border-collapse: collapse; table-layout: fixed; }
 table.decode th { font: normal ${S.index.head}pt/1.2 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.02em; padding: 0 0 1.6mm; text-align: center; }
 table.decode th.pg, table.decode td.pg { width: 11%; text-align: right; }
@@ -441,15 +461,14 @@ ${passage(e.body)}
 
   // The decoding table, a page at a time so each page has its column heads.
   const rows = Book.decodingIndex(lexicon);
-  const chunks = [rows.slice(0, S.index.rowsFirst)];
-  for (let i = S.index.rowsFirst; i < rows.length; i += S.index.rowsPer) chunks.push(rows.slice(i, i + S.index.rowsPer));
-  const head = `<tr>${Cipher.KEY_ORDER.map(d => `<th>${Cipher.FLOWERS[d].name}</th>`).join('')}<th class="pg">Page</th></tr>`;
+  const chunks = [];
+  for (let i = 0; i < rows.length; i += S.index.rowsPer) chunks.push(rows.slice(i, i + S.index.rowsPer));
+  // Column heads only, as in 2013: the five flowers and "#" for the page.
+  const head = `<tr>${Cipher.KEY_ORDER.map(d => `<th>${Cipher.FLOWERS[d].name}</th>`).join('')}<th class="pg">#</th></tr>`;
   const row = r => `<tr>${r.counts.map((n, i) => `<td>${Array.from({ length: n }, () => img('flower' + Cipher.KEY_ORDER[i], 'stem', S.index.stem)).join('')}</td>`).join('')}<td class="pg">${
     r.entries.map(e => `<a class="pgref" href="#e${e.id}"></a>`).join(', ')}</td></tr>`;
   const decode = chunks.map((c, i) => `
-<section class="back decode-page${i === 0 ? ' first' : ''}">
-  ${i === 0 ? `<h2>To Decode a Bouquet</h2>
-  <p class="note">Count the flowers of each kind in the bouquet you were given, find the row that matches, and turn to the page.</p>` : ''}
+<section class="back decode-page">
   <table class="decode"><thead>${head}</thead><tbody>${c.map(row).join('')}</tbody></table>
 </section>`).join('');
 
@@ -530,6 +549,7 @@ ${front}
 ${storySection}
 ${partTitle}
 ${entryPages}
+<section class="appendix"><span class="hidden-text">Appendix</span>${appendixArt.svg}</section>
 ${decode}
 ${withTitleIndex ? titles : ''}
 ${colophon}
@@ -692,7 +712,12 @@ async function layout(browser, size, art, fit) {
       const area = pg.querySelector('.pagedjs_page_content');
       return area && area.scrollHeight > area.clientHeight + 2;
     }).map(pg => pages.indexOf(pg) + 1);
-    return { total: pages.length, runOn, overflow, lost };
+    // Facing pairs, as in 2013: entry n is on a left-hand page when n is odd.
+    const unpaired = [...document.querySelectorAll('.entry:not([data-split-from])')].map((el, i) => {
+      const left = el.closest('.pagedjs_page').classList.contains('pagedjs_left_page');
+      return left === ((i + 1) % 2 === 1) ? null : Number(el.dataset.id.slice(1));
+    }).filter(Boolean);
+    return { total: pages.length, runOn, overflow, lost, unpaired, lastLeft: pages[pages.length - 1].classList.contains('pagedjs_left_page') };
   }, expectedText);
   return { page, report, htmlFile };
 }
@@ -722,6 +747,8 @@ try {
     if (htmlOnly) { console.log('wrote', path.relative(ROOT, result.htmlFile)); continue; }
     const { page, report } = result;
     // The checks (54a): no entry may run past its page, and none may lose any of its text.
+    if (report.unpaired.length) throw new Error(`${S.file}: entries on the wrong side of the spread: ${report.unpaired.map(title).join('; ')}`);
+    if (!report.lastLeft) throw new Error(`${S.file}: the colophon is not on a left-hand page`);
     if (report.runOn.length || report.lost.length) {
       await page.close();
       throw new Error(`${S.file}: ` + [report.runOn.length && `entries run past their page: ${report.runOn.map(title).join('; ')}`,
@@ -731,7 +758,7 @@ try {
     await page.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true, displayHeaderFooter: false, tagged: false, outline: false });
     await page.close();
     await finishPdf(pdf, S);
-    console.log(`${S.file}: ${report.total} pages; every entry on one page.\n${summary}` +
+    console.log(`${S.file}: ${report.total} pages; every entry on one page, odd entries on the left; colophon on the last left-hand page.\n${summary}` +
       (report.overflow.length ? `\n  Overflowing pages: ${report.overflow.join(', ')}` : ''));
   }
 } finally {

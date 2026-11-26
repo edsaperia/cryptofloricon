@@ -82,3 +82,23 @@ test('every script title in the book has a drawing', () => {
     .concat(lexicon.map(e => e.title)).flatMap(t => t.split(' ')).filter(Boolean));
   assert.deepEqual([...words].filter(w => !manifest.words[w]), []);
 });
+
+test('the entries face each other in 2013\'s pairs: entry n is on a left-hand page when n is odd', () => {
+  const titles = Book.bookEntries(lexicon).map(e => e.title);
+  titles.forEach((t, i) => assert.equal(Book.entrySide(i + 1), (i + 1) % 2 === 1 ? 'left' : 'right', t));
+  // The pairs 2013 set side by side across a spread.
+  const spread = n => [titles[n - 1], titles[n]];
+  for (const [n, pair] of [[1, ['I love you', 'I like you']], [17, ['I can wait', "I can't wait"]], [19, ['You win', 'You lose']], [63, ['Yes', 'No']]]) {
+    assert.equal(Book.entrySide(n), 'left');
+    assert.equal(Book.entrySide(n + 1), 'right');
+    assert.deepEqual(spread(n), pair);
+  }
+});
+
+test('the Appendix page is a drawing, not a font', () => {
+  // Church Text may not be embedded: its word is committed as outlines (scripts/draw-word.mjs).
+  const svg = fs.readFileSync(path.join(ROOT, 'src', 'headings', 'appendix-church-text.svg'), 'utf8');
+  assert.match(svg, /<title>Appendix<\/title>/);
+  assert.match(svg, /<path d="M/);
+  assert.match(svg, /data-upem="\d+" data-advance="\d+"/);
+});
