@@ -150,7 +150,7 @@ function shareTags(urlPath, share) {
   return tags.map(([attr, key, value]) => `<meta ${attr}="${key}" content="${esc(value)}">\n`).join('');
 }
 
-const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&display=swap';
 
 // The marker the 404 page looks for to find the site's root (see src/notfound.js).
 const ROOT_MARKER = 'cryptofloricon-root.txt';
@@ -364,8 +364,7 @@ ${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
     description: DESCRIPTIONS.home,
     bodyClass: 'home',
     main: r => `
-<h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
-  [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt Floral Bouquets']])}</h1>
+<h1 class="title home-title"><span class="line">A Lexicon of Ciphers</span> <span class="joiner">&ndash; to &ndash;</span> <span class="line">Encrypt &amp; Decrypt</span> <span class="line">Floral Bouquets</span></h1>
 ${divider(r, 'large')}
 <p class="intro">Emails, texts, tweets... we are a messaging culture, submerged in an endless deluge of communication. Sometimes, though, we are lost for words. This system makes it a little easier to say those difficult things.</p>
 <p class="calls"><a class="call" href="${r}decode/">&bull; Decode a Message &bull;</a> <span class="joiner">&ndash; or &ndash;</span> <a class="call" href="${r}encode/">&bull; Send a Message &bull;</a></p>`
