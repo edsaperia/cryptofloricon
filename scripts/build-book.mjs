@@ -213,6 +213,39 @@ function drawWord(w) {
   svgCache.set(w, out);
   return out;
 }
+// The ink of a drawn word's outline, in font units (y down, baseline 0): its box, and the
+// furthest right it reaches at or below yMin (so a capital's overhanging swash can be left out).
+function inkExtent(d, yMin = -Infinity) {
+  const toks = d.match(/[A-Za-z]|-?(?:\d+\.?\d*|\.\d+)(?:e-?\d+)?/g);
+  let i = 0, cmd = null, x = 0, y = 0, sx = 0, sy = 0, qx = 0, qy = 0, prev = '';
+  const box = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity, x1Below: -Infinity };
+  const add = (a, b) => {
+    box.x0 = Math.min(box.x0, a); box.x1 = Math.max(box.x1, a); box.y0 = Math.min(box.y0, b); box.y1 = Math.max(box.y1, b);
+    if (b >= yMin) box.x1Below = Math.max(box.x1Below, a);
+  };
+  const seg = (ax, ay, cx, cy, bx, by) => {          // a quadratic (a line when c is its midpoint), sampled finely
+    for (let n = 1; n <= 32; n++) { const t = n / 32, u = 1 - t; add(u * u * ax + 2 * u * t * cx + t * t * bx, u * u * ay + 2 * u * t * cy + t * t * by); }
+  };
+  const num = () => +toks[i++];
+  while (i < toks.length) {
+    if (/[A-Za-z]/.test(toks[i])) cmd = toks[i++];
+    const rel = cmd === cmd.toLowerCase(), C = cmd.toUpperCase(), ox = rel ? x : 0, oy = rel ? y : 0;
+    let bx = x, by = y, cx, cy;
+    if (C === 'M') { x = sx = ox + num(); y = sy = oy + num(); add(x, y); cmd = rel ? 'l' : 'L'; prev = C; continue; }
+    if (C === 'L') { bx = ox + num(); by = oy + num(); }
+    else if (C === 'H') bx = ox + num();
+    else if (C === 'V') by = oy + num();
+    else if (C === 'Q') { cx = ox + num(); cy = oy + num(); bx = ox + num(); by = oy + num(); }
+    else if (C === 'T') { [cx, cy] = /[QT]/.test(prev) ? [2 * x - qx, 2 * y - qy] : [x, y]; bx = ox + num(); by = oy + num(); }
+    else if (C === 'Z') { bx = sx; by = sy; }
+    else throw new Error(`inkExtent: unsupported path command ${cmd}`);
+    if (cx === undefined) { cx = (x + bx) / 2; cy = (y + by) / 2; }
+    seg(x, y, cx, cy, bx, by);
+    qx = cx; qy = cy; x = bx; y = by; prev = C;
+  }
+  return box;
+}
+
 // "Appendix" and the "Cryptofloricon" logo in Church Text, drawn by scripts/draw-word.mjs:
 // the font may not be embedded, so only its outlines are placed. THE LICENCE FOR PRINTING
 // CHURCH TEXT OUTLINES IS UNCONFIRMED.
@@ -353,8 +386,31 @@ function divider(name, cls) {
 
 /* ---------- the pages ---------- */
 
+/*
+ * The Story's drawn initial, sized and placed in points: the capital at 0.87 of its 2013-style
+ * size (Ed, 79: about 85–90%), its foot on the third line's baseline, its box cropped to the ink.
+ * width is the float: the ink beside the lines (below the first line's top) plus a fixed gap.
+ */
+function storyInitial(S) {
+  const letter = fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8')
+    .replace(/<!--[\s\S]*?-->/g, '').match(/<p>([A-Za-z])/)[1];
+  const m = manifest.words[letter];
+  const d = fs.readFileSync(path.join(SRC, 'headings', 'words', m.file), 'utf8').match(/<path d="([^"]*)"/)[1];
+  const k = S.leading * 3.6 * 0.87 / manifest.unitsPerEm;           // pt per font unit
+  const baseline = S.leading * 2 + (S.leading - S.body) / 2 + S.body * 0.76;   // the third line's baseline, from the paragraph's top
+  const ink = inkExtent(d, -baseline / k);
+  const gap = S.body * 0.4;
+  return {
+    svg: `<svg viewBox="${ink.x0.toFixed(1)} ${ink.y0.toFixed(1)} ${(ink.x1 - ink.x0).toFixed(1)} ${(ink.y1 - ink.y0).toFixed(1)}"><path d="${d}"/></svg>`,
+    width: (ink.x1Below - ink.x0) * k + gap,
+    top: baseline + ink.y0 * k,
+    svgW: (ink.x1 - ink.x0) * k, svgH: (ink.y1 - ink.y0) * k
+  };
+}
+
 function html(size, art, fit = new Map(), spacing = new Map()) {
   const S = SIZES[size];
+  const dropcap = storyInitial(S);
   const img = (key, cls, heightMm) => {
     const { width, height } = art[key];
     return `<img class="${cls}" src="img/${key}.png" alt="" style="height:${heightMm}mm;width:${(width * heightMm / height).toFixed(2)}mm">`;
@@ -442,10 +498,17 @@ p { margin: 0; orphans: 2; widows: 2; }
 .story .title { margin-bottom: 0.1em; }
 .story .divider { margin: 0 0 ${(S.leading * 1.5).toFixed(1)}pt; }
 .story p { text-align: justify; text-indent: 1.2em; }
-.story p:first-of-type { text-indent: 0; }
-/* The drawn initial: its box is Andrade's em, the capital filling the top 0.6 of it, so it spans three lines. */
-.story .dropcap { float: left; font-size: ${(S.leading * 3.6).toFixed(1)}pt; line-height: 1; margin: ${(S.leading * 0.05).toFixed(2)}pt ${(S.body * 0.3).toFixed(1)}pt 0 0; height: ${(S.leading * 2.6).toFixed(1)}pt; }
-.story .dropcap svg { display: block; height: 1em; overflow: visible; fill: #000; }
+/* A class, not :first-of-type, which Paged.js's page fragments do not keep (the first line was indented). */
+.story p.opening { text-indent: 0; }
+/*
+ * The drawn initial (Ed, 79): a plain rectangular float, as wide as the capital's ink beside
+ * the lines plus a fixed gap, so the three lines beside it start at one indent and the rest
+ * return to the full measure. The swash above the first line overhangs them. The capital's
+ * foot sits on the third line's baseline; the opening phrase follows in small capitals.
+ */
+.story .dropcap { float: left; position: relative; width: ${dropcap.width.toFixed(2)}pt; height: ${(S.leading * 2.6).toFixed(1)}pt; }
+.story .dropcap svg { position: absolute; left: 0; top: ${dropcap.top.toFixed(2)}pt; width: ${dropcap.svgW.toFixed(2)}pt; height: ${dropcap.svgH.toFixed(2)}pt; overflow: visible; fill: #000; }
+.story .lead-in { font-variant-caps: small-caps; letter-spacing: 0.04em; }
 .story p.signature { text-align: right; text-indent: 0; margin-top: ${S.leading / 2}pt; font-style: italic; }
 
 /* ---------- the entries ---------- */
@@ -533,8 +596,8 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
   // The Story, with its first letter drawn large as on the site; the letter itself stays, unseen.
   let story = fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8').replace(/<!--[\s\S]*?-->\s*/g, '');
   story = story.replace(/>([^<]+)</g, (m, t) => '>' + typeset(t) + '<');
-  const first = story.match(/<p>([A-Za-z])/);
-  story = story.replace(first[0], `<p><span class="dropcap" aria-hidden="true">${drawWord(first[1])}</span><span class="hidden-text">${first[1]}</span>`);
+  const first = story.match(/<p>([A-Za-z])([^,<]*,[^,<]*,)/);   // the capital, and the opening phrase to its second comma
+  story = story.replace(first[0], `<p class="opening"><span class="dropcap" aria-hidden="true">${dropcap.svg}</span><span class="hidden-text">${first[1]}</span><span class="lead-in">${first[2]}</span>`);
   const storySection = `
 <section class="story">
   <h1 class="title">${drawn('Introduction')}</h1>
