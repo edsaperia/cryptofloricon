@@ -428,8 +428,8 @@ p { margin: 0; orphans: 2; widows: 2; }
 .half-title .logo, .part-title .logo { margin-top: ${((parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside) * 0.28).toFixed(1)}mm; }
 .title-page { break-before: right; text-align: center; }
 .title-page .logo { margin-top: ${((parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside) * 0.12).toFixed(1)}mm; }
-.title-page .title { font-size: ${(S.title * 0.72).toFixed(1)}pt; margin-top: 1.2em; }
-.title-page .divider { margin-top: 1.4em; }
+/* The subtitle centred on the page's height (not the text block's), the logo above, the imprint at the foot (Ed, 2026-11-27). */
+.title-page .title { font-size: ${(S.title * 0.72).toFixed(1)}pt; position: absolute; left: 0; right: 0; top: calc(${S.height} / 2 - ${S.top}mm); transform: translateY(-50%); }
 .title-page .byline { position: absolute; bottom: 0; left: 0; right: 0; }
 .title-page .byline p + p { margin-top: 0.4em; }
 .copyright { break-before: left; font-size: ${(S.body * 0.86).toFixed(2)}pt; line-height: ${(S.leading * 0.86).toFixed(2)}pt; }
@@ -514,8 +514,7 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 <section class="front title-page">
   ${logo(S.inside * 5)}
   <h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
-    [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt Floral Bouquets']])}</h1>
-  ${divider('small')}
+    [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt'], ['line', 'Floral Bouquets']])}</h1>
   <div class="byline">
     <p class="sc">Original Content London</p>
   </div>
