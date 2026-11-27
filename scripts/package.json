@@ -1,11 +1,15 @@
 {
   "name": "cryptofloricon-draw-headings",
   "private": true,
-  "description": "Draws the site's script headings from Andrade Script Pro as SVG outlines (see draw-headings.js). Not needed by build.js or the tests.",
+  "description": "Tools run outside CI: draw-headings.mjs draws the script headings from Andrade Script Pro as SVG outlines; build-book.mjs lays out the book interior PDFs (Paged.js, hyphen). Not needed by build.js or the tests.",
   "scripts": {
     "draw": "node draw-headings.js"
   },
   "devDependencies": {
-    "harfbuzzjs": "1.6.4"
+    "@fontsource/eb-garamond": "5.2.7",
+    "harfbuzzjs": "1.6.4",
+    "hyphen": "1.10.6",
+    "pagedjs": "0.4.3",
+    "pdf-lib": "1.17.1"
   }
 }

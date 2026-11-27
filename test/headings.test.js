@@ -27,7 +27,8 @@ function allFiles(dir, base = '', skip = new Set()) {
 }
 
 // The repository's own files: not git's store, installed packages or a built site.
-const SKIP = new Set(['.git', 'site', 'node_modules', 'scripts/node_modules']);
+// book/out holds the book's working files (scripts/build-book.mjs), git-ignored.
+const SKIP = new Set(['.git', 'site', 'node_modules', 'scripts/node_modules', 'book/out']);
 const repoFiles = allFiles(ROOT, '', SKIP);
 const siteFiles = allFiles(out);
 const TEXT = /\.(html|css|js|mjs|json|svg|txt|md|toml|yml|yaml)$/;
