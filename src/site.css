@@ -359,10 +359,13 @@ h2 a { text-decoration: none; }
 
 .prose { text-align: left; }
 /* The story's drop cap is drawn (build.js); the letter stays in the text, unseen. */
-.dropcap { float: left; font-size: 3.2em; line-height: 1; padding: 0.12em 0.08em 0 0; }
+/* 51px, as before the body grew to 19px (3.2em of 16px). */
+.dropcap { float: left; font-size: 2.7em; line-height: 1; padding: 0.12em 0.08em 0 0; }
 /* The webfont's float was 0.8em tall (its line-height), so the text wraps after two lines. */
 .dropcap svg { display: block; height: 1em; margin-bottom: -0.2em; overflow: visible; fill: currentColor; }
 .dropcap-letter { font-size: 0; }
+/* The opening phrase in small capitals, as in the book's Story (Ed, 79). */
+.opening-phrase { font-variant: small-caps; letter-spacing: 0.03em; }
 /* The author's initials close the introduction, as in the 2013 print master. */
 .prose .signature { text-align: right; font-style: italic; margin-top: var(--half); }
 

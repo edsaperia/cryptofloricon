@@ -208,6 +208,14 @@ function build(out, options = {}) {
   const tags = [...new Set(entries.flatMap(e => e.tags))].sort();
   const assets = resolveAssets(out);
   const pages = [];
+  // A version on the stylesheet and scripts, from their contents, so a browser
+  // holding an old copy (GitHub Pages sends max-age=600) fetches the new one.
+  const VERSION = require('crypto').createHash('sha1')
+    .update(siteCss(assets))
+    .update(fs.readFileSync(path.join(ROOT, 'lib', 'cipher.js')))
+    .update(['decode.js', 'encode.js', 'notfound.js'].map(f => fs.existsSync(path.join(SRC, f)) ? fs.readFileSync(path.join(SRC, f), 'utf8') : '').join(''))
+    .update(JSON.stringify(entries))
+    .digest('hex').slice(0, 10);
 
   /* ---------- shared pieces ---------- */
 
@@ -325,7 +333,7 @@ function build(out, options = {}) {
 ${urlPath === null ? '' : `<link rel="canonical" href="${SITE_URL}/${urlPath}">\n`}${fav ? `<link rel="icon" href="${fav}">\n` : ''}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS_CSS}">
-<link rel="stylesheet" href="${r}assets/site.css" data-site-css>
+<link rel="stylesheet" href="${r}assets/site.css?v=${VERSION}" data-site-css>
 ${shareTags(urlPath, share)}${head}</head>
 <body class="${bodyClass}" data-root="${r}">
 <div class="wrapper">
@@ -338,7 +346,7 @@ ${main(r)}
 </main>
 ${footer(r)}
 </div>
-${scripts.map(s => `<script src="${r}assets/${s}"></script>`).join('\n')}
+${scripts.map(s => `<script src="${r}assets/${s}?v=${VERSION}"></script>`).join('\n')}
 </body>
 </html>
 `;
@@ -513,7 +521,10 @@ ${byCodeOrder.filter(e => e.tags.includes(tag)).map(e => entryRow(e, r)).join('\
   function dropCap(html) {
     const m = html.match(/<p>([A-Za-z])/);
     if (!m) throw new Error('content/story.html: no first letter for the drop cap');
-    return html.replace(m[0], `<p><span class="dropcap" aria-hidden="true">${drawWords(m[1])}</span><span class="dropcap-letter">${m[1]}</span>`);
+    // The opening phrase, to its second comma, in small capitals, as in the book (Ed, 79).
+    const rest = html.slice(m.index + m[0].length).match(/^[^,<]*,[^,<]*,/);
+    if (!rest) throw new Error('content/story.html: no opening phrase for the small capitals');
+    return html.replace(m[0] + rest[0], `<p class="opening"><span class="dropcap" aria-hidden="true">${drawWords(m[1])}</span><span class="dropcap-letter">${m[1]}</span><span class="opening-phrase">${rest[0]}</span>`);
   }
 
   page({

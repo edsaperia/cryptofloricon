@@ -131,7 +131,7 @@ test('the Story drop cap is drawn and the first word stays whole', () => {
   const html = read('story/index.html');
   assert.match(html, /<span class="dropcap" aria-hidden="true"><svg\b/);
   // "There" is still one word in the text: the T is only made invisible.
-  assert.match(html, /<span class="dropcap-letter">T<\/span>here was a time/);
+  assert.match(html, /<span class="dropcap-letter">T<\/span><span class="opening-phrase">here was a time, many years since,<\/span> that I/);
 });
 
 test('a title with no drawing fails the build, so a new or renamed title forces a redraw', () => {

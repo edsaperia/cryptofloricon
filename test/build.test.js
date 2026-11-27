@@ -364,3 +364,10 @@ test('Decode names the bouquet in natural words as flowers are tapped', () => {
   assert.equal(d.marks('4'), '');
   assert.equal(d.line(), '');
 });
+
+test('the stylesheet and scripts carry a content version, so browsers drop old copies', () => {
+  const home = read('index.html');
+  assert.match(home, /href="\.\/assets\/site\.css\?v=[0-9a-f]{10}" data-site-css/);
+  const decode = read('decode/index.html');
+  assert.match(decode, /<script src="\.\.\/assets\/[a-z]+\.js\?v=[0-9a-f]{10}"><\/script>/);
+});
