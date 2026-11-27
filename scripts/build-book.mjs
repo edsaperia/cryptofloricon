@@ -118,6 +118,9 @@ const htmlOnly = args.includes('--html');
 const measureOnly = args.includes('--measure');
 // --title-index: add the Index of Messages (titles A–Z with pages). Left out for now (Ed, 53).
 const withTitleIndex = args.includes('--title-index');
+// --title-amp: Ed's option (80) for the title page, "Encrypt & Decrypt" with a Caslon italic
+// ampersand among the drawn script words; written to a separate "-title-amp" PDF. The book keeps "and" until he chooses.
+const titleAmp = args.includes('--title-amp');
 // BOOK_SETTINGS='{"a6":{"body":7.8}}' tries other settings without editing SIZES.
 if (process.env.BOOK_SETTINGS) {
   for (const [k, v] of Object.entries(JSON.parse(process.env.BOOK_SETTINGS))) Object.assign(SIZES[k], v);
@@ -280,21 +283,36 @@ const typeset = s => hyph(s)
   .replace(/'/g, '’')                                  // the lexicon's few straight apostrophes
   .replace(/ [-–] /g, '\u00a0– ');                     // a spaced hyphen is a dash, and never starts a line
 
-/* A passage as paragraphs, each "#NN" the referenced entry's title, with its page number set small. */
-function passage(body) {
-  return body.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => {
-    const parts = p.split(/\B#(\d+)/);
+/* A passage's paragraphs as segments for lib/book.js: plain text, and each "#NN" a fixed cross-reference. */
+const segmentsOf = body => body.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
+  .map(p => p.split(/\B#(\d+)/).map((t, i) => i % 2 ? { text: byId.get(Number(t)).title, id: Number(t), fixed: true } : { text: t, fixed: false }));
+
+/* A chosen ligature word (Book.sprinkleLigatures): a span with Caslon's dlig, kept whole so no line end splits it. */
+const ligSpans = html => html.replace(new RegExp(`${Book.LIG_OPEN}([^${Book.LIG_CLOSE}]*)${Book.LIG_CLOSE}`, 'g'),
+  (m, w) => `<span class="dlig">${w.replace(/\u00AD/g, '')}</span>`);
+
+/*
+ * A passage as paragraphs, each "#NN" the referenced entry's title, with its page number set small.
+ * ornaments: { ligatures: the running state for Book.sprinkleLigatures, or null for none;
+ * skip: a page too full for one; swash: give the first cross-reference a swash capital }.
+ */
+function passage(body, ornaments = {}) {
+  let paras = segmentsOf(body);
+  const swash = ornaments.swash ? Book.swashRef(paras) : null;
+  if (ornaments.ligatures) paras = Book.sprinkleLigatures(paras, { state: ornaments.ligatures, skip: ornaments.skip });
+  return paras.map((segs, pi) => {
     let html = '';
-    parts.forEach((part, i) => {
-      if (i % 2 === 0) html += esc(typeset(part));
+    segs.forEach((seg, si) => {
+      if (!seg.fixed) html += ligSpans(esc(typeset(seg.text)));
       else {
-        const t = byId.get(Number(part));
-        html += `<a class="xref" href="#e${t.id}">${esc(t.title.replace(/'/g, '’'))}</a>`;
+        const title = esc(seg.text.replace(/'/g, '’'));
+        const shown = swash && swash[0] === pi && swash[1] === si ? `<span class="swash">${title[0]}</span>${title.slice(1)}` : title;
+        html += `<a class="xref" href="#e${seg.id}">${shown}</a>`;
       }
     });
     // A shouted paragraph (Evil laugh's "MWAHAHAHA…", Aaaaaaaaaa's screams: long
     // words in capitals) is set ragged rather than justified, so no line is stretched.
-    const unbreakable = p.replace(/\B#\d+/g, '').split(/\s+/).some(w => /^[A-Z!?]{6,}$/.test(w));
+    const unbreakable = segs.filter(s => !s.fixed).map(s => s.text).join(' ').split(/\s+/).some(w => /^[A-Z!?]{6,}$/.test(w));
     return `<p${unbreakable ? ' class="ragged"' : ''}>${html}</p>`;
   }).join('\n');
 }
@@ -408,8 +426,13 @@ function storyInitial(S) {
   };
 }
 
-function html(size, art, fit = new Map(), spacing = new Map()) {
+/*
+ * fill: each entry's share of its page, measured by fitEntries; given, the historical
+ * ligatures are sprinkled (none on a page over 90% full); left out (the measure itself), none are.
+ */
+function html(size, art, fit = new Map(), spacing = new Map(), fill = null, options = {}) {
   const S = SIZES[size];
+  const ligatures = fill ? { since: 0 } : null;   // one running count, Story first, then the entries
   const dropcap = storyInitial(S);
   const img = (key, cls, heightMm) => {
     const { width, height } = art[key];
@@ -535,6 +558,10 @@ p { margin: 0; orphans: 2; widows: 2; }
 .entry.fit1 .bouquet .stem, .entry.fit2 .bouquet .stem { height: ${(S.stems * FIT_STEMS).toFixed(1)}mm !important; width: auto !important; }
 .entry.fit2 .passage { line-height: ${(S.leading * FIT_LEADING).toFixed(2)}pt; }
 .xref { color: #000; text-decoration: none; font-style: italic; font-weight: 600; }  /* Semibold Italic, as in 2013 */
+/* Caslon's extras (Ed, 80), each on just its word or letter; font-feature-settings adds to the defaults, so liga (fi, fl) stays on. */
+.dlig { font-feature-settings: 'dlig' 1; }
+.swash { font-feature-settings: 'swsh' 1; }
+.amp { font-style: italic; }
 /* The referenced title's page, set small after it as in 2013. */
 .xref::after { content: target-counter(attr(href url), page); font-style: italic; font-weight: 400; font-size: 0.62em; vertical-align: -0.25em; line-height: 0; margin-left: 0.08em; font-variant-numeric: lining-nums; }
 
@@ -571,13 +598,23 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 `;
 
   const credit = (role, names) => `<p class="roles"><i>${role}</i> ${names}</p>`;
+  // Caslon's italic ampersand, in roman text too (Ed, 80).
+  const amp = '<i class="amp">&amp;</i>';
+  // A swash capital (Ed, 80): the italic's swsh form of the first letter.
+  const swashed = t => `<span class="swash">${t[0]}</span>${t.slice(1)}`;
+  // For the title page option: the ampersand as a drawing-sized box like a script word, its baseline on theirs.
+  const AMP_SIZE = 1150, AMP_ADVANCE = 852;   // font units: its size against the script's em, and Caslon Italic's advance
+  const caslonAmp = `<svg viewBox="0 -605 ${AMP_ADVANCE * AMP_SIZE / 1000 + 120} 1000" style="width:${((AMP_ADVANCE * AMP_SIZE / 1000 + 120) / 1000).toFixed(3)}em"><text x="40" y="0" font-family="Book Caslon" font-style="italic" font-size="${AMP_SIZE}">&amp;</text></svg>`;
 
   const front = `
 <section class="front half-title">${logo(S.inside * 3.6)}</section>
 <section class="front title-page">
   ${logo(S.inside * 5)}
-  <h1 class="title">${drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
-    [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt'], ['line', 'Floral Bouquets']])}</h1>
+  <h1 class="title">${options.titleAmp
+    ? drawn('A Lexicon of Ciphers – to – Encrypt & Decrypt Floral Bouquets', [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –']])
+      .replace(/<\/span>$/, ` <span class="line">${drawWord('Encrypt')} ${caslonAmp} ${drawWord('Decrypt')}</span> <span class="line">${drawWords('Floral Bouquets')}</span></span>`)
+    : drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
+      [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt'], ['line', 'Floral Bouquets']])}</h1>
   <div class="byline">
     <p class="sc">Original Content London</p>
   </div>
@@ -585,8 +622,8 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 <section class="front copyright">
   <div class="block">
     <p><span class="sc">Cryptofloricon</span><br><i>A Lexicon of Ciphers to Encrypt and Decrypt Floral Bouquets</i></p>
-    <p>${['<i>Invented and produced by</i> Edward Saperia', '<i>Written by</i> Sasha Garwood and Grant Howitt',
-      '<i>Graphics by</i> Sam Ballard and <span class="cy">Евгений Олегович</span>'].join('<br>')}</p>
+    <p>${[`<i>${swashed('Invented')} &amp; produced by</i> Edward Saperia`, `<i>${swashed('Written')} by</i> Sasha Garwood ${amp} Grant Howitt`,
+      `<i>${swashed('Graphics')} by</i> Sam Ballard ${amp} <span class="cy">Евгений Олегович</span>`].join('<br>')}</p>
     <p>First made in London in 2013.<br>This edition 2026.</p>
     <p>&copy; Original Content London 2013, 2026.<br>All rights reserved.</p>
     <p>cryptofloricon.com</p>
@@ -595,9 +632,19 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 
   // The Story, with its first letter drawn large as on the site; the letter itself stays, unseen.
   let story = fs.readFileSync(path.join(ROOT, 'content', 'story.html'), 'utf8').replace(/<!--[\s\S]*?-->\s*/g, '');
-  story = story.replace(/>([^<]+)</g, (m, t) => '>' + typeset(t) + '<');
   const first = story.match(/<p>([A-Za-z])([^,<]*,[^,<]*,)/);   // the capital, and the opening phrase to its second comma
-  story = story.replace(first[0], `<p class="opening"><span class="dropcap" aria-hidden="true">${dropcap.svg}</span><span class="hidden-text">${first[1]}</span><span class="lead-in">${first[2]}</span>`);
+  story = story.replace(first[0], `<p class="opening">\u0001`);
+  // The Story's paragraphs take part in the sprinkled ligatures; the opening phrase, in small capitals, is fixed.
+  const storyParas = [...story.matchAll(/(<p[^>]*>)([^<]*)<\/p>/g)];
+  const storySegs = storyParas.map(([, , t]) => t.startsWith('\u0001')
+    ? [{ text: '', fixed: true }, { text: t.slice(1), fixed: false }] : [{ text: t, fixed: false }]);
+  const storyMarked = ligatures ? Book.sprinkleLigatures(storySegs, { state: ligatures, skip: (fill.get('story') || 0) > 0.9 }) : storySegs;
+  storyParas.forEach(([whole, open], i) => {
+    const text = storyMarked[i].map(seg => seg.fixed
+      ? `<span class="dropcap" aria-hidden="true">${dropcap.svg}</span><span class="hidden-text">${first[1]}</span><span class="lead-in">${typeset(first[2])}</span>`
+      : ligSpans(typeset(seg.text))).join('');
+    story = story.replace(whole, `${open}${text}</p>`);
+  });
   const storySection = `
 <section class="story">
   <h1 class="title">${drawn('Introduction')}</h1>
@@ -610,7 +657,7 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
   <div class="bouquet"${spacing.has(e.id) ? ` style="margin-bottom:${spacing.get(e.id).above}mm"` : ''}>${bouquet(e.code, S.stems)}</div>
   <h2 class="title"${spacing.has(e.id) ? ` style="margin-bottom:${spacing.get(e.id).below}mm"` : ''}>${drawn(e.title)}</h2>
   <div class="passage">
-${passage(e.body)}
+${passage(e.body, { ligatures, skip: fill && fill.get(e.id) > 0.9, swash: true })}
   </div>
 </section>`).join('');
 
@@ -649,7 +696,7 @@ ${titleItems}
   <div class="block">
     <p class="name">Cryptofloricon</p>
     <p>London 2013 &middot; 2026</p>
-    <p class="set-in"><i>Set in Adobe Caslon;<br>the titles drawn from Andrade Script Pro.</i></p>
+    <p class="set-in"><i>${swashed('Set')} in Adobe Caslon;<br>the titles drawn from Andrade Script Pro.</i></p>
   </div>
 </section>`;
 
@@ -870,9 +917,9 @@ const expectedText = Object.fromEntries(entries.map(e => [`e${e.id}`,
   e.body.replace(/\B#(\d+)/g, (m, id) => byId.get(Number(id)).title).toLowerCase().replace(/[^a-z]/g, '')]));
 
 /* Lay one size out with Paged.js; the page stays open for printing. */
-async function layout(browser, size, art, fit, spacing) {
+async function layout(browser, size, art, fit, spacing, fill) {
   const htmlFile = path.join(OUT, `book-${size}.html`);
-  fs.writeFileSync(htmlFile, html(size, art, fit, spacing));
+  fs.writeFileSync(htmlFile, html(size, art, fit, spacing, fill, { titleAmp }));
   if (htmlOnly) return { htmlFile };
   const page = await browser.newPage();
   // A script error in the page would leave the layout waiting for ever: stop on the first.
@@ -924,7 +971,8 @@ try {
       if (tooLong.length && !measureOnly) throw new Error(`${S.file}: ${tooLong.length} entries do not fit on one page`);
       continue;
     }
-    const result = await layout(browser, size, art, fit, spacing);
+    const fill = new Map(rows.map(r => [r.id, r.fill]));
+    const result = await layout(browser, size, art, fit, spacing, fill);
     if (htmlOnly) { console.log('wrote', path.relative(ROOT, result.htmlFile)); continue; }
     const { page, report } = result;
     // The checks (54a): no entry may run past its page, and none may lose any of its text.
@@ -935,11 +983,11 @@ try {
       throw new Error(`${S.file}: ` + [report.runOn.length && `entries run past their page: ${report.runOn.map(title).join('; ')}`,
         report.lost.length && `entries missing text: ${report.lost.map(title).join('; ')}`].filter(Boolean).join('. '));
     }
-    const pdf = path.join(OUT, S.file);
+    const pdf = path.join(OUT, titleAmp ? S.file.replace('.pdf', '-title-amp.pdf') : S.file);
     await page.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true, displayHeaderFooter: false, tagged: false, outline: false });
     await page.close();
     await finishPdf(pdf, S);
-    console.log(`${S.file}: ${report.total} pages; every entry on one page, odd entries on the left; colophon on the last left-hand page.\n${summary}` +
+    console.log(`${path.basename(pdf)}: ${report.total} pages; every entry on one page, odd entries on the left; colophon on the last left-hand page.\n${summary}` +
       (report.overflow.length ? `\n  Overflowing pages: ${report.overflow.join(', ')}` : ''));
   }
 } finally {

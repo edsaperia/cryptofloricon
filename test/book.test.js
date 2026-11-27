@@ -124,3 +124,59 @@ test('the book-only edit to One last chance (Ed, 61b) applies, and leaves the le
   // An edit whose text is not there is refused.
   assert.throws(() => Book.bookText(lexicon, [{ ...edit, remove: 'not in the passage' }]), /0 times, not once/);
 });
+
+/* ---------- Caslon's extras (Ed, 80) ---------- */
+
+const plain = text => ({ text, fixed: false });
+const ref = text => ({ text, fixed: true });
+const ligWords = paras => paras.flat().map(s => s.text).join(' ').match(new RegExp(`${Book.LIG_OPEN}[^${Book.LIG_CLOSE}]*${Book.LIG_CLOSE}`, 'g')) || [];
+
+test('the historical ligatures are sprinkled by a fixed rule: one a paragraph at most, a gap of words between', () => {
+  const para = [plain('the first act is just a test of the respect we must show to most of them')];
+  // With no gap, the first eligible word in each paragraph, and only one there.
+  const out = Book.sprinkleLigatures([para, para], { gap: 0 });
+  assert.deepEqual(ligWords(out), ['\uE000first\uE001', '\uE000first\uE001']);
+  // The text is otherwise untouched.
+  assert.equal(out[0][0].text.replace(/[\uE000\uE001]/g, ''), para[0].text);
+  // A gap of 30 words (each paragraph has 17): the count runs on across paragraphs, so the first
+  // comes at the first eligible word after word 30, "most" in the second paragraph, and the third has none.
+  const state = { since: 0 };
+  const gapped = Book.sprinkleLigatures([para, para, para], { gap: 30, state });
+  assert.deepEqual(gapped.map(p => ligWords([p]).length), [0, 1, 0]);
+  assert.match(gapped[1][0].text, /\uE000most\uE001 of them$/);
+  // The same input always gives the same result.
+  assert.deepEqual(Book.sprinkleLigatures([para, para, para], { gap: 30 }), gapped);
+});
+
+test('no ligature in or right beside a cross-reference, in small capitals, in a capitalised or long word, or on a full page', () => {
+  const none = paras => assert.deepEqual(ligWords(Book.sprinkleLigatures(paras, { gap: 0 })), []);
+  none([[ref('Just a test'), plain(' first, then nothing')]]);       // the word after a reference
+  none([[plain('nothing but first '), ref('Must do')]]);                 // the word before one
+  none([[ref('here was a time, many years since,'), plain(' that I contemplated')]]);   // after small capitals
+  none([[plain('Stop. Strictly Christmas.')]]);                          // capitals, and Ch is no ligature
+  none([[plain('enthusiastically, well-structured')]]);                  // too long; not a plain word
+  assert.deepEqual(ligWords(Book.sprinkleLigatures([[plain('the first act')]], { gap: 0, skip: true })), []);
+  // One word further on is fine.
+  assert.deepEqual(ligWords(Book.sprinkleLigatures([[ref('Yes'), plain(' or first, then nothing')]], { gap: 0 })), ['\uE000first\uE001']);
+});
+
+test('a swash capital goes only on an entry\'s first cross-reference, where it has room', () => {
+  assert.deepEqual(Book.swashRef([[plain('Some words.')], [plain(''), ref('Tell me the truth'), plain(' is a bold request.')]]), [1, 1]);
+  assert.deepEqual(Book.swashRef([[plain('It is suspicious. '), ref('Tell me the truth'), plain(' is a bold request.')]]), [0, 1]);
+  assert.equal(Book.swashRef([[plain('Mid-sentence, '), ref('Tell me the truth'), plain(' then more words.')]]), null);
+  assert.equal(Book.swashRef([[plain('Ends. '), ref('Tell me'), plain(' or '), ref('Yes'), plain(' close together.')]]), null);
+  assert.equal(Book.swashRef([[plain('Ends. '), ref('I love you'), plain(' with no swash worth having.')]]), null);
+  assert.equal(Book.swashRef([[plain('No references at all.')]]), null);
+  // Over the whole book: few, and each an entry's first reference.
+  const lexicon2 = Book.bookText(Book.bookEntries(lexicon));
+  const byId = new Map(lexicon2.map(e => [e.id, e]));
+  const segs = body => body.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
+    .map(p => p.split(/\B#(\d+)/).map((t, i) => i % 2 ? ref(byId.get(Number(t)).title) : plain(t)));
+  const n = lexicon2.filter(e => Book.swashRef(segs(e.body))).length;
+  assert.ok(n > 5 && n < 30, `sparing: ${n} entries`);
+  // And the ligatures over the book: an occasional touch, roughly one every few paragraphs.
+  const state = { since: 0 };
+  const paras = lexicon2.reduce((k, e) => k + segs(e.body).length, 0);
+  const ligs = lexicon2.reduce((k, e) => k + ligWords(Book.sprinkleLigatures(segs(e.body), { state })).length, 0);
+  assert.ok(ligs > paras / 8 && ligs < paras / 2.5, `${ligs} ligatures in ${paras} paragraphs`);
+});
