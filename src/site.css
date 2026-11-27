@@ -1,8 +1,8 @@
 /*
  * Cryptofloricon. Modelled on the 2015 site's stylesheet
  * (/Cryptofloricon Dev/css/main.css): brown ink (#581a0e) on paper, a
- * script title face, an old-style body face (Sorts Mill Goudy, Ed 84a, the free face
- * closest to the book's Adobe Caslon), ornamental corners round the main
+ * script title face, an old-style body face (Cardo, Ed 2026-11-27, after Sorts Mill
+ * Goudy; a free face near the book's Adobe Caslon), ornamental corners round the main
  * panel, small-caps "• Decode •" links, and a 600px column on wide screens.
  *
  * The script face (Andrade Script Pro) is not served: the build places each
@@ -24,7 +24,7 @@
   --ornament-stroke: 0.33px;
   /* Only for the text logotype, shown if the logo image is missing. */
   --title-font: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
-  --body-font: "Sorts Mill Goudy", "Adobe Caslon Pro", "Big Caslon", Georgia, "Times New Roman", serif;
+  --body-font: "Cardo", "Adobe Caslon Pro", "Big Caslon", Georgia, "Times New Roman", serif;
   /* Vertical rhythm (Ed, 2026-11-25): every space between blocks is a whole
      or half line of the body text (16px at 1.65), so the page keeps one beat. */
   --line: 1.65rem;
@@ -39,7 +39,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* Sorts Mill Goudy's small x-height (0.43em, Libre Caslon's was 0.53em) wants a larger
+/* Cardo's small x-height (0.44em, Libre Caslon's was 0.53em) wants a larger
    body size; every rem-based space grows with it, so the rhythm holds. */
 html { font-size: 19px; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; background-color: #f1e6cc; }
 
@@ -126,8 +126,8 @@ img { vertical-align: middle; max-width: 100%; }
   /* 32px, as before the body grew to 19px (2em of 16px). */
   font: 1.684em/1.95 var(--body-font);
   /* The words are drawings (see .drawn below); the spaces between them are
-     the body face's, widened to Andrade's own (0.23em; Sorts Mill Goudy's is 0.213em). */
-  word-spacing: 0.017em;
+     the body face's, narrowed to Andrade's own (0.23em; Cardo's is 0.269em). */
+  word-spacing: -0.039em;
   margin: 0 auto;
   padding: var(--half) 0;
   font-weight: normal;
