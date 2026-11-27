@@ -102,3 +102,25 @@ test('the Appendix page is a drawing, not a font', () => {
   assert.match(svg, /<path d="M/);
   assert.match(svg, /data-upem="\d+" data-advance="\d+"/);
 });
+
+test('the book-only edit to One last chance (Ed, 61b) applies, and leaves the lexicon untouched', () => {
+  const before = fs.readFileSync(path.join(ROOT, 'data', 'lexicon.json'), 'utf8');
+  const edits = Book.loadEdits();
+  assert.equal(edits.length, 1);
+  const [edit] = edits;
+  assert.equal(edit.id, 44);
+  assert.match(edit.source, /2013 print master, p\. 167/);
+  assert.match(edit.ruling, /61b/);
+  const original = lexicon.find(e => e.id === 44);
+  const printed = Book.bookText(lexicon).find(e => e.id === 44);
+  // Exactly that text is removed, and the passage ends where 2013's did.
+  assert.equal(printed.body, original.body.replace(edit.remove, ''));
+  assert.equal(original.body.length - printed.body.length, edit.remove.length);
+  assert.match(printed.body, /conditional or otherwise\.$/);
+  // Every other entry is unchanged, and so is the lexicon itself.
+  Book.bookText(lexicon).forEach((e, i) => { if (e.id !== 44) assert.equal(e, lexicon[i]); });
+  assert.ok(original.body.includes(edit.remove), 'the lexicon still has the full passage');
+  assert.equal(fs.readFileSync(path.join(ROOT, 'data', 'lexicon.json'), 'utf8'), before);
+  // An edit whose text is not there is refused.
+  assert.throws(() => Book.bookText(lexicon, [{ ...edit, remove: 'not in the passage' }]), /0 times, not once/);
+});

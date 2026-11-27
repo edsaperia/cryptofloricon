@@ -1,0 +1,12 @@
+{
+  "about": "Book-only edits: changes to an entry's text in the printed book that the website and data/lexicon.json do not make. Each removes one exact passage of text, applied by lib/book.js (bookText) and checked by test/book.test.js.",
+  "edits": [
+    {
+      "id": 44,
+      "title": "One last chance",
+      "remove": " #11 or #77 suggest both parties should conduct themselves with care, whereas #94 answers the Bearer’s terms with conditions of the Receiver’s own, and #178 wryly or humorously acknowledges the implicit finality of the Bearer’s assertion.",
+      "source": "2013 print master, p. 167 (the passage ends \"conditional or otherwise.\")",
+      "ruling": "Ed, 61b, 2026-11-27: cut in the book only, as 2013 printed it, so the entry fits its page"
+    }
+  ]
+}

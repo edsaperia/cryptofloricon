@@ -90,10 +90,10 @@ const SIZES = {
     file: 'cryptofloricon-5.5x8.5-interior.pdf',
     label: '5.5 × 8.5 in',
     width: '5.5in', height: '8.5in',
-    // Proportioned like 2013 (Ed, 58a): a text block 96 × 171 mm in classical margins
-    // (inside smallest, then top, outside, bottom).
-    inside: 16, outside: 27.7, top: 17, bottom: 28,
-    body: 10.2, leading: 13,          // Adobe Caslon Pro, 1.27 (Ed, 59b): the largest size at which every entry fits
+    // Proportioned like 2013 (Ed, 58a, 60): a text block 95 × 170.4 mm in classical
+    // margins (inside smallest, then top, outside, bottom).
+    inside: 16, outside: 28.7, top: 16.5, bottom: 29,
+    body: 10.6, leading: 13.3,        // Adobe Caslon Pro (59b), 1.25, about 63 characters a line (60)
     paraGap: 0.5,
     title: 18,
     appendix: 44,
@@ -190,7 +190,10 @@ const { hyphenateSync } = require(path.join(MODULES, 'hyphen/en-gb'));
 /* ---------- content ---------- */
 
 const lexicon = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'lexicon.json'), 'utf8'));
-const entries = Book.bookEntries(lexicon);
+// The entries in book order, with the book-only edits applied (book/edits.json: Ed, 61b,
+// One last chance cut as 2013 printed it). The website keeps the full text. The
+// missing-text check compares the pages with this edited text, so any other loss still fails.
+const entries = Book.bookText(Book.bookEntries(lexicon));
 const unresolved = Book.unresolvedRefs(entries);
 if (unresolved.length) throw new Error('unresolved cross-references: ' + unresolved.map(r => `#${r.from} → #${r.to}`).join(', '));
 const byId = new Map(entries.map(e => [e.id, e]));
