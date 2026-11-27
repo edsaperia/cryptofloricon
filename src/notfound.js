@@ -22,7 +22,7 @@
     if (old) {
       var css = document.createElement('link');
       css.rel = 'stylesheet';
-      css.href = base + 'assets/site.css';
+      css.href = base + 'assets/site.css' + (old.getAttribute('href').match(/\?.*$/) || [''])[0];
       old.parentNode.replaceChild(css, old);
     }
     // Images were requested before the base existed; ask again.
