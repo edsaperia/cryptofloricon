@@ -81,6 +81,7 @@ const SIZES = {
     body: 7.6, leading: 10,           // pt
     paraGap: 0.4,                     // the space between paragraphs, in lines
     title: 15,                        // pt: one em of the drawn script, ascender to descender
+    subtitle: 12.5, subtitleJoiner: 9, // pt: the title page's Caslon Italic subtitle, and its upright "– to –"
     appendix: 34,                     // pt: one em of Church Text (2013: 30 pt on a 90 mm wide page)
     stems: 13,                        // mm: the bouquet above each title
     gapAbove: 5.3, gapBelow: 3.5,     // mm, ink to ink: stems to title, title to text (see spaceTitles)
@@ -97,6 +98,7 @@ const SIZES = {
     body: 10.6, leading: 13.3,        // Adobe Caslon Pro (59b), 1.25, about 63 characters a line (60)
     paraGap: 0.5,
     title: 18,
+    subtitle: 15, subtitleJoiner: 11,   // pt: the title page's Caslon Italic subtitle, and its upright "– to –"
     appendix: 44,
     stems: 14,
     gapAbove: 6.6, gapBelow: 4.4,
@@ -118,9 +120,6 @@ const htmlOnly = args.includes('--html');
 const measureOnly = args.includes('--measure');
 // --title-index: add the Index of Messages (titles A–Z with pages). Left out for now (Ed, 53).
 const withTitleIndex = args.includes('--title-index');
-// --title-amp: Ed's option (80) for the title page, "Encrypt & Decrypt" with a Caslon italic
-// ampersand among the drawn script words; written to a separate "-title-amp" PDF. The book keeps "and" until he chooses.
-const titleAmp = args.includes('--title-amp');
 // BOOK_SETTINGS='{"a6":{"body":7.8}}' tries other settings without editing SIZES.
 if (process.env.BOOK_SETTINGS) {
   for (const [k, v] of Object.entries(JSON.parse(process.env.BOOK_SETTINGS))) Object.assign(SIZES[k], v);
@@ -430,7 +429,7 @@ function storyInitial(S) {
  * fill: each entry's share of its page, measured by fitEntries; given, the historical
  * ligatures are sprinkled (none on a page over 90% full); left out (the measure itself), none are.
  */
-function html(size, art, fit = new Map(), spacing = new Map(), fill = null, options = {}) {
+function html(size, art, fit = new Map(), spacing = new Map(), fill = null) {
   const S = SIZES[size];
   const ligatures = fill ? { since: 0 } : null;   // one running count, Story first, then the entries
   const dropcap = storyInitial(S);
@@ -508,7 +507,11 @@ p { margin: 0; orphans: 2; widows: 2; }
 .title-page { break-before: right; text-align: center; }
 .title-page .logo { margin-top: ${((parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside) * 0.12).toFixed(1)}mm; }
 /* The subtitle centred on the page's height (not the text block's), the logo above, the imprint at the foot (Ed, 2026-11-27). */
-.title-page .title { font-size: ${(S.title * 0.72).toFixed(1)}pt; position: absolute; left: 0; right: 0; top: calc(${S.height} / 2 - ${S.top}mm); transform: translateY(-50%); }
+/* The subtitle in live Caslon Italic, plain capitals, with its italic ampersand (Ed, 81a, 82e); the "– to –" upright and smaller, as on the website (47b). */
+.title-page .subtitle { font-size: ${S.subtitle}pt; line-height: 1.7; font-style: italic; font-weight: normal; font-feature-settings: 'swsh' 0; margin: 0;
+  position: absolute; left: 0; right: 0; top: calc(${S.height} / 2 - ${S.top}mm); transform: translateY(-50%); }
+.title-page .subtitle .line, .title-page .subtitle .joiner { display: block; }
+.title-page .subtitle .joiner { font-style: normal; font-size: ${S.subtitleJoiner}pt; }
 .title-page .byline { position: absolute; bottom: 0; left: 0; right: 0; }
 .title-page .byline p + p { margin-top: 0.4em; }
 .copyright { break-before: left; font-size: ${(S.body * 0.86).toFixed(2)}pt; line-height: ${(S.leading * 0.86).toFixed(2)}pt; }
@@ -602,19 +605,12 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
   const amp = '<i class="amp">&amp;</i>';
   // A swash capital (Ed, 80): the italic's swsh form of the first letter.
   const swashed = t => `<span class="swash">${t[0]}</span>${t.slice(1)}`;
-  // For the title page option: the ampersand as a drawing-sized box like a script word, its baseline on theirs.
-  const AMP_SIZE = 1150, AMP_ADVANCE = 852;   // font units: its size against the script's em, and Caslon Italic's advance
-  const caslonAmp = `<svg viewBox="0 -605 ${AMP_ADVANCE * AMP_SIZE / 1000 + 120} 1000" style="width:${((AMP_ADVANCE * AMP_SIZE / 1000 + 120) / 1000).toFixed(3)}em"><text x="40" y="0" font-family="Book Caslon" font-style="italic" font-size="${AMP_SIZE}">&amp;</text></svg>`;
 
   const front = `
 <section class="front half-title">${logo(S.inside * 3.6)}</section>
 <section class="front title-page">
   ${logo(S.inside * 5)}
-  <h1 class="title">${options.titleAmp
-    ? drawn('A Lexicon of Ciphers – to – Encrypt & Decrypt Floral Bouquets', [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –']])
-      .replace(/<\/span>$/, ` <span class="line">${drawWord('Encrypt')} ${caslonAmp} ${drawWord('Decrypt')}</span> <span class="line">${drawWords('Floral Bouquets')}</span></span>`)
-    : drawn('A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
-      [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt'], ['line', 'Floral Bouquets']])}</h1>
+  <h1 class="subtitle"><span class="line">A Lexicon of Ciphers</span> <span class="joiner">– to –</span> <span class="line">Encrypt &amp; Decrypt</span> <span class="line">Floral Bouquets</span></h1>
   <div class="byline">
     <p class="sc">Original Content London</p>
   </div>
@@ -919,7 +915,7 @@ const expectedText = Object.fromEntries(entries.map(e => [`e${e.id}`,
 /* Lay one size out with Paged.js; the page stays open for printing. */
 async function layout(browser, size, art, fit, spacing, fill) {
   const htmlFile = path.join(OUT, `book-${size}.html`);
-  fs.writeFileSync(htmlFile, html(size, art, fit, spacing, fill, { titleAmp }));
+  fs.writeFileSync(htmlFile, html(size, art, fit, spacing, fill));
   if (htmlOnly) return { htmlFile };
   const page = await browser.newPage();
   // A script error in the page would leave the layout waiting for ever: stop on the first.
@@ -983,7 +979,7 @@ try {
       throw new Error(`${S.file}: ` + [report.runOn.length && `entries run past their page: ${report.runOn.map(title).join('; ')}`,
         report.lost.length && `entries missing text: ${report.lost.map(title).join('; ')}`].filter(Boolean).join('. '));
     }
-    const pdf = path.join(OUT, titleAmp ? S.file.replace('.pdf', '-title-amp.pdf') : S.file);
+    const pdf = path.join(OUT, S.file);
     await page.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true, displayHeaderFooter: false, tagged: false, outline: false });
     await page.close();
     await finishPdf(pdf, S);

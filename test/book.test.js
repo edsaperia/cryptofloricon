@@ -78,7 +78,7 @@ test('the title index has every entry once, in alphabetical order', () => {
 
 test('every script title in the book has a drawing', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'headings', 'manifest.json'), 'utf8'));
-  const words = new Set(['Introduction', 'A Lexicon of Ciphers', '– to –', 'Encrypt and Decrypt Floral Bouquets', 'T']
+  const words = new Set(['Introduction', 'T']   // the title page's subtitle is live Caslon Italic (82e)
     .concat(lexicon.map(e => e.title)).flatMap(t => t.split(' ')).filter(Boolean));
   assert.deepEqual([...words].filter(w => !manifest.words[w]), []);
 });
