@@ -517,7 +517,6 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
     [['line', 'A Lexicon of Ciphers'], ['joiner', '– to –'], ['line', 'Encrypt and Decrypt Floral Bouquets']])}</h1>
   ${divider('small')}
   <div class="byline">
-    <p class="sc">Sasha Garwood &amp; Grant Howitt</p>
     <p class="sc">Original Content London</p>
   </div>
 </section>
