@@ -60,8 +60,8 @@ const SRC = path.join(ROOT, 'src');
  * pages, 12.7 mm for 151–300, 15.9 mm for 301–500. Both books are 151–300
  * pages, so the gutter is at least 12.7 mm. Bookvault publishes no fixed
  * interior margins (its templates come from its quote tool), so A6 uses the
- * same rule. The folio sits in the bottom margin, its foot at least 7.4 mm
- * from the edge.
+ * same rule. The folio sits in the bottom margin, about 40% of the way down
+ * it, its foot at least 7.4 mm from the edge.
  *
  * Every entry fits on one page (Ed, 54a), as in the 2013 book, which set
  * Adobe Caslon at 8 pt on 10 pt, about 72 mm wide, on a 90 × 140 mm page. Libre
@@ -87,15 +87,17 @@ const SIZES = {
     file: 'cryptofloricon-5.5x8.5-interior.pdf',
     label: '5.5 × 8.5 in',
     width: '5.5in', height: '8.5in',
-    inside: 14, outside: 11, top: 13, bottom: 17,
-    body: 10, leading: 13.4,
+    // Proportioned like 2013 (Ed, 58a): a text block 96 × 171 mm, about 62 characters
+    // a line, in classical margins (inside smallest, then top, outside, bottom).
+    inside: 16, outside: 27.7, top: 17, bottom: 28,
+    body: 9.3, leading: 11.9,         // 1.28
     paraGap: 0.5,
-    title: 20,
+    title: 18,
     appendix: 44,
-    stems: 17,
-    gapAbove: 8, gapBelow: 5.3,
+    stems: 14,
+    gapAbove: 6.6, gapBelow: 4.4,
     folio: 8.5,
-    index: { stem: 8.4, row: 12, head: 7.5, rowsPer: 14, text: 9, leading: 13 }
+    index: { stem: 8.4, row: 11.4, head: 7.5, rowsPer: 14, text: 9, leading: 13 }
   }
 };
 
@@ -304,7 +306,7 @@ ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-
     font: ${S.folio}pt 'Libre Caslon Text', serif;
     color: #000;
     vertical-align: top;
-    padding-top: ${(S.bottom - 7.4 - S.folio * 0.3528 * 1.2).toFixed(2)}mm;
+    padding-top: ${Math.min(S.bottom * 0.4, S.bottom - 7.4 - S.folio * 0.3528 * 1.2).toFixed(2)}mm;
   }
 }
 @page :left  { margin-left: ${S.outside}mm; margin-right: ${S.inside}mm; }
