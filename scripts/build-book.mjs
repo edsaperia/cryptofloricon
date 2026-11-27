@@ -5,7 +5,9 @@
  *   book/out/cryptofloricon-a6-interior.pdf       A6, 105 × 148 mm (the special edition)
  *   book/out/cryptofloricon-5.5x8.5-interior.pdf  5.5 × 8.5 in (the Amazon edition)
  *
- * Usage:  cd scripts && npm ci         (once: Paged.js, hyphenation patterns, the body face)
+ * Usage:  cd scripts && npm ci         (once: Paged.js, hyphenation patterns, EB Garamond)
+ *         pip install fonttools          (once: to convert Adobe Caslon Pro for embedding)
+ *         CRYPTOFLORICON_CASLON_DIR=<Ed's Adobe Caslon Pro folder> \
  *         node scripts/build-book.mjs [--size us|a6|all] [--html] [--measure] [--title-index]
  *
  * The default is the Amazon edition alone (5.5 × 8.5 in); the A6 edition is
@@ -32,8 +34,10 @@
  * placed as stencils (image masks) that print black on the strokes and
  * nothing elsewhere, so no box shows round them; every colour is rewritten as
  * grey, and the PDF has no colour and no transparency. The
- * body face, Libre Caslon Text (SIL Open Font License), and EB Garamond for
- * the Cyrillic in the credits (OFL; Libre Caslon has no Cyrillic) come from
+ * body face is Adobe Caslon Pro, the 2013 book's own (Ed, 59b), read from Ed's
+ * copy outside the repository (--caslon <dir> or CRYPTOFLORICON_CASLON_DIR);
+ * EB Garamond sets the Cyrillic in the credits (OFL; Adobe Caslon Pro has no
+ * Cyrillic) and comes from
  * npm and are embedded by Chromium as subsets; no font file is written into
  * the repository. The script titles are the committed outline drawings in
  * src/headings/: the licensed title font is never needed or embedded.
@@ -64,9 +68,8 @@ const SRC = path.join(ROOT, 'src');
  * it, its foot at least 7.4 mm from the edge.
  *
  * Every entry fits on one page (Ed, 54a), as in the 2013 book, which set
- * Adobe Caslon at 8 pt on 10 pt, about 72 mm wide, on a 90 × 140 mm page. Libre
- * Caslon Text is larger and wider for its size than Adobe Caslon, so 7.6 pt
- * here reads about as large as 2013's 8 pt.
+ * Adobe Caslon at 8 pt on 10 pt, about 72 mm wide, on a 90 × 140 mm page.
+ * (The shelved A6 settings date from Libre Caslon Text and are not refitted.)
  */
 const SIZES = {
   a6: {
@@ -87,10 +90,10 @@ const SIZES = {
     file: 'cryptofloricon-5.5x8.5-interior.pdf',
     label: '5.5 × 8.5 in',
     width: '5.5in', height: '8.5in',
-    // Proportioned like 2013 (Ed, 58a): a text block 96 × 171 mm, about 62 characters
-    // a line, in classical margins (inside smallest, then top, outside, bottom).
+    // Proportioned like 2013 (Ed, 58a): a text block 96 × 171 mm in classical margins
+    // (inside smallest, then top, outside, bottom).
     inside: 16, outside: 27.7, top: 17, bottom: 28,
-    body: 9.3, leading: 11.9,         // 1.28
+    body: 10.2, leading: 13,          // Adobe Caslon Pro, 1.27 (Ed, 59b): the largest size at which every entry fits
     paraGap: 0.5,
     title: 18,
     appendix: 44,
@@ -119,12 +122,69 @@ if (process.env.BOOK_SETTINGS) {
   for (const [k, v] of Object.entries(JSON.parse(process.env.BOOK_SETTINGS))) Object.assign(SIZES[k], v);
 }
 
-for (const need of ['pagedjs/dist/paged.polyfill.js', 'hyphen/en-gb', 'pdf-lib', '@fontsource/libre-caslon-text/files', '@fontsource/eb-garamond/files']) {
+for (const need of ['pagedjs/dist/paged.polyfill.js', 'hyphen/en-gb', 'pdf-lib', '@fontsource/eb-garamond/files']) {
   const p = path.join(MODULES, need);
   if (!fs.existsSync(p) && !fs.existsSync(p + '.js') && !fs.existsSync(path.join(p, 'index.js'))) {
     throw new Error(`scripts/node_modules/${need} is missing: run "cd scripts && npm ci" first`);
   }
 }
+/*
+ * The body face: Adobe Caslon Pro, as in 2013 (Ed, 59b). These are Ed's own
+ * 2012 font files. They are never copied into the repository or book/out/:
+ * the pages load them from where they are, and Chromium embeds subsets in the
+ * PDF (their fsType, 12, allows embedding). THE LICENCE FOR PRINTING A SOLD
+ * BOOK WITH THEM IS UNCONFIRMED; it is Ed's to check.
+ */
+const CASLON_FILES = {
+  '400 normal': 'ACaslonPro-Regular.otf', '400 italic': 'ACaslonPro-Italic.otf',
+  '600 normal': 'ACaslonPro-Semibold.otf', '600 italic': 'ACaslonPro-SemiboldItalic.otf',
+  '700 normal': 'ACaslonPro-Bold.otf', '700 italic': 'ACaslonPro-BoldItalic.otf'
+};
+const caslonDir = args.includes('--caslon') ? args[args.indexOf('--caslon') + 1] : process.env.CRYPTOFLORICON_CASLON_DIR;
+{
+  const missing = caslonDir ? Object.values(CASLON_FILES).filter(f => !fs.existsSync(path.join(caslonDir, f))) : Object.values(CASLON_FILES);
+  if (missing.length) {
+    console.error(`The book is set in Adobe Caslon Pro, which is not in the repository. Pass its folder with
+` +
+      `  --caslon <dir>  or  CRYPTOFLORICON_CASLON_DIR=<dir>
+` +
+      (caslonDir ? `Missing from ${caslonDir}: ${missing.join(', ')}` : 'No folder was given.'));
+    process.exit(1);
+  }
+  // Never let the fonts sit where git could see them.
+  const rel = path.relative(ROOT, path.resolve(caslonDir));
+  if (!rel.startsWith('..') && !path.isAbsolute(rel)) throw new Error('keep the Adobe Caslon fonts outside the repository');
+}
+/*
+ * Chromium cannot embed CFF outlines in a PDF and would fall back to Type 3
+ * fonts, so the OTFs are converted to TrueType outlines (scripts/otf-to-ttf.py,
+ * needs `pip install fonttools`) into a cache in the system's temporary folder,
+ * outside the repository, keyed by each file's content.
+ */
+const caslonTtf = {};
+{
+  const { execFileSync } = await import('node:child_process');
+  const crypto = await import('node:crypto');
+  const os = await import('node:os');
+  const cache = path.join(os.tmpdir(), 'cryptofloricon-caslon-ttf');
+  fs.mkdirSync(cache, { recursive: true });
+  for (const [key, file] of Object.entries(CASLON_FILES)) {
+    const src = path.join(caslonDir, file);
+    const hash = crypto.createHash('sha256').update(fs.readFileSync(src)).digest('hex').slice(0, 16);
+    const out = path.join(cache, `${path.basename(file, '.otf')}-${hash}.ttf`);
+    if (!fs.existsSync(out)) {
+      try {
+        execFileSync('python3', ['-I', path.join(ROOT, 'scripts', 'otf-to-ttf.py'), src, out], { stdio: ['ignore', 'ignore', 'pipe'] });
+      } catch (err) {
+        console.error(`Could not convert ${file} to TrueType outlines (is fonttools installed? pip install fonttools):\n${err.stderr || err.message}`);
+        process.exit(1);
+      }
+    }
+    caslonTtf[key] = out;
+  }
+}
+const BODY = "'Book Caslon', 'Book Cyrillic', serif";
+
 const { hyphenateSync } = require(path.join(MODULES, 'hyphen/en-gb'));
 
 /* ---------- content ---------- */
@@ -183,7 +243,10 @@ function passage(body) {
         html += `<a class="xref" href="#e${t.id}">${esc(t.title.replace(/'/g, '’'))}</a>`;
       }
     });
-    return `<p>${html}</p>`;
+    // A shouted paragraph (Evil laugh's "MWAHAHAHA…", Aaaaaaaaaa's screams: long
+    // words in capitals) is set ragged rather than justified, so no line is stretched.
+    const unbreakable = p.replace(/\B#\d+/g, '').split(/\s+/).some(w => /^[A-Z!?]{6,}$/.test(w));
+    return `<p${unbreakable ? ' class="ragged"' : ''}>${html}</p>`;
   }).join('\n');
 }
 
@@ -288,13 +351,16 @@ function html(size, art, fit = new Map(), spacing = new Map()) {
 
   const font = (family, file, style, weight) =>
     `${'@'}font-face { font-family: '${family}'; font-style: ${style}; font-weight: ${weight}; src: url('${pathToFileURL(path.join(MODULES, file)).href}') format('woff2'); }`;
+  // Adobe Caslon Pro from Ed's folder, in place (see CASLON_FILES; licence for printing unconfirmed).
+  const caslon = Object.keys(CASLON_FILES).map(key => {
+    const [weight, style] = key.split(' ');
+    return `${'@'}font-face { font-family: 'Book Caslon'; font-style: ${style}; font-weight: ${weight}; src: url('${pathToFileURL(caslonTtf[key]).href}') format('truetype'); }`;
+  }).join('\n');
 
   const textWidth = `calc(${S.width} - ${S.inside + S.outside}mm)`;
 
   const css = `
-${font('Libre Caslon Text', '@fontsource/libre-caslon-text/files/libre-caslon-text-latin-400-normal.woff2', 'normal', 400)}
-${font('Libre Caslon Text', '@fontsource/libre-caslon-text/files/libre-caslon-text-latin-400-italic.woff2', 'italic', 400)}
-${font('Libre Caslon Text', '@fontsource/libre-caslon-text/files/libre-caslon-text-latin-700-normal.woff2', 'normal', 700)}
+${caslon}
 ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-normal.woff2', 'normal', 400)}
 ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-italic.woff2', 'italic', 400)}
 
@@ -303,7 +369,7 @@ ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-
   margin: ${S.top}mm ${S.outside}mm ${S.bottom}mm ${S.inside}mm;
   @bottom-center {
     content: counter(page);
-    font: ${S.folio}pt 'Libre Caslon Text', serif;
+    font: 600 ${S.folio}pt ${BODY};  /* the folios in Semibold, as in 2013 */
     color: #000;
     vertical-align: top;
     padding-top: ${Math.min(S.bottom * 0.4, S.bottom - 7.4 - S.folio * 0.3528 * 1.2).toFixed(2)}mm;
@@ -320,9 +386,9 @@ ${font('Book Cyrillic', '@fontsource/eb-garamond/files/eb-garamond-cyrillic-400-
 html { color: #000; background: #fff; }
 body {
   margin: 0;
-  font: ${S.body}pt/${S.leading}pt 'Libre Caslon Text', 'Book Cyrillic', serif;
+  font: ${S.body}pt/${S.leading}pt ${BODY};
   hyphens: manual;
-  hyphenate-character: "-";  /* Chromium otherwise looks for U+2010, which Libre Caslon lacks */
+  hyphenate-character: "-";  /* a plain hyphen at every break, whatever the font offers */
   font-variant-numeric: oldstyle-nums;
   font-kerning: normal;
 }
@@ -384,17 +450,18 @@ p { margin: 0; orphans: 2; widows: 2; }
  */
 .entry .title { margin: -0.475em 0 calc(${S.gapBelow}mm - 0.475em); }
 .passage p { text-align: justify; text-indent: 1.2em; }
+.passage p.ragged { text-align: left; }
 .passage p + p { margin-top: ${(S.leading * S.paraGap).toFixed(2)}pt; }
 /* The few entries too long for the common setting (see fitEntries): first a smaller bouquet, then also slightly closer lines. */
 .entry.fit1 .bouquet, .entry.fit2 .bouquet { height: ${(S.stems * FIT_STEMS).toFixed(1)}mm; }
 .entry.fit1 .bouquet .stem, .entry.fit2 .bouquet .stem { height: ${(S.stems * FIT_STEMS).toFixed(1)}mm !important; width: auto !important; }
 .entry.fit2 .passage { line-height: ${(S.leading * FIT_LEADING).toFixed(2)}pt; }
-.xref { color: #000; text-decoration: none; font-style: italic; }
+.xref { color: #000; text-decoration: none; font-style: italic; font-weight: 600; }  /* Semibold Italic, as in 2013 */
 /* The referenced title's page, set small after it as in 2013. */
-.xref::after { content: target-counter(attr(href url), page); font-style: italic; font-size: 0.62em; vertical-align: -0.25em; line-height: 0; margin-left: 0.08em; font-variant-numeric: lining-nums; }
+.xref::after { content: target-counter(attr(href url), page); font-style: italic; font-weight: 400; font-size: 0.62em; vertical-align: -0.25em; line-height: 0; margin-left: 0.08em; font-variant-numeric: lining-nums; }
 
 /* ---------- the indexes ---------- */
-.back h2 { font: normal ${(S.body * 1.25).toFixed(1)}pt/${S.leading * 1.2}pt 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.06em; text-align: center; margin: 0; }
+.back h2 { font: normal ${(S.body * 1.25).toFixed(1)}pt/${S.leading * 1.2}pt ${BODY}; font-variant: small-caps; letter-spacing: 0.06em; text-align: center; margin: 0; }
 .back .note { font-style: italic; text-align: center; text-wrap: balance; margin: ${S.leading * 0.4}pt 0 ${S.leading * 0.6}pt; font-size: ${(S.body * 0.92).toFixed(2)}pt; line-height: ${(S.leading * 0.92).toFixed(1)}pt; }
 .back .divider { margin: ${S.leading * 0.4}pt 0 0; }
 /* The appendix opens as in 2013: the one word, in Church Text, a third of the way down a right-hand page. */
@@ -402,7 +469,7 @@ p { margin: 0; orphans: 2; widows: 2; }
 .appendix svg { position: absolute; left: 50%; top: calc(${S.height} / 3 - ${S.top}mm); transform: translate(-50%, -50%); font-size: ${S.appendix}pt; height: ${(appendixArt.height / appendixArt.upem).toFixed(3)}em; width: ${(appendixArt.advance / appendixArt.upem).toFixed(3)}em; fill: #000; overflow: visible; }
 .decode-page { break-before: page; }
 table.decode { width: 100%; border-collapse: collapse; table-layout: fixed; }
-table.decode th { font: normal ${S.index.head}pt/1.2 'Libre Caslon Text', serif; font-variant: small-caps; letter-spacing: 0.02em; padding: 0 0 1.6mm; text-align: center; }
+table.decode th { font: normal ${S.index.head}pt/1.2 ${BODY}; font-variant-caps: all-small-caps; letter-spacing: 0.04em; padding: 0 0 1.6mm; text-align: center; }
 table.decode th.pg, table.decode td.pg { width: 11%; text-align: right; }
 table.decode td { height: ${S.index.row}mm; text-align: center; vertical-align: bottom; padding: 0 0 0.6mm; line-height: 0; }
 /* No rules (Ed, 2026-11-26): the rows are carried by their spacing alone. */
@@ -422,7 +489,7 @@ table.decode td.pg { font-size: ${S.index.text}pt; line-height: 1; vertical-alig
 .colophon { page: blank; break-before: left; text-align: center; }
 .colophon .block { position: absolute; bottom: 0; left: 0; right: 0; font-size: ${(S.body * 0.86).toFixed(2)}pt; line-height: ${(S.leading * 0.9).toFixed(1)}pt; }
 .colophon .set-in { margin-top: 1em; }
-.colophon .name { letter-spacing: 0.14em; font-variant: small-caps; }
+.colophon .name { letter-spacing: 0.14em; font-weight: 600; text-transform: uppercase; }
 `;
 
   const credit = (role, names) => `<p class="roles"><i>${role}</i> ${names}</p>`;
@@ -506,7 +573,7 @@ ${titleItems}
   <div class="block">
     <p class="name">Cryptofloricon</p>
     <p>London 2013 &middot; 2026</p>
-    <p class="set-in"><i>Set in Libre Caslon Text;<br>the titles drawn from Andrade Script Pro.</i></p>
+    <p class="set-in"><i>Set in Adobe Caslon;<br>the titles drawn from Andrade Script Pro.</i></p>
   </div>
 </section>`;
 
@@ -526,7 +593,7 @@ table.decode td.pg a.pgref::after { content: target-counter(attr(href url), page
 // reset to the one page, so the pages after it would go on counting from the front matter.
 // Number each page after it explicitly, as Paged.js already counted them for target-counter().
 // Where a page ends inside a word, Paged.js cuts the word one letter past its soft
-// hyphen and adds U+2011, which Libre Caslon lacks. Cut at the soft hyphen instead,
+// hyphen and adds U+2011, which the book's faces may lack. Cut at the soft hyphen instead,
 // with an ordinary hyphen, and carry the letters over to the next page's first line.
 function mendHyphens() {
   document.querySelectorAll('.pagedjs_hyphen').forEach(el => {
@@ -682,7 +749,7 @@ async function fitEntries(browser, size, art) {
     const px = mm => mm * 96 / 25.4;
     // How far below its line box's top the first line of text starts to show ink.
     const g = document.createElement('canvas').getContext('2d');
-    g.font = `${bodyPt}pt 'Libre Caslon Text'`;
+    g.font = `${bodyPt}pt 'Book Caslon'`;
     const m = g.measureText('Hdlbkft');
     const lh = leadingPt * 96 / 72;
     const textInk = (lh - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent - m.actualBoundingBoxAscent;
