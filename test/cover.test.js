@@ -15,7 +15,8 @@ const ratio = Object.fromEntries(Cover.ORDER.map(d => {
 }));
 const covers = [
   ['paperback', Cover.frame('paperback', { pages: 204 })],
-  // The hardback's spine and boards come from KDP's cover calculator; try a few plausible ones.
+  ['hardback', Cover.frame('hardback', Cover.KDP.hard204)],
+  // Other spines and boards, as KDP's cover calculator might give for other page counts.
   ['hardback 0.51', Cover.frame('hardback', { spine: 0.51, boardW: 5.5, boardH: 8.5 })],
   ['hardback 0.75', Cover.frame('hardback', { spine: 0.75, boardW: 5.625, boardH: 8.75 })],
   ['paperback 120 pages', Cover.frame('paperback', { pages: 120 })]
@@ -77,4 +78,17 @@ test('the barcode box is where KDP puts it on the paperback: 2" × 1.2", 0.25" f
   assert.equal(f.barcode.h, 1.2);
   assert.ok(Math.abs(f.spineL - (f.barcode.x + f.barcode.w) - 0.25) < 1e-9);
   assert.ok(Math.abs(f.height - f.outer - (f.barcode.y + f.barcode.h) - 0.25) < 1e-9);
+});
+
+test('the hardback is KDP\'s cover calculator\'s size for 204 pages on cream paper', () => {
+  const f = covers[1][1];
+  assert.equal(f.width.toFixed(3), '13.274');          // the calculator's full cover
+  assert.equal(f.height.toFixed(3), '9.917');
+  assert.equal(f.spine.toFixed(3), '0.699');
+  assert.equal(f.panelW.toFixed(3), '5.697');          // the front cover (board)
+  assert.equal(f.panelH.toFixed(3), '8.736');
+  assert.equal(f.outer.toFixed(3), '0.591');           // the wrap
+  // The barcode as in KDP's template: 0.25" from the hinge edge, 0.375" above the bottom trim.
+  assert.ok(Math.abs(f.spineL - Cover.KDP.hardHinge - (f.barcode.x + f.barcode.w) - 0.25) < 1e-9);
+  assert.ok(Math.abs(f.outer + f.panelH - (f.barcode.y + f.barcode.h) - 0.375) < 1e-9);
 });

@@ -30,7 +30,8 @@
  * (Ed, 53); --title-index puts it back.
  *
  * Print: black ink only. Text and the drawn titles are pure black; the brown
- * woodcut stems and the logo become black line art at 1,200 ppi or more,
+ * woodcut stems become black line art at 1,200 ppi or more (the logo is Church
+ * Text outlines),
  * placed as stencils (image masks) that print black on the strokes and
  * nothing elsewhere, so no box shows round them; every colour is rewritten as
  * grey, and the PDF has no colour and no transparency. The
@@ -212,16 +213,28 @@ function drawWord(w) {
   svgCache.set(w, out);
   return out;
 }
-// "Appendix" in Church Text, drawn by scripts/draw-word.mjs: the font may not be
-// embedded, so only its outlines are placed. The licence for printing them is unconfirmed.
-const appendixArt = (() => {
-  const svg = fs.readFileSync(path.join(SRC, 'headings', 'appendix-church-text.svg'), 'utf8');
+// "Appendix" and the "Cryptofloricon" logo in Church Text, drawn by scripts/draw-word.mjs:
+// the font may not be embedded, so only its outlines are placed. THE LICENCE FOR PRINTING
+// CHURCH TEXT OUTLINES IS UNCONFIRMED.
+const churchArt = name => {
+  const svg = fs.readFileSync(path.join(SRC, 'headings', name), 'utf8');
   const [, , , height] = svg.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
   return {
     svg: svg.replace(/<title>[^<]*<\/title>/, '').replace(/^<svg /, '<svg aria-hidden="true" ').trim(),
     height, upem: Number(svg.match(/data-upem="(\d+)"/)[1]), advance: Number(svg.match(/data-advance="(\d+)"/)[1])
   };
-})();
+};
+const appendixArt = churchArt('appendix-church-text.svg');
+// The logo is Church Text typed out, spaced by hand: the drawing matches src/assets/logo.png.
+const logoArt = churchArt('cryptofloricon-church-text.svg');
+{
+  // Its box cropped to the ink, so it sits and sizes as the 2013 raster did.
+  const n = logoArt.svg.match(/ d="([^"]+)"/)[1].match(/-?[\d.]+/g).map(Number);
+  const xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  logoArt.svg = logoArt.svg.replace(/viewBox="[^"]+"/, `viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}"`);
+  logoArt.inkRatio = (y1 - y0) / (x1 - x0);
+}
 const drawWords = text => text.split(' ').filter(Boolean).map(drawWord).join(' ');
 // The text stays in the page, unseen, so the PDF can be searched and copied.
 const drawn = (text, parts) => `<span class="hidden-text">${esc(text)}</span><span class="drawn" aria-hidden="true">${
@@ -262,7 +275,7 @@ function pngSize(file) {
 
 const ART = {
   flower1: 'assets/flowers/1.png', flower2: 'assets/flowers/2.png', flower3: 'assets/flowers/3.png',
-  flower4: 'assets/flowers/4.png', flower5: 'assets/flowers/5.png', logo: 'assets/logo.png'
+  flower4: 'assets/flowers/4.png', flower5: 'assets/flowers/5.png'
 };
 
 /*
@@ -274,7 +287,7 @@ const ART = {
  * makes each one a stencil (an image mask) that lays black ink on the strokes
  * and nothing anywhere else, so no box can show around a drawing.
  */
-const ART_SCALE = { flower1: 4, flower2: 4, flower3: 4, flower4: 4, flower5: 4, logo: 3 };
+const ART_SCALE = { flower1: 4, flower2: 4, flower3: 4, flower4: 4, flower5: 4 };
 async function inkArt(browser) {
   const dir = path.join(OUT, 'img');
   fs.mkdirSync(dir, { recursive: true });
@@ -347,10 +360,9 @@ function html(size, art, fit = new Map(), spacing = new Map()) {
     return `<img class="${cls}" src="img/${key}.png" alt="" style="height:${heightMm}mm;width:${(width * heightMm / height).toFixed(2)}mm">`;
   };
   const bouquet = (code, heightMm) => Cipher.displayStems(code).map(d => img('flower' + d, 'stem', heightMm)).join('');
-  const logo = (widthMm) => {
-    const { width, height } = art.logo;
-    return `<img class="logo" src="img/logo.png" alt="Cryptofloricon" style="width:${widthMm}mm;height:${(height * widthMm / width).toFixed(2)}mm">`;
-  };
+  // The logo as vector outlines (Church Text), in place of the 2013 raster.
+  const logo = (widthMm) => `<div class="logo" style="height:${(widthMm * logoArt.inkRatio).toFixed(2)}mm">` +
+    logoArt.svg.replace('<svg ', `<svg role="img" aria-label="Cryptofloricon" style="display:block;margin:0 auto;width:${widthMm}mm;height:${(widthMm * logoArt.inkRatio).toFixed(2)}mm;overflow:visible;fill:#000" `) + '</div>';
 
   const font = (family, file, style, weight) =>
     `${'@'}font-face { font-family: '${family}'; font-style: ${style}; font-weight: ${weight}; src: url('${pathToFileURL(path.join(MODULES, file)).href}') format('woff2'); }`;
@@ -411,11 +423,11 @@ p { margin: 0; orphans: 2; widows: 2; }
 
 /* ---------- front matter ---------- */
 .front { page: front; }
-.half-title, .title-page, .copyright, .part-title, .colophon { break-before: page; height: calc(${S.height} - ${S.top + S.bottom}mm); position: relative; }
+.half-title, .title-page, .copyright, .part-title, .colophon { break-before: page; height: calc(${S.height} - ${S.top + S.bottom + 0.5}mm); position: relative; display: flow-root; }
 .half-title, .part-title { break-before: right; text-align: center; }
-.half-title .logo, .part-title .logo { margin-top: 28%; }
+.half-title .logo, .part-title .logo { margin-top: ${((parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside) * 0.28).toFixed(1)}mm; }
 .title-page { break-before: right; text-align: center; }
-.title-page .logo { margin-top: 12%; }
+.title-page .logo { margin-top: ${((parseFloat(S.width) * (S.width.endsWith('in') ? 25.4 : 1) - S.inside - S.outside) * 0.12).toFixed(1)}mm; }
 .title-page .title { font-size: ${(S.title * 0.72).toFixed(1)}pt; margin-top: 1.2em; }
 .title-page .divider { margin-top: 1.4em; }
 .title-page .byline { position: absolute; bottom: 0; left: 0; right: 0; }
@@ -468,7 +480,7 @@ p { margin: 0; orphans: 2; widows: 2; }
 .back .note { font-style: italic; text-align: center; text-wrap: balance; margin: ${S.leading * 0.4}pt 0 ${S.leading * 0.6}pt; font-size: ${(S.body * 0.92).toFixed(2)}pt; line-height: ${(S.leading * 0.92).toFixed(1)}pt; }
 .back .divider { margin: ${S.leading * 0.4}pt 0 0; }
 /* The appendix opens as in 2013: the one word, in Church Text, a third of the way down a right-hand page. */
-.appendix { page: blank; break-before: right; height: calc(${S.height} - ${S.top + S.bottom}mm); position: relative; text-align: center; }
+.appendix { page: blank; break-before: right; height: calc(${S.height} - ${S.top + S.bottom + 0.5}mm); position: relative; text-align: center; }
 .appendix svg { position: absolute; left: 50%; top: calc(${S.height} / 3 - ${S.top}mm); transform: translate(-50%, -50%); font-size: ${S.appendix}pt; height: ${(appendixArt.height / appendixArt.upem).toFixed(3)}em; width: ${(appendixArt.advance / appendixArt.upem).toFixed(3)}em; fill: #000; overflow: visible; }
 .decode-page { break-before: page; }
 table.decode { width: 100%; border-collapse: collapse; table-layout: fixed; }

@@ -10,29 +10,25 @@
  *
  * Writes to book/out/ (git-ignored):
  *   cryptofloricon-cover-paperback.pdf   the full wrap at KDP's exact size
- *   cryptofloricon-cover-hardback.pdf    (only with the hardback's figures, see below)
+ *   cryptofloricon-cover-hardback.pdf    the case-laminate wrap
  *   …-preview.png                        each with KDP's lines drawn on
  *
  * The geometry and the pattern are in lib/cover.js, with KDP's figures and
- * where each came from; test/cover.test.js checks the pattern.
+ * where each came from; test/cover.test.js checks the pattern. The hardback's
+ * spine and board for 204 pages are KDP's cover calculator's (lib/cover.js,
+ * KDP.hard204); for another page count, pass the calculator's figures.
  *
- * The hardback: KDP gives the case-laminate cover's wrap (0.51"), hinge (0.4")
- * and safe distances in its help pages, but its spine width and board size only
- * through the cover calculator (kdp.amazon.com/cover-calculator), whose
- * workings this environment cannot reach. Pass them from the calculator:
- * --hardback-spine 0.xx --hardback-board 5.xxx8.xx. Without them no hardback
- * file is written, unless --hardback-provisional is given, which uses the
- * paperback's spine and the trim size as the board, and says so loudly.
+ * The logo is Church Text typed out (the same glyphs as the 2013 raster logo,
+ * spaced by hand), drawn as vector outlines by scripts/draw-word.mjs into
+ * src/headings/cryptofloricon-church-text.svg. The font is never embedded or
+ * committed (its fsType forbids embedding). THE LICENCE FOR PRINTING CHURCH
+ * TEXT OUTLINES IS UNCONFIRMED.
  *
- * Print: the flowers and the logo are 1-bit line art, placed as image masks in
- * 100% black (K). src/assets/flowers-hires/1–5.png were made once from Ed's
+ * Print: the flowers are 1-bit line art, placed as image masks in 100% black
+ * (K); the logo is vector outlines in 100% K. src/assets/flowers-hires/1–5.png were made once from Ed's
  * high-resolution woodcuts (Dropbox web graphics/woodcut symbols/1ink–5ink.png,
  * about 2,700 px tall): ink = opacity × darkness, resized to 720 px tall and cut
- * at half, so about 2,400 ppi at the 7.6 mm they print. src/assets/cover/
- * logo-1bit.png is src/assets/logo.png (1,147 px wide) enlarged three times
- * smoothly and cut the same way, about 700 ppi at its 4.8 in; the source logo
- * itself is only about 240 ppi at that width, so a larger original would be
- * better. The
+ * at half, so about 2,400 ppi at the 7.6 mm they print. The
  * cream is a flat CMYK tint. The PDF is DeviceCMYK only, with no colour profile,
  * no transparency and no text, as KDP's cover pages ask.
  */
@@ -59,17 +55,28 @@ const CREAM_RGB = '#efe4c9';
 const CREAM_CMYK = [0, 0.05, 0.16, 0.06];
 
 const ART = Object.fromEntries(Cover.ORDER.map(d => [d, path.join(ROOT, 'src', 'assets', 'flowers-hires', `${d}.png`)]));
-const LOGO = path.join(ROOT, 'src', 'assets', 'cover', 'logo-1bit.png');
+const LOGO_SVG = fs.readFileSync(path.join(ROOT, 'src', 'headings', 'cryptofloricon-church-text.svg'), 'utf8')
+  .replace(/<title>[^<]*<\/title>/, '');
+const logoBox = LOGO_SVG.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
+// The ink's centre, from the outline's points (absolute coordinates), as shares of the box: the
+// logo is centred on its ink, not on its em box.
+const LOGO_INK = (() => {
+  const n = LOGO_SVG.match(/ d="([^"]+)"/)[1].match(/-?[\d.]+/g).map(Number);
+  const xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1);
+  const [vx, vy, vw, vh] = logoBox;
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  return { dx: -((cx - vx) / vw - 0.5), dy: -((cy - vy) / vh - 0.5), w: (Math.max(...xs) - Math.min(...xs)) / vw, h: (Math.max(...ys) - Math.min(...ys)) / vh };
+})();
 const pngSize = f => { const b = fs.readFileSync(f); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; };
 const ratio = Object.fromEntries(Object.entries(ART).map(([d, f]) => { const s = pngSize(f); return [d, s.w / s.h]; }));
-const logoSize = pngSize(LOGO);
 
 /* The page: the cream ground and each drawing placed in inches. */
 function html(f, lay, preview) {
   const imgs = lay.flowers.map(p =>
     `<img src="${pathToFileURL(ART[p.kind]).href}" style="left:${p.x - p.w / 2}in;top:${p.y - p.h / 2}in;width:${p.w}in;height:${p.h}in">`).join('\n');
-  const lh = lay.logo.w * logoSize.h / logoSize.w;
-  const logo = `<img src="${pathToFileURL(LOGO).href}" style="left:${lay.logo.cx - lay.logo.w / 2}in;top:${lay.logo.cy - lh / 2}in;width:${lay.logo.w}in;height:${lh}in">`;
+  // The logo's box is Church Text's em (ascender to descender) by the word's advance; it is centred on its ink.
+  const lh = lay.logo.w * logoBox[3] / logoBox[2];
+  const logo = LOGO_SVG.replace('<svg ', `<svg class="logo" style="position:absolute;left:${lay.logo.cx - lay.logo.w / 2 + lay.logo.w * LOGO_INK.dx}in;top:${lay.logo.cy - lh / 2 + lh * LOGO_INK.dy}in;width:${lay.logo.w}in;height:${lh}in;overflow:visible;fill:#000" `);
   const line = (x1, y1, x2, y2, colour, dash) =>
     `<div class="g" style="left:${Math.min(x1, x2)}in;top:${Math.min(y1, y2)}in;width:${Math.abs(x2 - x1) || 0.015}in;height:${Math.abs(y2 - y1) || 0.015}in;background:${colour};${dash ? 'opacity:.75' : ''}"></div>`;
   const rect = (x, y, w, h, colour) => [line(x, y, x + w, y, colour), line(x, y + h, x + w, y + h, colour), line(x, y, x, y + h, colour), line(x + w, y, x + w, y + h, colour)].join('');
@@ -83,7 +90,7 @@ function html(f, lay, preview) {
     for (const x of [f.spineL + f.spineSafe, f.frontL - f.spineSafe]) guides += line(x, trimTop, x, trimBottom, '#0a0'); // spine safe
     const bc = f.barcode;
     guides += `<div class="barcode" style="left:${bc.x}in;top:${bc.y}in;width:${bc.w}in;height:${bc.h}in">barcode (KDP adds it)</div>`;
-    guides += `<div class="key">${f.kind}: ${f.width.toFixed(3)} × ${f.height.toFixed(3)} in, spine ${f.spine} in${f.provisional ? ' — PROVISIONAL spine and board' : ''}. ` +
+    guides += `<div class="key">${f.kind}: ${f.width.toFixed(3)} × ${f.height.toFixed(3)} in, spine ${f.spine.toFixed(3)} in${f.provisional ? ' — PROVISIONAL spine and board' : ''}. ` +
       `Red: ${f.kind === 'hardback' ? 'board edge (the wrap lies outside)' : 'trim (the bleed lies outside)'}; blue: spine folds; green: safe area${f.kind === 'hardback' ? ', hinge' : ', fold clearance'} and spine safe area.</div>`;
   }
   return `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -163,13 +170,10 @@ const hs = arg('--hardback-spine'), hb = arg('--hardback-board');
 if (hs && hb) {
   const [boardW, boardH] = hb.split('x').map(Number);
   jobs.push(['hardback', Cover.frame('hardback', { spine: Number(hs), boardW, boardH })]);
-} else if (args.includes('--hardback-provisional')) {
-  const f = Cover.frame('hardback', { spine: +(pages * Cover.KDP.creamPerPage).toFixed(4), boardW: 5.5, boardH: 8.5 });
-  f.provisional = true;
-  jobs.push(['hardback', f]);
-  console.warn('hardback: PROVISIONAL spine and board (the paperback spine and the trim size); replace with KDP cover calculator figures.');
+} else if (pages === 204) {
+  jobs.push(['hardback', Cover.frame('hardback', Cover.KDP.hard204)]);
 } else {
-  console.log('hardback: skipped (pass --hardback-spine and --hardback-board from KDP\'s cover calculator)');
+  console.log('hardback: skipped (for a page count other than 204, pass --hardback-spine and --hardback-board from KDP\'s cover calculator)');
 }
 
 fs.mkdirSync(OUT, { recursive: true });
@@ -177,6 +181,10 @@ const browser = await chromium.launch();
 try {
   for (const [kind, f] of jobs) {
     const lay = Cover.layout(f, d => ratio[d]);
+    // The logo's ink must lie inside the front's live area (clear of the hinge or fold, and the edge).
+    const inkW = lay.logo.w * LOGO_INK.w, inkH = lay.logo.w * logoBox[3] / logoBox[2] * LOGO_INK.h;
+    if (lay.logo.cx - inkW / 2 < f.frontL + f.foldClear || lay.logo.cx + inkW / 2 > f.width - f.safeOuter ||
+        lay.logo.cy - inkH / 2 < f.safeOuter) throw new Error(`${kind}: the logo is outside the live area`);
     const spine = Cover.spineKinds(lay);
     if (spine.length !== 5 || new Set(spine).size !== 5) throw new Error(`${kind}: the spine holds ${spine.join('')}, not one of each flower`);
     const base = path.join(OUT, `cryptofloricon-cover-${kind}`);
@@ -193,7 +201,7 @@ try {
     await preview.evaluate(() => Promise.all([...document.images].map(i => i.decode())));
     await preview.screenshot({ path: base + '-preview.png', clip: { x: 0, y: 0, width: f.width * 96, height: f.height * 96 } });
     await page.close(); await preview.close();
-    console.log(`${path.basename(base)}.pdf: ${f.width.toFixed(4)} × ${f.height.toFixed(4)} in, spine ${f.spine} in, ` +
+    console.log(`${path.basename(base)}.pdf: ${f.width.toFixed(4)} × ${f.height.toFixed(4)} in, spine ${f.spine.toFixed(4)} in, ` +
       `${lay.flowers.length} flowers (spine ${spine.map(d => ({ 1: 'lily', 2: 'rose', 3: 'chrysanth', 4: 'carnation', 5: 'gerbera' })[d]).join(', ')})${f.provisional ? ' PROVISIONAL' : ''}`);
   }
 } finally {
