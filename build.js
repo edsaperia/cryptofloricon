@@ -150,7 +150,7 @@ function shareTags(urlPath, share) {
   return tags.map(([attr, key, value]) => `<meta ${attr}="${key}" content="${esc(value)}">\n`).join('');
 }
 
-const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap';
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&display=swap';
 
 // The marker the 404 page looks for to find the site's root (see src/notfound.js).
 const ROOT_MARKER = 'cryptofloricon-root.txt';

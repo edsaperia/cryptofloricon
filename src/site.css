@@ -1,7 +1,8 @@
 /*
  * Cryptofloricon. Modelled on the 2015 site's stylesheet
  * (/Cryptofloricon Dev/css/main.css): brown ink (#581a0e) on paper, a
- * script title face, a Caslon body face, ornamental corners round the main
+ * script title face, an old-style body face (Sorts Mill Goudy, Ed 84a, the free face
+ * closest to the book's Adobe Caslon), ornamental corners round the main
  * panel, small-caps "• Decode •" links, and a 600px column on wide screens.
  *
  * The script face (Andrade Script Pro) is not served: the build places each
@@ -23,7 +24,7 @@
   --ornament-stroke: 0.33px;
   /* Only for the text logotype, shown if the logo image is missing. */
   --title-font: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
-  --body-font: "Libre Caslon Text", "Big Caslon", "Adobe Caslon Pro", Georgia, "Times New Roman", serif;
+  --body-font: "Sorts Mill Goudy", "Adobe Caslon Pro", "Big Caslon", Georgia, "Times New Roman", serif;
   /* Vertical rhythm (Ed, 2026-11-25): every space between blocks is a whole
      or half line of the body text (16px at 1.65), so the page keeps one beat. */
   --line: 1.65rem;
@@ -38,13 +39,15 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; background-color: #f1e6cc; }
+/* Sorts Mill Goudy's small x-height (0.43em, Libre Caslon's was 0.53em) wants a larger
+   body size; every rem-based space grows with it, so the rhythm holds. */
+html { font-size: 19px; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; background-color: #f1e6cc; }
 
 body {
   margin: 0;
   padding: var(--half) 0 var(--line);
   color: var(--ink);
-  font: 16px/1.65 var(--body-font);
+  font: 1rem/1.65 var(--body-font);
   background-color: var(--paper);
   /* Placeholder paper (soft mottling) under the real texture once it is in. */
   background-image:
@@ -120,10 +123,11 @@ img { vertical-align: middle; max-width: 100%; }
 
 .title {
   /* Andrade's swash capitals and descenders need room between lines (Ed, 2026-11-23). */
-  font: 2em/1.95 var(--body-font);
+  /* 32px, as before the body grew to 19px (2em of 16px). */
+  font: 1.684em/1.95 var(--body-font);
   /* The words are drawings (see .drawn below); the spaces between them are
-     the body face's, narrowed to Andrade's own (0.23em; Libre Caslon's is 0.272em). */
-  word-spacing: -0.042em;
+     the body face's, widened to Andrade's own (0.23em; Sorts Mill Goudy's is 0.213em). */
+  word-spacing: 0.017em;
   margin: 0 auto;
   padding: var(--half) 0;
   font-weight: normal;
@@ -149,8 +153,8 @@ img { vertical-align: middle; max-width: 100%; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
 
-/* The home title follows the book's title page (Ed, 82e, 2026-11-27): Caslon
-   in four lines, "– to –" smaller; upright and a little smaller than the book's
+/* The home title follows the book's title page (Ed, 82e, 2026-11-27): the body
+   face in four lines, "– to –" smaller; upright and a little smaller than the book's
    proportions on the site (Ed, 2026-11-27). */
 .home-title { font: 1.35em/1.7 var(--body-font); word-spacing: normal; }
 .home-title .joiner { font-style: normal; font-size: 0.7em; line-height: 2.43; }
@@ -383,7 +387,7 @@ h2 a { text-decoration: none; }
 @media (max-width: 379px) {
   .border { padding-left: 10px; padding-right: 10px; }
   /* Andrade's swash capitals and descenders reach well outside the letters' box. */
-  .title { font-size: 1.8em; padding-left: 20px; padding-right: 20px; }
+  .title { font-size: 1.516em; padding-left: 20px; padding-right: 20px; }
   .flower-btn { font-size: 0.6em; letter-spacing: -0.02em; }
   .flower-picker { --flower-img: 72px; }
 }
