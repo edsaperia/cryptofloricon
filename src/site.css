@@ -149,6 +149,11 @@ img { vertical-align: middle; max-width: 100%; }
 /* One size throughout (Ed, 27b): the long phrase wraps, balanced, as
    "Encrypt and Decrypt / Floral Bouquets" where it does not fit. */
 
+/* The home title matches the book's title page (Ed, 82e, 2026-11-27): Caslon
+   italic in four lines, the italic ampersand (81a), "– to –" upright and smaller. */
+.home-title { font: italic 1.6em/1.7 var(--body-font); word-spacing: normal; }
+.home-title .joiner { font-style: normal; font-size: 0.7em; line-height: 2.43; }
+
 h2 { font-variant: small-caps; font-weight: normal; font-size: 1.25em; line-height: var(--line); margin: var(--line) 0 var(--half); }
 h2 a { text-decoration: none; }
 

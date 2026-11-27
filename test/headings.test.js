@@ -81,9 +81,8 @@ test('message titles are drawn, with their text kept for screen readers', () => 
   assert.equal((long[0].inner.match(/<svg\b/g) || []).length, 6);
 });
 
-test('page titles are drawn: home, Decode, Send a Message, Browse, a tag, Story, 404', () => {
+test('page titles are drawn: Decode, Send a Message, Browse, a tag, Story, 404', () => {
   const cases = {
-    'index.html': 'A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets',
     'decode/index.html': 'Decode a Message',
     'encode/index.html': 'Send a Message',
     'browse/index.html': 'Browse',
@@ -103,7 +102,8 @@ test('page titles are drawn: home, Decode, Send a Message, Browse, a tag, Story,
 
 test('every title on every page has drawings and exposes its text', () => {
   let n = 0;
-  for (const f of siteFiles.filter(f => f.endsWith('.html'))) {
+  // The home title is set in Caslon italic, not drawn (Ed, 82e).
+  for (const f of siteFiles.filter(f => f.endsWith('.html') && f !== 'index.html')) {
     for (const t of titlesIn(read(f))) {
       n++;
       assert.ok(accessibleText(t.inner).length > 0, f + ': ' + t.tag.slice(0, 80));
@@ -113,8 +113,8 @@ test('every title on every page has drawings and exposes its text', () => {
       assert.doesNotMatch(visible, /<svg\b/, f);
     }
   }
-  // 196 pages; every page has one title except the code page shared by two messages.
-  assert.ok(n >= 196, 'titles checked: ' + n);
+  // 196 pages less the home page; every page has one title except the code page shared by two messages.
+  assert.ok(n >= 195, 'titles checked: ' + n);
 });
 
 test('the Decode page carries the drawn "Uh oh!" for its script to show', () => {

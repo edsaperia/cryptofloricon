@@ -60,12 +60,11 @@ test('#123 now links "Do you feel the same?" where it said #32', () => {
   assert.ok(!html.includes('#32'));
 });
 
-test('the home title is three parts: phrase, "– to –", phrase', () => {
-  const h1 = read('index.html').match(/<h1 class="title">([\s\S]*?)<\/h1>/)[1];
-  assert.ok(h1.startsWith('<span class="visually-hidden">A Lexicon of Ciphers – to – Encrypt and Decrypt Floral Bouquets</span>'));
-  // The drawings in three spans: 4 words, then "– to –" (3), then 5 words.
-  const parts = [...h1.matchAll(/<span class="(line|joiner)">([\s\S]*?)<\/span>/g)].map(m => m[1] + ' ' + (m[2].match(/<svg\b/g) || []).length);
-  assert.deepEqual(parts, ['line 4', 'joiner 3', 'line 5']);
+test('the home title is Caslon italic text in four lines, as on the book\'s title page (82e)', () => {
+  const h1 = read('index.html').match(/<h1 class="title home-title">([\s\S]*?)<\/h1>/)[1];
+  assert.doesNotMatch(h1, /<svg\b/);
+  const parts = [...h1.matchAll(/<span class="(line|joiner)">([\s\S]*?)<\/span>/g)].map(m => m[1] + ' ' + m[2]);
+  assert.deepEqual(parts, ['line A Lexicon of Ciphers', 'joiner &ndash; to &ndash;', 'line Encrypt &amp; Decrypt', 'line Floral Bouquets']);
 });
 
 test('the dividers are inlined, without the scan they were traced from', () => {
